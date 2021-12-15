@@ -1,4 +1,3 @@
-
 """
     reduced_extended_edge_formulation
 
@@ -45,11 +44,12 @@ function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Subgraph
             end
         end
     end
+    pair_graph_inds = nb_altruists+1:nb_subgraph
 
     model = create_model(maxtime, params.optimizer, true, params.verbose)
 
     # create variables x^l_(i,j)
-    @variable(model, x[l in 1:nb_subgraph, e in subgraph_edges[l]], Bin)
+    @variable(model, x[l in pair_graph_inds, e in subgraph_edges[l]], Bin)
 
     # create flow variables for altruist subgraphs
     @variable(model, y[u in vertices(graph), v in outneighbors(graph, u), k in 1:L], Bin)
@@ -63,26 +63,26 @@ function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Subgraph
     @constraint(model, [u in instance.altruists, v in outneighbors(graph,u), k in 2:L], y[u,v,k] == 0)
 
     # create vertex disjoint constraints for pairs
-    @constraint(model, vertex_disjoint[u in instance.pairs], sum(x[l,(u,v)] for l in 1:nb_subgraph, v in outneighbors(graph,u) if is_arc[l][arc_ind[u=>v]]) + sum(y[v,u,k] for v in inneighbors(graph,u), k in 1:L) <= 1)
+    @constraint(model, vertex_disjoint[u in instance.pairs], sum(x[l,(u,v)] for l in pair_graph_inds, v in outneighbors(graph,u) if is_arc[l][arc_ind[u=>v]]) + sum(y[v,u,k] for v in inneighbors(graph,u), k in 1:L) <= 1)
 
     # create flow conservation constraints for each subgraph
-    @constraint(model, cycle_flow[l in 1:nb_subgraph, u in subgraph_vertices[l]], sum(x[l,(v,u)] for v in inneighbors(graph, u) if is_arc[l][arc_ind[v=>u]]) == sum(x[l,(u,v)] for v in outneighbors(graph,u) if is_arc[l][arc_ind[u=>v]]))
+    @constraint(model, cycle_flow[l in pair_graph_inds, u in subgraph_vertices[l]], sum(x[l,(v,u)] for v in inneighbors(graph, u) if is_arc[l][arc_ind[v=>u]]) == sum(x[l,(u,v)] for v in outneighbors(graph,u) if is_arc[l][arc_ind[u=>v]]))
 
     # create cycle_limit constraints
-    @constraint(model, cycle_length[l in 1:nb_subgraph], sum(x[l,e] for e in subgraph_edges[l]) <= K)
+    @constraint(model, cycle_length[l in pair_graph_inds], sum(x[l,e] for e in subgraph_edges[l]) <= K)
 
-    # create symmetry breaking constraints
+    # the flow going out of each vertex of each copy cannot be larger than that going out of the source
     S = subgraphs.sources
-    @constraint(model, symmetry_break[l in 1:nb_subgraph, u in subgraph_vertices[l]], sum(x[l,(u,v)] for v in outneighbors(graph,u) if is_arc[l][arc_ind[u=>v]]) <= sum(x[l,(S[l],v)] for v in outneighbors(graph, S[l]) if is_arc[l][arc_ind[S[l]=>v]]))
+    @constraint(model, symmetry_break[l in pair_graph_inds, u in subgraph_vertices[l]], sum(x[l,(u,v)] for v in outneighbors(graph,u) if is_arc[l][arc_ind[u=>v]]) <= sum(x[l,(S[l],v)] for v in outneighbors(graph, S[l]) if is_arc[l][arc_ind[S[l]=>v]]))
 
     # objective function maximizes the weight of selected cycles
     # - break symmetry by giving a preference to copies with smallest index
     weight = instance.edge_weight
     max_weight = maximum(weight)
     if L == 0
-        @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in 1:nb_subgraph, e in subgraph_edges[l]))
+        @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]))
     else
-        @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in 1:nb_subgraph, e in subgraph_edges[l]) + sum(weight[u,v] * y[u,v,k] for u in instance.pairs, v in outneighbors(graph, u), k  in 2:L) + sum(weight[u,v] * y[u,v,1] for u in instance.altruists, v in outneighbors(graph, u)))
+        @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]) + sum(weight[u,v] * y[u,v,k] for u in instance.pairs, v in outneighbors(graph, u), k  in 2:L) + sum(weight[u,v] * y[u,v,1] for u in instance.altruists, v in outneighbors(graph, u)))
     end
 
     return model
@@ -133,13 +133,14 @@ function solve_reduced_extended_edge_mip(model::Model, params::MIP_params, insta
             end
         end
     end
+    pair_graph_inds = instance.nb_altruists+1:nb_subgraph
 
     flow_cycle = Dict{Tuple{Int,Int}, Float64}()
     x = value.(model[:x])
     for e in edges(g)
         flow_cycle[(e.src,e.dst)] = 0.0
     end
-    for l in 1:nb_subgraph
+    for l in pair_graph_inds
         for e in subgraph_edges[l]
             flow_cycle[e] += x[l,e]
         end

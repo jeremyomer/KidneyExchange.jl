@@ -31,19 +31,27 @@ function print_and_check_solution(cycles::Vector{Vector{Int}}, chains::Vector{Ve
 
     # Display the number of chains and cycles for each path length up to the maximum allowed
     nb_vertices = 0
+    max_cycles_lengths = 0
+    if !isempty(cycles_lengths)
+        max_cycles_lengths = maximum(cycles_lengths)
+    end
     if verbose println("Numbers of cycles per cycle length") end
-    for k in 2:maximum(cycles_lengths)
+    for k in 2:max_cycles_lengths
         nb_cycles = length(findall(cycles_lengths .== k))
         if verbose  && nb_cycles >= 1
             println("- k = $k: $nb_cycles cycles")
          end
         nb_vertices += nb_cycles * k
     end
+    max_chains_lengths = 0
+    if !isempty(chains_lengths)
+        max_chains_lengths = maximum(chains_lengths)
+    end
     if verbose println("In total, $nb_vertices pairs are covered by cycles\n") end
     if instance.nb_altruists > 0
         if verbose println("Numbers of chains per chain length") end
         nb_vertices = 0
-        for l in 2:maximum(chains_lengths)
+        for l in 2:max_chains_lengths
             nb_chains = length(findall(chains_lengths .== l))
             if verbose && nb_chains >= 1
                 println("- l = $(l-1): $nb_chains chains")
