@@ -1,8 +1,8 @@
 """
     reduced_extended_edge_formulation
 
-    A compact MIP formulation originally proposed by Constantino et al. (2013).
-    Here it is adapted to the graph copies based on FVS. This formulation is suitable only for the cycles-only variant of the problem.
+    A compact MIP formulation originally proposed by Constantino et al. (2013). for the cycles-only variant of the problem.
+    Here it is adapted to the graph copies based on FVS and chains are considered with position-indexed variables.
 """
 function build_reduced_extended_edge_mip(instance::Instance, subgraphs::SubgraphsData, params::MIP_params, maxtime::Float64 = 600)
     if params.verbose println("- build the JuMP model") end
@@ -18,23 +18,7 @@ function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Subgraph
     nb_edges = ne(graph)
     nb_subgraph = subgraphs.nb_copies
 
-    # extract edge existance information from subgraphs
-    is_arc = subgraphs.is_arc_list
-    arc_ind = Dict{Pair{Int,Int}, Int}()
-    for e in 1:nb_edges
-        arc_ind[graph_edges[e].src=>graph_edges[e].dst] = e
-    end
-    subgraph_edges = Array{Vector{Tuple},1}(undef, nb_subgraph)
-    for l in 1:nb_subgraph
-        subgraph_edges[l] = Vector{Tuple}()
-        for e in 1:nb_edges
-            if is_arc[l][e] == true
-                push!(subgraph_edges[l], (graph_edges[e].src,graph_edges[e].dst))
-            end
-        end
-    end
-
-    # extract node existance information from subgraphs
+    # extract node existence information from subgraphs
     subgraph_vertices = Array{Vector{Int},1}(undef, nb_subgraph)
     for l in 1:nb_subgraph
         subgraph_vertices[l] = Vector{Int}()
@@ -46,10 +30,28 @@ function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Subgraph
     end
     pair_graph_inds = nb_altruists+1:nb_subgraph
 
+    # extract edge existence information from subgraphs
+    subgraph_edges = Vector{Vector{Tuple}}(undef, nb_subgraph)
+    for l in 1:nb_subgraph
+        subgraph_edges[l] = Vector{Tuple}()
+    end
+    is_arc = subgraphs.is_arc_list
+    arc_ind = Dict{Pair{Int,Int}, Int}()
+    for e in 1:nb_edges
+        arc_ind[graph_edges[e].src=>graph_edges[e].dst] = e
+    end
+    for l in 1:nb_subgraph
+        for e in 1:nb_edges
+            if is_arc[l][e] == true
+                push!(subgraph_edges[l], (graph_edges[e].src,graph_edges[e].dst))
+            end
+        end
+    end
+
     model = create_model(maxtime, params.optimizer, true, params.verbose)
 
     # create variables x^l_(i,j)
-    @variable(model, x[l in pair_graph_inds, e in subgraph_edges[l]], Bin)
+    @variable(model, x[l in pair_graph_inds, (u,v) in subgraph_edges[l]], Bin)
 
     # create flow variables for altruist subgraphs
     @variable(model, y[u in vertices(graph), v in outneighbors(graph, u), k in 1:L], Bin)
@@ -78,11 +80,20 @@ function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Subgraph
     # objective function maximizes the weight of selected cycles
     # - break symmetry by giving a preference to copies with smallest index
     weight = instance.edge_weight
-    max_weight = maximum(weight)
     if L == 0
-        @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]))
+        if params.symmetry_break
+            max_weight = maximum(weight)
+            @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]))
+        else
+            @objective(model, Max, sum(weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]))
+        end
     else
-        @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]) + sum(weight[u,v] * y[u,v,k] for u in instance.pairs, v in outneighbors(graph, u), k  in 2:L) + sum(weight[u,v] * y[u,v,1] for u in instance.altruists, v in outneighbors(graph, u)))
+        if params.symmetry_break
+            max_weight = maximum(weight)
+            @objective(model, Max, sum((1.0 + l/(max_weight*nb_vertices^2)) * weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]) + sum(weight[u,v] * y[u,v,k] for u in instance.pairs, v in outneighbors(graph, u), k  in 2:L) + sum(weight[u,v] * y[u,v,1] for u in instance.altruists, v in outneighbors(graph, u)))
+        else
+            @objective(model, Max, sum(weight[e[1],e[2]] * x[l,e] for l in pair_graph_inds, e in subgraph_edges[l]) + sum(weight[u,v] * y[u,v,k] for u in instance.pairs, v in outneighbors(graph, u), k  in 2:L) + sum(weight[u,v] * y[u,v,1] for u in instance.altruists, v in outneighbors(graph, u)))
+        end
     end
 
     return model

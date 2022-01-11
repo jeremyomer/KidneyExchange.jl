@@ -38,7 +38,7 @@ function solve_with_mip(filename::String, K::Int, L::Int, params::MIP_params = M
     if params.verbose
         printstyled("\n----------------------------------------------------------\n Preprocessing: compute the graph copies\n----------------------------------------------------------\n\n" ; color = :yellow)
     end
-    subgraphs = @timeit timer "Preprocessing" preprocess_graph_copies(instance, true, true)
+    subgraphs = @timeit timer "Preprocessing" preprocess_graph_copies(instance, true, params.reduce_vertices, params.fvs)
 
     # Call the branch-and-price algorithm
     if params.verbose

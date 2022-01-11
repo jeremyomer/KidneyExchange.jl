@@ -36,7 +36,7 @@ function solve_with_BP(filename::String, K::Int, L::Int, bp_params::BP_params = 
 
     # Preprocessing
     if bp_params.verbose printstyled("\n----------------------------------------------------------\n Preprocessing: compute the graph copies\n----------------------------------------------------------\n\n" ; color = :yellow) end
-    subgraphs = @timeit timer "Preprocessing" preprocess_graph_copies(instance, bp_params.reduce_arcs, bp_params.reduce_vertices)
+    subgraphs = @timeit timer "Preprocessing" preprocess_graph_copies(instance, false, bp_params.reduce_vertices, bp_params.fvs)
 
     # Call the branch-and-price algorithm
     if bp_params.verbose printstyled("\n----------------------------------------------------------\n Solve with branch-and-price\n----------------------------------------------------------\n\n" ; color = :yellow) end
@@ -120,17 +120,19 @@ function branch_and_price(instance::Instance, subgraphs::SubgraphsData, bp_param
 
             if bp_info.LB < current_node.ub - ϵ
                 if verbose printstyled("- the problem was not solved at root node:", color=:red) end
-                if verbose println("- delete half the columns and restart solving to generate new columns") end
-                deleted_columns = collect(1:length(column_pool))
-                shuffle!(deleted_columns)
-                y = mastermodel[:y]
-                ncols = floor(Int, length(column_pool)/2)
-                for i in deleted_columns[1:ncols]
-                    JuMP.set_upper_bound(y[i], 0)
-                end
-                column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
-                for i in deleted_columns
-                    JuMP.set_upper_bound(y[i], 1)
+                if bp_params.restart_for_IP
+                    if verbose println("- delete half the columns and restart solving to generate new columns") end
+                    deleted_columns = collect(1:length(column_pool))
+                    shuffle!(deleted_columns)
+                    y = mastermodel[:y]
+                    ncols = floor(Int, length(column_pool)/2)
+                    for i in deleted_columns[1:ncols]
+                        JuMP.set_upper_bound(y[i], 0)
+                    end
+                    column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
+                    for i in deleted_columns
+                        JuMP.set_upper_bound(y[i], 1)
+                    end
                 end
             end
         else

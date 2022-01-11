@@ -58,13 +58,15 @@ mutable struct MIP_params
   optimizer::String  # LP and IP solver that will be used to solve the master
   verbose::Bool  # true if messages are printed during the solution
   model_type::MipModel  # type of MIP compact model that is to be solved
+  fvs::Bool  # true if a feedback vertex set is used to reduce the number of graph copies
   reduce_vertices::Bool  # true if we try deleting useless arcs in graph copies
   reduce_arcs::Bool  # true if we try deleting useless arcs in graph copies
+  symmetry_break::Bool  # true if the MIP model is modified to reduce the number of optimal solutions
 
-  function MIP_params(_optimizer::String = "Cbc", _verbose::Bool = true, _model_type = HPIEF, _reduce_vertices = true, _reduce_arcs = true)
-    return new(_optimizer, _verbose, _model_type, _reduce_vertices, _reduce_arcs)
+  function MIP_params(_optimizer::String = "Cbc", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true)
+    return new(_optimizer, _verbose, _model_type, _fvs, _reduce_vertices, _reduce_arcs, _symmetry)
   end
   function MIP_params(_model_type::MipModel, _verbose = false)
-    return new("Cbc", _verbose, _model_type, true, true)
+    return new("Cbc", _verbose, _model_type, true, true, true, true)
   end
 end

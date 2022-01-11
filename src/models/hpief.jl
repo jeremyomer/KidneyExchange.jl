@@ -58,76 +58,12 @@ function build_hpief_mip(instance::Instance, subgraphs::SubgraphsData, params::M
 
     # objective function maximizes the weight of selected cycles
     weight = instance.edge_weight
-    max_weight = maximum(weight)
-    @objective(model, Max, sum((1.0 + l/(max_weight*(instance.nb_pairs)^2))  * weight[u,v] * x[l,u,v,k] for l in nb_altruists+1:nb_subgraphs, u in instance.pairs, v in outneighbors(graph,u), k  in κ[l][u=>v]) + sum(weight[u,v] * y[u,v,k] for  v in instance.pairs, u in inneighbors(graph, v), k  in 1:L))
-
-    return model, κ
-end
-
-function build_chainonly_pief_mip(instance::Instance, subgraphs::SubgraphsData, params::MIP_params, maxtime::Float64 = 600)
-    if params.verbose
-        println("- build the JuMP model")
+    if params.symmetry_break
+        max_weight = maximum(weight)
+        @objective(model, Max, sum((1.0 + l/(max_weight*(instance.nb_pairs)^2))  * weight[u,v] * x[l,u,v,k] for l in nb_altruists+1:nb_subgraphs, u in instance.pairs, v in outneighbors(graph,u), k  in κ[l][u=>v]) + sum(weight[u,v] * y[u,v,k] for  v in instance.pairs, u in inneighbors(graph, v), k  in 1:L))
+    else
+        @objective(model, Max, sum(weight[u,v] * x[l,u,v,k] for l in nb_altruists+1:nb_subgraphs, u in instance.pairs, v in outneighbors(graph,u), k  in κ[l][u=>v]) + sum(weight[u,v] * y[u,v,k] for  v in instance.pairs, u in inneighbors(graph, v), k  in 1:L))
     end
-    # extract relevant information from the instance and preprocess
-    graph = instance.graph
-    K = instance.max_cycle_length
-    L = instance.max_chain_length
-    nb_subgraphs = subgraphs.nb_copies
-    nb_altruists = instance.nb_altruists
-
-    # populate the position index sets for cycle variables
-    E = collect(edges(graph))
-    κ = Vector{Dict{Pair{Int,Int}, Bool}}(undef, nb_subgraphs)
-    for l in nb_altruists+1:nb_subgraphs
-        κ[l]= Dict{Tuple{Int,Int}, Any}()
-        for i in 1:ne(graph)
-            u = E[i].src
-            v = E[i].dst
-            push!(κ[l], (u=>v) => subgraphs.is_arc_list[l][i])
-        end
-    end
-
-    # initialize the model
-    model = create_model(maxtime, params.optimizer, true, params.verbose)
-
-    # create flow variables and conservation constraints for altruist subgraphs
-    @variable(model, y[u in vertices(graph), v in outneighbors(graph, u), k in 1:L], Bin)
-    @constraint(model, [u in instance.pairs, k in 1:L-1], sum(y[v,u,k] for v in inneighbors(graph, u)) - sum(y[u,v,k+1] for v in outneighbors(graph, u)) >= 0)
-    if L >= 1
-        @constraint(model,[u in instance.pairs, v in outneighbors(graph,u)], y[u,v,1] == 0)
-        @constraint(model, [u in instance.altruists], sum(y[u,v,1] for v in outneighbors(graph, u)) <= 1)
-    end
-    @constraint(model, [u in instance.altruists, v in outneighbors(graph,u), k in 2:L], y[u,v,k] == 0)
-    if params.verbose
-        println("- variables and flow constraints created for altruist subgraphs")
-    end
-
-    # create flow variables and constraints for pair subgraphs
-    @variable(model, x[l in nb_altruists+1:nb_subgraphs, u in vertices(graph), v in outneighbors(graph, u) ; κ[l][u=>v] == true], Bin)
-    # @variable(model, z[u in vertices(graph), v in outneighbors(graph, u), k in 1:K], Bin)
-
-    # flow conservation at each vertex of each copy
-    @constraint(model,[l in nb_altruists+1:nb_subgraphs, u in instance.pairs ; subgraphs.is_vertex_list[l][u] == true], sum(x[l,v,u] for v in inneighbors(graph, u) if κ[l][v=>u]) == sum(x[l,u,v] for v in outneighbors(graph,u) if κ[l][u=>v]))
-
-
-    # the flow going out of each vertex of each copy cannot be larger than that going out of the source
-    @constraint(model,[l in nb_altruists+1:nb_subgraphs, u in instance.pairs ; subgraphs.is_vertex_list[l][u] == true],  sum(x[l,u,v] for v in outneighbors(graph,u) if κ[l][u=>v]) <= sum(x[l,subgraphs.sources[l],v] for v in outneighbors(graph,subgraphs.sources[l]) if κ[l][subgraphs.sources[l]=>v]))
-    if params.verbose
-        println("- variables and flow constraints created for pair subgraphs")
-    end
-
-    @constraint(model, [l in nb_altruists+1:nb_subgraphs],sum(x[l,u,v] for u in vertices(graph),v in outneighbors(graph, u) if κ[l][u=>v]) <= K)
-
-    # @constraint(model,[u in instance.pairs, k in 1:K-1, l in nb_altruists+1:nb_subgraphs ; u != subgraphs.sources[l]], sum(x[l,v,u,k] for v in inneighbors(graph, u) if k in κ[l][v=>u]) == sum(x[l,u,v,k+1] for v in outneighbors(graph,u) if k+1 in κ[l][u=>v]))
-
-    # create vertex disjoint constraints for pairs
-    @constraint(model, [u in instance.pairs], sum(x[l,u,v] for l in nb_altruists+1:nb_subgraphs, v in outneighbors(graph,u) if κ[l][u=>v]) + sum(y[v,u,k] for v in inneighbors(graph,u), k in 1:L) <= 1)
-    if params.verbose
-        println("- vertex disjoint constraints created for pairs")
-    end
-
-    # objective function maximizes the weight of selected cycles
-    @objective(model, Max, sum(instance.edge_weight[u,v] * x[l,u,v] for l in nb_altruists+1:nb_subgraphs, u in instance.pairs, v in outneighbors(graph,u) if κ[l][u=>v]) + sum(instance.edge_weight[u,v] * y[u,v,k] for  v in instance.pairs, u in inneighbors(graph, v), k  in 1:L))
 
     return model, κ
 end

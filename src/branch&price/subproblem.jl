@@ -124,7 +124,7 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Flo
         @inbounds for u in vtx_list
             # the cost of an arc cannot be larger than max_cost, so we can only hope to get a nb_edges_left*max_cost extra cost with the remaining arcs of the cycle
             if tmp_d[u] + nb_edges_left * max_cost < ϵ
-                 continue
+                 break
             end
             d_with_tol = tmp_d[u] - ϵ
             @inbounds for v in outneighbors(graph,u)
@@ -168,7 +168,7 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Flo
     @inbounds for u in vtx_list
         # the cost of an arc cannot be larger than max_cost, so we can only hope to get an extra max_cost with the remaining arc of the cycle
         if d[u] + max_cost < ϵ
-             continue
+             break
         end
         @inbounds for v in outneighbors(graph,u)
             if is_ignored[v]
@@ -306,8 +306,8 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{
         vtx_list = vtx_list[sort_ind]
         for u in vtx_list
             # the cost of an arc cannot be larger than max_cost, so we can only hope to get a  nb_edges_left*max_cost extra cost with the remaining arcs of the cycle
-            if tmp_d[u] + nb_edges_left*max_cost < ϵ
-                 continue
+            if tmp_d[u] + nb_edges_left * max_cost < ϵ
+                 break
             end
             if l >= 3
                 chain_to_u = traverse_preds(u, pred, l-1)
@@ -388,7 +388,7 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_co
         for u in vtx_list
             # the cost of an arc cannot be larger than max_cost, so we can only hope to get a  nb_edges_left*max_cost extra cost with the remaining arcs of the cycle
             if tmp_d[u] + nb_edges_left*max_cost < ϵ
-                continue
+                break
             end
             for v in outneighbors(graph,u)
                 if is_ignored[v]

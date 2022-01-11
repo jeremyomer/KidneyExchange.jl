@@ -66,20 +66,21 @@ mutable struct BP_params
   optimizer::String  # LP and IP solver that will be used to solve the master
   verbose::Bool  # true if messages are printed during the solution
   is_pief::Bool  # true if the chains are considered in the master model using a position-indexed extended edge formulation
+  fvs::Bool  # true if a feedback vertex set is used to reduce the number of graph copies
   reduce_vertices::Bool  # true if we try deleting useless vertices in graph copies
-  reduce_arcs::Bool  # true if we try deleting useless arcs in graph copies
   is_column_disjoint::Bool  # true if we require column disjoint columns at each column generation iteration
   max_intersecting_columns::Int  # true maximum number of generated columns covering each vertex
   is_tabu_list::Bool  # true if we stop solving a subproblem as soon as it does not produce any positive cost column
   solve_master_IP::Bool  # true if we solve the master IP to find feasible solutions
   time_limit_master_IP::Float64  # time limit at each solution of the master IP
   freq_solve_master_IP::Int  # number of new columns that must be added in the master IP between two solutions of this IP
+  restart_for_IP::Bool  # true if the root node can be solved twice to generate more columns when the IP master could not prove optimality of the relaxation value
 
-  function BP_params(_optimizer::String = "GLPK-Cbc", _verbose::Bool = true, _is_pief = false, _reduce_vertices = true, _reduce_arcs = false, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 10.0,  _freq_solve_master_IP = 1)
-    return new(_optimizer, _verbose, _is_pief, _reduce_vertices, _reduce_arcs, _is_column_disjoint, _max_intersecting_columns, _is_tabu_list, _solve_master_IP, _time_limit_IP, _freq_solve_master_IP)
+  function BP_params(_optimizer::String = "GLPK-Cbc", _verbose::Bool = true, _is_pief = false, _fvs = true,  _reduce_vertices = true, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 10.0,  _freq_solve_master_IP = 1, _restart_for_IP = true)
+    return new(_optimizer, _verbose, _is_pief, _fvs, _reduce_vertices, _reduce_arcs, _is_column_disjoint, _max_intersecting_columns, _is_tabu_list, _solve_master_IP, _time_limit_IP, _freq_solve_master_IP, _restart_for_IP)
   end
   function BP_params(_is_pief::Bool, _verbose::Bool = false)
-    return new("GLPK-Cbc", _verbose, _is_pief, true, false, true, 6, true, true, 10.0, 1)
+    return new("GLPK-Cbc", _verbose, _is_pief, true, true, true, 6, true, true, 10.0, 1, true)
   end
 end
 

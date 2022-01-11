@@ -19,7 +19,7 @@ export generate_sparse_unos_instance
 export generate_heterogeneous_instance
 include("instance/create_benchmark.jl")
 
-export MipModel, HPIEF, EXTENDED_EDGE, REDUCED_ARC
+export MipModel, HPIEF, EXTENDED_EDGE, RELAXED_ARC
 export MIP_params
 export solve_with_mip
 include("models/mip.jl")
