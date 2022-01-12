@@ -149,7 +149,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
             arc_to_branch, is_cg_branching = @timeit timer "calc_branch" calculate_branching(column_flow, pief_flow)
 
             # branch on the selected fractional arc
-            branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool)
+            branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool, bp_params.verbose)
         else
             if verbose println("The node is either infeasible or pruned by bound") end
         end
@@ -224,7 +224,6 @@ function calculate_branching(column_flow::Dict{Pair{Int,Int}, Float64}, pief_flo
                 val = abs(it.second-0.5)
                 arc_to_branch = it.first
                 is_cg_branching = true
-                println("arc ", it.first, ", value = ", it.second)
                 if val < ϵ break end
             end
         end
