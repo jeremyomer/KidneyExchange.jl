@@ -119,9 +119,12 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
             if verbose println("After processing root node: LB = $(bp_info.LB), UB = $(current_node.ub)") end
 
             if bp_info.LB < current_node.ub - ϵ
-                if verbose printstyled("- the problem was not solved at root node:", color=:red) end
+                if verbose printstyled("- the problem was not solved at root node\n", color=:red) end
+                if verbose println("    . deactivate column-disjoint CG and tabu list") end
+                # bp_params.is_column_disjoint = false
+                # bp_params.is_tabu_list = false
                 if bp_params.restart_for_IP
-                    if verbose println("- delete half the columns and restart solving to generate new columns") end
+                    if verbose println("    . delete half the columns and restart solving to generate new columns") end
                     deleted_columns = collect(1:length(column_pool))
                     shuffle!(deleted_columns)
                     y = mastermodel[:y]
@@ -221,6 +224,8 @@ function calculate_branching(column_flow::Dict{Pair{Int,Int}, Float64}, pief_flo
                 val = abs(it.second-0.5)
                 arc_to_branch = it.first
                 is_cg_branching = true
+                println("arc ", it.first, ", value = ", it.second)
+                if val < ϵ break end
             end
         end
     end
@@ -232,6 +237,7 @@ function calculate_branching(column_flow::Dict{Pair{Int,Int}, Float64}, pief_flo
                 if abs(it.second-0.5) < val
                     val = abs(it.second-0.5)
                     arc_to_branch = it.first
+                    if val < ϵ break end
                 end
             end
         end
@@ -258,10 +264,7 @@ Update the branch-and-bound tree with two new nodes by branching on the given ar
 """
 function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, verbose::Bool = true)
     current_index = current_node.index
-    next_index = current_index + 1
-    if current_index%2 == 0
-        next_index += 1
-    end
+    next_index = 2 * current_index
 
     y = master[:y]
     if is_cg_branching

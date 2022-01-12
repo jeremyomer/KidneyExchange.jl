@@ -61,7 +61,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         #  Collect values from the solution of the restricted master problem
         # ==============================================================
         if JuMP.termination_status(mastermodel) != MOI.OPTIMAL
-            println(mastermodel)
+            # println(mastermodel)
             error("The master problem relaxation has not been solved to optimality")
         end
         master_value = JuMP.objective_value(mastermodel)
@@ -69,7 +69,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
         # dual values of the vertex-disjoint constraints
         if !JuMP.has_duals(mastermodel)
-            println(mastermodel)
+            # println(mastermodel)
             error("The master problem has no dual solution")
         end
         λ = JuMP.shadow_price.(mastermodel[:capacity])
@@ -87,7 +87,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         for arc in keys(mastermodel[:branch_zero])
             δ_zero[arc] = shadow_price(mastermodel[:branch_zero][arc])
             # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
-            if δ_zero[arc] > 0
+            if δ_zero[arc] < 0
                 δ_zero[arc] = -δ_zero[arc]
             end
         end
@@ -497,22 +497,17 @@ function add_column_to_master(column::Column, mastermodel::Model, tree_node::Tre
     end
     set_objective_coefficient(mastermodel, y[end], column.weight)
 
-    # set the coefficient of the new coluln in every branching constraint
-    arcs = column.arcs
-    if !isempty(tree_node.setone)
-        branch_one = mastermodel[:branch_one]
-        for _e in tree_node.setone
-            if _e in arcs
-                set_normalized_coefficient(branch_one[_e], y[end], 1)
-            end
+    # set the coefficient of the new column in every branching constraint (including those that are not active at this node)
+    branch_one = mastermodel[:branch_zero]
+    for arc in keys(branch_one)
+        if arc in column.arcs
+            set_normalized_coefficient(branch_one[arc], y[end], 1)
         end
     end
-    if !isempty(tree_node.setzero)
-        branch_zero = mastermodel[:branch_zero]
-        for _e in tree_node.setzero
-            if _e in arcs
-                set_normalized_coefficient(branch_zero[_e], y[end], 1)
-            end
+    branch_zero = mastermodel[:branch_zero]
+    for arc in keys(branch_zero)
+        if arc in column.arcs
+            set_normalized_coefficient(branch_zero[arc], y[end], 1)
         end
     end
 end
