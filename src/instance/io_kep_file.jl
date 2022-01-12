@@ -79,14 +79,14 @@ Write a `.wmd` and a `.dat` files to store the input KEP graph in the same form 
 # Parameters
 * `kep_graph::SimpleDiGraph`: KEP graph to write
 * `edge_weight::Matrix{Float64}`: weight of each eadge of the KEP graph
-* `donorBT::Vector{BloodType}`: blood type of the donor of each pair
-* `patientBT::Vector{BloodType}`: blood type of the patient of each pair
+* `donorBT::Vector{Blood_type}`: blood type of the donor of each pair
+* `patientBT::Vector{Blood_type}`: blood type of the patient of each pair
 * `wifeP::BitArray`: for each pair true iff the donor and patient are married
 * `patientPRA::Vector{Float64}`: PRA of the patient of each pair
 * `is_altruist::BitArray`: for each pair, true if the donor is an altruist donor
 * `file_name::String`: Name of the files (before the extensions)
 """
-function write_kep_file(kep_graph::SimpleDiGraph, edge_weight::Matrix{Float64}, donorBT::Vector{BloodType}, patientBT::Vector{BloodType}, wifeP::BitArray, patientPRA::Vector{Float64}, is_altruist::BitArray, file_name::String)
+function write_kep_file(kep_graph::SimpleDiGraph, edge_weight::Matrix{Float64}, donorBT::Vector{Blood_type}, patientBT::Vector{Blood_type}, wifeP::BitArray, patientPRA::Vector{Float64}, is_altruist::BitArray, file_name::String)
 	data_folder = joinpath(join(split(@__DIR__, "/")[1:(end-2)], "/"), "data/")
 	io_dat = open(data_folder * file_name * ".dat", "w")
 	io_wmd = open(data_folder * file_name * ".wmd", "w")

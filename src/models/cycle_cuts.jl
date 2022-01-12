@@ -12,7 +12,7 @@ Initialize the MIP model with cycle constraint generation for the optimal search
 #Output Parameters
 * `model::Model`: Initial JuMP model for the search of a positive chain
 """
-function buid_cycle_cuts(instance::Instance, subgraphs::SubgraphsData, params::MIP_params, maxtime::Float64 = 600)
+function buid_cycle_cuts(instance::Instance, subgraphs::Graph_copies, params::MIP_params, maxtime::Float64 = 600)
     g = instance.graph
     K = instance.max_cycle_length
     L = instance.max_chain_length

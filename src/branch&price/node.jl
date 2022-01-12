@@ -9,7 +9,7 @@ Columns generation of the node
 #Output parameter
 * `column_flow::Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)`
 """
-function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Model, subgraphs::SubgraphsData, bp_status::BP_status, column_pool::Vector{Column},  bp_params::BP_params, master_IP::Model, timer::TimerOutput, time_limit::Float64)
+function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Model, subgraphs::Graph_copies, bp_status::BP_status, column_pool::Vector{Column},  bp_params::BP_params, master_IP::Model, timer::TimerOutput, time_limit::Float64)
     # local variables
     graph = instance.graph
     K = instance.max_cycle_length

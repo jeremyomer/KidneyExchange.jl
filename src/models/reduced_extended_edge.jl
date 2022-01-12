@@ -4,7 +4,7 @@
     A compact MIP formulation originally proposed by Constantino et al. (2013). for the cycles-only variant of the problem.
     Here it is adapted to the graph copies based on FVS and chains are considered with position-indexed variables.
 """
-function build_reduced_extended_edge_mip(instance::Instance, subgraphs::SubgraphsData, params::MIP_params, maxtime::Float64 = 600)
+function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Graph_copies, params::MIP_params, maxtime::Float64 = 600)
     if params.verbose println("- build the JuMP model") end
     # extract relevant information from the instance and preprocess
     graph = instance.graph
@@ -99,7 +99,7 @@ function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Subgraph
     return model
 end
 
-function solve_reduced_extended_edge_mip(model::Model, params::MIP_params, instance::Instance, subgraphs::SubgraphsData)
+function solve_reduced_extended_edge_mip(model::Model, params::MIP_params, instance::Instance, subgraphs::Graph_copies)
     if params.verbose println("- solve the model with $(params.optimizer)") end
     # Local variables
     g = instance.graph

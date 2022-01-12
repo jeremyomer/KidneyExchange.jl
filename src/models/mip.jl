@@ -17,7 +17,7 @@ This is the main function to call to solve the input instance with given bounds 
 
 #Output parametes
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains.
-* `subgraphs::SubgraphsData`: Description of the graph copies of the extended edge formulation
+* `subgraphs::Graph_copies`: Description of the graph copies of the extended edge formulation
 * `bp_status::BP_status`:  Structure containing every relevant information on the execution of the algorithm (including the optimal solution)
 """
 function solve_with_mip(filename::String, K::Int, L::Int, params::MIP_params = MIP_params(), timer::TimerOutput = TimerOutput(), time_limit::Float64 = 600.0)

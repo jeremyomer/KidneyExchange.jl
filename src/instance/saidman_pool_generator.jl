@@ -51,9 +51,9 @@ end
 
 """
  * Draws a random patient's blood type from the US distribution
- * @return BloodType.{O,A,B,AB}
+ * @return Blood_type.{O,A,B,AB}
 """
-function drawPatientBloodType(pool_gen::PoolGenerator)
+function drawPatientBlood_type(pool_gen::PoolGenerator)
 	r = rand()
 
 	if r <= pool_gen.Pr_PATIENT_TYPE_O
@@ -69,10 +69,10 @@ end
 
 """
   Draws a random donor's blood type from the US distribution
-  @return BloodType.{O,A,B,AB}
+  @return Blood_type.{O,A,B,AB}
  """
 
-function drawDonorBloodType(pool_gen::PoolGenerator)
+function drawDonorBlood_type(pool_gen::PoolGenerator)
 	r = rand()
 
 	if r <= pool_gen.Pr_DONOR_TYPE_O
@@ -139,7 +139,7 @@ function generatePraIncompatibility(pool_gen::PoolGenerator, isWifePatient::Bool
 	end
 end
 
-function isCompatible(blood_type_donor::BloodType, blood_type_patient::BloodType, patient_cpra::Float64)
+function isCompatible(blood_type_donor::Blood_type, blood_type_patient::Blood_type, patient_cpra::Float64)
 	# Donor must be blood type compatible with patient and crossmatch must be negative
 	is_compatible = canGiveTo(blood_type_donor, blood_type_patient) && !isPositiveCrossmatch(patient_cpra)
 	return is_compatible
@@ -153,8 +153,8 @@ end
 function generatePair(pool_gen::PoolGenerator)
 
 	# draw blood types for patient and donor, along with spousal details and probability of PositiveXM
-	bloodTypePatient::BloodType = drawPatientBloodType(pool_gen)
-	bloodTypeDonor::BloodType = drawDonorBloodType(pool_gen)
+	bloodTypePatient::Blood_type = drawPatientBlood_type(pool_gen)
+	bloodTypeDonor::Blood_type = drawDonorBlood_type(pool_gen)
 	isWifePatient = isPatientFemale(pool_gen) && isDonorSpouse(pool_gen)
 	patientCPRA = generatePraIncompatibility(pool_gen, isWifePatient);
 
@@ -171,15 +171,15 @@ Random rolls an altruistic donor (donor with no attached patient)
 """
 function generateAltruist(pool_gen::PoolGenerator)
 	# Draw blood type for the altruist
-	bloodTypeAltruist::BloodType = drawDonorBloodType(pool_gen)
+	bloodTypeAltruist::Blood_type = drawDonorBlood_type(pool_gen)
 
 	return bloodTypeAltruist
 end
 
 function generate_kep_graph(pool_gen::PoolGenerator, nb_pairs::Int, nb_altruists::Int)
 	nb_vertices = nb_pairs + nb_altruists
-	donorBT = Vector{BloodType}(undef, nb_vertices)
-	patientBT = Vector{BloodType}(undef, nb_vertices)
+	donorBT = Vector{Blood_type}(undef, nb_vertices)
+	patientBT = Vector{Blood_type}(undef, nb_vertices)
 	wifep = falses(nb_vertices)
 	patientPRA = Vector{Float64}(undef, nb_vertices)
 	is_altruist = falses(nb_vertices)

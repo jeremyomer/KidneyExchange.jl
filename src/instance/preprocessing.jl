@@ -12,7 +12,7 @@ For the other copies, either each donor/patient pair is the source of one copy, 
 * `fvs::Bool` : True if the copies correspond to an FVS, false if there is one copy per donor/patient pair
 
 # Output parameters
-* `subgraphs::SubgraphsData` : The structure describing the preprocessed data of the graph copies
+* `subgraphs::Graph_copies` : The structure describing the preprocessed data of the graph copies
 """
 function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, reduce_vertices::Bool = true, fvs::Bool = true)
     K = instance.max_cycle_length
@@ -154,15 +154,15 @@ function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, re
         end
     end
 
-    # reduce arcs to get smaller models: this is time-consuming and useful only if there is a real need to get smaller models, so this should not be used unless a compact MIP model is solved
+    # reduce arcs to get smaller models: this is time-consuming and useful only if there is a real need to get smaller models, so this should be used only when a compact MIP model is solved
     if reduce_arcs
         alledges = collect(edges(graph))
         for s in 1:instance.nb_altruists
             arc_in_subgraph = falses(ne(graph))
             for i in 1:ne(graph)
-                src_vertex = alledges[i].src
-                dst_vertex = alledges[i].dst
-                if d_from_vstar_list[s][src_vertex] <= L-1
+                u = alledges[i].src
+                # keep an arc in the copy only if it can belong to a chain with length at most L originated from the source vertex
+                if d_from_vstar_list[s][u] + 1 <= L
                     arc_in_subgraph[i] = true
                 end
             end
@@ -171,21 +171,22 @@ function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, re
         for s in instance.nb_altruists+1:length(sources)
             arc_in_subgraph = falses(ne(graph))
             for i in 1:ne(graph)
-                src_vertex = alledges[i].src
-                dst_vertex = alledges[i].dst
-                if d_from_vstar_list[s][src_vertex] + d_to_vstar_list[s][dst_vertex] <= K-1
+                u = alledges[i].src
+                v = alledges[i].dst
+                # keep an arc in the copy only if it can belong to a cycle with length at most K going through the source vertex
+                if d_from_vstar_list[s][u] + d_to_vstar_list[s][v] + 1 <= K
                     arc_in_subgraph[i] = true
                 end
             end
             push!(arc_in_subgraph_list,arc_in_subgraph)
         end
-        return SubgraphsData(sources, vertex_in_subgraph_list, d_to_vstar_list, d_from_vstar_list, chain_mip, arc_in_subgraph_list)
+        return Graph_copies(sources, vertex_in_subgraph_list, d_to_vstar_list, d_from_vstar_list, chain_mip, arc_in_subgraph_list)
     end
 
     if reduce_vertices
-        return SubgraphsData(sources, vertex_in_subgraph_list, d_to_vstar_list, d_from_vstar_list)
+        return Graph_copies(sources, vertex_in_subgraph_list, d_to_vstar_list, d_from_vstar_list)
     end
-    return SubgraphsData(sources, vertex_in_subgraph_list)
+    return Graph_copies(sources, vertex_in_subgraph_list)
 end
 
 """

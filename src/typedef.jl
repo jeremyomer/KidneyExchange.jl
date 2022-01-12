@@ -19,7 +19,7 @@ mutable struct Subgraph_info
   nb_arcs_per_copy:: Float64  # average number of arcs per copy
   density_per_copy:: Float64  # average density per copy
 
-  function Subgraph_info(subgraphs::SubgraphsData)
+  function Subgraph_info(subgraphs::Graph_copies)
     nb_copies = subgraphs.nb_copies
     if nb_copies > 0
       nb_vertices = [length(findall(subgraphs.is_vertex_list[c])) for c in 1:nb_copies]
@@ -52,21 +52,46 @@ mutable struct Solution_status
   end
 end
 
+"""
+  Mip_model
 
-@enum MipModel HPIEF EXTENDED_EDGE RELAXED_ARC
+  Enumerated structure specifying the considered formulation when solving a compact formulation of the kidney exchange problem
+
+  # Enumerate values
+  * `HPIEF`: Hybrid position-indexed extended formulation
+  * `EXTENDED_EDGE`: Cycles are handled with an extended edge formulation and  chains are handled with position-indexed variables
+  * `CYCLE_CUT`: Cycles are handled with an extended edge formulation and  chains are handled with cycle cuts to avoid long cycles
+  * `RELAXED_ARC`: Arc formulation where the size of cycles and chains are not considered
+"""
+@enum Mip_model HPIEF EXTENDED_EDGE CYCLE_CUT RELAXED_ARC
+
+"""
+  MIP_params
+
+  Mutable structure where the solving options of the compact formulation are stored
+
+  # Fields
+  *` optimizer::String`: LP and IP solver that will be used to solve the master (default is Cbc for IPs and GLPK for LPs)
+  * `verbose::Bool`: true if messages are printed during the solution (default = true)
+  * `model_type::Mip_model`: type of MIP compact model that is to be solved (default = HPIEF)
+  * `fvs::Bool`: true if a feedback vertex set is used to reduce the number of graph copies (default = true)
+  * `reduce_vertices::Bool`: true if we try deleting useless arcs in graph copies (default = true)
+  * `reduce_arcs::Bool`: true if we try deleting useless arcs in graph copies (default = true)
+  * `symmetry_break::Bool`: true if the MIP model is modified to reduce the number of optimal solutions (default = true)
+"""
 mutable struct MIP_params
-  optimizer::String  # LP and IP solver that will be used to solve the master
-  verbose::Bool  # true if messages are printed during the solution
-  model_type::MipModel  # type of MIP compact model that is to be solved
-  fvs::Bool  # true if a feedback vertex set is used to reduce the number of graph copies
-  reduce_vertices::Bool  # true if we try deleting useless arcs in graph copies
-  reduce_arcs::Bool  # true if we try deleting useless arcs in graph copies
-  symmetry_break::Bool  # true if the MIP model is modified to reduce the number of optimal solutions
+  optimizer::String
+  verbose::Bool
+  model_type::Mip_model
+  fvs::Bool
+  reduce_vertices::Bool
+  reduce_arcs::Bool
+  symmetry_break::Bool
 
   function MIP_params(_optimizer::String = "Cbc", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true)
     return new(_optimizer, _verbose, _model_type, _fvs, _reduce_vertices, _reduce_arcs, _symmetry)
   end
-  function MIP_params(_model_type::MipModel, _verbose = false)
+  function MIP_params(_model_type::Mip_model, _verbose = false)
     return new("Cbc", _verbose, _model_type, true, true, true, true)
   end
 end

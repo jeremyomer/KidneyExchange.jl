@@ -3,42 +3,6 @@ include("saidman_pool_generator.jl")
 include("heterogeneous_pool_generator.jl")
 
 """
-    generate_abraham_benchmark
-
-Generate a benchmark using the same method as that used in
-Abraham, David J., Avrim Blum, et Tuomas Sandholm. « Clearing Algorithms for Barter Exchange Markets: Enabling Nationwide Kidney Exchanges ». In Proceedings of the 8th ACM Conference on Electronic Commerce, 295‑304. EC ’07. New York, NY, USA: ACM, 2007. https://doi.org/10.1145/1250910.1250954.
-"""
-function generate_abraham_benchmark()
-    Random.seed!(30112021)
-    list_nb_pairs = [100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
-    for nb_pairs in list_nb_pairs
-        for k in 1:10
-            generate_saidman_instance(nb_pairs, 0, k)
-        end
-    end
-end
-
-function generate_heterogeneous_benchmark()
-    Random.seed!(30112021)
-    list_nb_pairs = [125,250,500,1000,2000]
-    for nb_pairs in list_nb_pairs
-        for k in 1:1
-            generate_heterogeneous_instance(nb_pairs, round(Int, 0.15*nb_pairs), k)
-        end
-    end
-end
-
-function generate_sparse_unos_benchmark()
-    Random.seed!(30112021)
-    list_nb_pairs = [125,250,500,1000,2000]
-    for nb_pairs in list_nb_pairs
-        for k in 1:1
-            generate_sparse_unos_instance(nb_pairs, round(Int, 0.15*nb_pairs), k)
-        end
-    end
-end
-
-"""
     generate_saidman_instance
 
 Generate a KEP dataset and write in two text files with extensions .dat and .wmd; the graph generator is based on the following article:
@@ -95,4 +59,44 @@ function generate_heterogeneous_instance(nb_pairs::Int, nb_altruists::Int, index
     write_kep_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, "heterogeneous/heterogeneous_$(nb_pairs)_$(nb_altruists)_$(index)");
     kep_graph = 0;
     return nothing;
+end
+
+"""
+    generate_abraham_benchmark
+
+Generate a benchmark using the same method as that used in
+Abraham, David J., Avrim Blum, et Tuomas Sandholm. « Clearing Algorithms for Barter Exchange Markets: Enabling Nationwide Kidney Exchanges ». In Proceedings of the 8th ACM Conference on Electronic Commerce, 295‑304. EC ’07. New York, NY, USA: ACM, 2007. https://doi.org/10.1145/1250910.1250954.
+"""
+function generate_abraham_benchmark()
+    Random.seed!(30112021)
+    list_nb_pairs = [100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+    for nb_pairs in list_nb_pairs
+        for k in 1:10
+            generate_saidman_instance(nb_pairs, 0, k)
+        end
+    end
+end
+
+"""
+    generate_complete_benchmark
+
+Generate all the instances that are used in addition to the PrefLib to assess the solution methods of this package in the article describing the package.
+* add citation later*
+The instances are stored in the subdirectories `heterogeneous`, `sparse` and `saidman` of the `data` directory. Beware that if using the package with Pkg.add(), the `data` directory is in the directroy where the package is stored.
+"""
+function generate_complete_benchmark()
+    Random.seed!(30112021)
+    list_nb_pairs = [128,256,512,1024,2048,6000,1000]
+    for nb_pairs in list_nb_pairs
+        for k in 1:10
+            generate_heterogeneous_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
+            generate_sparse_unos_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
+        end
+    end
+    list_nb_pairs = [6000,1000]
+    for nb_pairs in list_nb_pairs
+        for k in 1:10
+            generate_saidman_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
+        end
+    end
 end

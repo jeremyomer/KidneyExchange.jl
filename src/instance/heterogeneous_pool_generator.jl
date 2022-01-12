@@ -6,8 +6,8 @@ Kidney Exchange in Dynamic Sparse Heterogeneous Pools. Itai Ashlagi, Patrick Jai
 function generate_heterogeneous_kep_graph(nb_pairs::Int, nb_altruists::Int, pct_easy_to_match::Float64 = 0.5)
 	# initialize the vertices data
 	nb_vertices = nb_pairs + nb_altruists
-	donorBT = Vector{BloodType}(undef, nb_vertices)
-	patientBT = Vector{BloodType}(undef, nb_vertices)
+	donorBT = Vector{Blood_type}(undef, nb_vertices)
+	patientBT = Vector{Blood_type}(undef, nb_vertices)
 	wifep = falses(nb_vertices)
 	patientPRA = Vector{Float64}(undef, nb_vertices)
 	is_altruist = falses(nb_vertices)

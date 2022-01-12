@@ -18,7 +18,7 @@ This is the main function to call for an execution of the branch-and-price algor
 
 #Output parametes
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains.
-* `subgraphs::SubgraphsData`: Description of the graph copies of the extended edge formulation
+* `subgraphs::Graph_copies`: Description of the graph copies of the extended edge formulation
 * `bp_status::BP_status`:  Structure containing every relevant information on the execution of the algorithm (including the optimal solution)
 """
 function solve_with_BP(filename::String, K::Int, L::Int, bp_params::BP_params = BP_params(), timer::TimerOutput = TimerOutput(), time_limit::Float64 = 600.0)
@@ -60,7 +60,7 @@ Core function of the KEP solution with branch-and-price. It requires a parsed in
 
 #Input parameters
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains
-* `subgraphs::SubgraphsData`: Description of the graph copies of the extended edge formulation
+* `subgraphs::Graph_copies`: Description of the graph copies of the extended edge formulation
 * `bp_params::BP_params`: solution parameters of the branch-and-price
 * `timer::TimerOutput`: a timer that will provide detail of where the computational time was spent during the branch-and-price
 * `time_limit::Float64`: time limit of the algorithm, including parsing and prepreprocessing times
@@ -68,7 +68,7 @@ Core function of the KEP solution with branch-and-price. It requires a parsed in
 #Output parametes
 * `bp_status::BP_status`:  Structure containing every relevant information on the execution of the algorithm (including the optimal solution)
 """
-function branch_and_price(instance::Instance, subgraphs::SubgraphsData, bp_params::BP_params, timer::TimerOutput, time_limit::Real)
+function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params::BP_params, timer::TimerOutput, time_limit::Real)
     # initialization of local variables
     verbose = bp_params.verbose
     graph = instance.graph
