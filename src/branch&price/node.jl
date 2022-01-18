@@ -498,7 +498,7 @@ function add_column_to_master(column::Column, mastermodel::Model, tree_node::Tre
     set_objective_coefficient(mastermodel, y[end], column.weight)
 
     # set the coefficient of the new column in every branching constraint (including those that are not active at this node)
-    branch_one = mastermodel[:branch_zero]
+    branch_one = mastermodel[:branch_one]
     for arc in keys(branch_one)
         if arc in column.arcs
             set_normalized_coefficient(branch_one[arc], y[end], 1)
