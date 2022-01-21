@@ -17,7 +17,7 @@ This generator is usually refererred to as the "Saidman Generator".
  """
 function generate_saidman_instance(nb_pairs::Int, nb_altruists::Int, index::Int)
     kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = generate_saidman_kep_graph(nb_pairs, nb_altruists);
-    write_kep_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, "abraham2006/saidman_$(nb_pairs)_$(nb_altruists)_$(index)");
+    write_kep_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, "saidman/saidman_$(nb_pairs)_$(nb_altruists)_$(index)");
     kep_graph = 0;
     return nothing;
 end
