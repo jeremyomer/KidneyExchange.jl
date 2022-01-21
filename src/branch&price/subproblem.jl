@@ -13,15 +13,13 @@ Calculates in parallel the cost of arcs of the original graph
 # JO: in my view, this function is not useful, we could directly use the vectors of dual variables in the subproblem, and it would make the code easier to read
 function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::Vector{Float64}, δ_one::Dict{Pair{Int64, Int64}, Float64}, δ_zero::Dict{Pair{Int64, Int64}, Float64})
     # initialize all arc costs with arc weights and retrieve destination dual cost for all vertices; also retrieve source dual for arcs outgoing from altruists
-    for v in instance.pairs
-        λ_v = λ[v]
-        for u in inneighbors(instance.graph, v)
+    for u in vertices(instance.graph)
+        for v in outneighbors(instance.graph, u)
             # add a small perturbation to guarantee that the only zero costs are where there is no edge
-            arc_cost[u,v] = instance.edge_weight[u,v] - λ_v + rand()*1.0e-6
+            arc_cost[u,v] = instance.edge_weight[u,v] - λ[v] + rand()*1.0e-6
         end
     end
     for u in instance.altruists
-        λ_u = λ[u]
         for v in outneighbors(instance.graph, u)
             arc_cost[u,v] -= λ[u]
         end
