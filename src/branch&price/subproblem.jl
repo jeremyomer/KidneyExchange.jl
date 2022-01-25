@@ -11,7 +11,7 @@ Calculates in parallel the cost of arcs of the original graph
 * `δ_val::Array{Array{Float64,1},1}`: dual value of the branching constraints associated with arcs to be branched
 """
 # JO: in my view, this function is not useful, we could directly use the vectors of dual variables in the subproblem, and it would make the code easier to read
-function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::Vector{Float64}, δ_one::Dict{Pair{Int64, Int64}, Float64}, δ_zero::Dict{Pair{Int64, Int64}, Float64})
+function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::Vector{Float64}, δ_one::Dict{Pair{Int64, Int64}, Float64}, δ_zero::Dict{Pair{Int64, Int64}, Float64}, δ_one_vertex::Dict{Int, Float64}, δ_zero_vertex::Dict{Int, Float64})
     # initialize all arc costs with arc weights and retrieve destination dual cost for all vertices; also retrieve source dual for arcs outgoing from altruists
     for u in vertices(instance.graph)
         for v in outneighbors(instance.graph, u)
@@ -31,6 +31,16 @@ function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::V
     end
     for arc in keys(δ_zero)
         arc_cost[arc[1],arc[2]] -= δ_zero[arc]
+    end
+    for v in keys(δ_one_vertex)
+        for u in inneighbors(instance.graph, v)
+            arc_cost[u,v] -= δ_one_vertex[v]
+        end
+    end
+    for v in keys(δ_zero_vertex)
+        for u in inneighbors(instance.graph, v)
+            arc_cost[u,v] -= δ_zero_vertex[v]
+        end
     end
     return maximum(arc_cost)
 end
