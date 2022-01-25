@@ -321,9 +321,14 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 # initialize the MIP for chain search if L >= K+2
                 @timeit timer "create_chain_mip" subgraphs.chain_mip = create_chain_mip(graph,  L, bp_params.optimizer, time_limit)
             end
+
+            # compute are reduced costs
+            @timeit timer "calc arc cost" max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero)
+
+            # solve each subproblem independently
             for l in subproblems_for_mip
                 # need to initialize mips first
-                is_positive_chain, chain = MIP_chain_search(subgraphs.chain_mip, graph, subgraphs.sources[l], subgraphs.is_vertex_list[l], λ, verbose)
+                is_positive_chain, chain = MIP_chain_search(subgraphs.chain_mip, graph, subgraphs.sources[l], subgraphs.is_vertex_list[l], arc_cost, verbose)
                 if (is_positive_chain)
                     push!(positive_paths, chain)
                 end
