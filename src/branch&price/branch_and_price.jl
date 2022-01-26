@@ -87,7 +87,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     end
     tree = Vector{TreeNode}()
 
-    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}()))   #the branch and price tree is initialized with the root node
+    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}()))   #the branch and price tree is initialized with the root node
 
     # initialize the master problem
     initial_time_limit_master_IP = bp_params.time_limit_master_IP
@@ -145,11 +145,22 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 
         # if the relaxation is not infeasible OR not eliminated by bound
         if (!isempty(column_flow) || !isempty(pief_flow)) && current_node.ub > bp_info.LB + ϵ
-            # try to find a branching variable
-            arc_to_branch, is_cg_branching = @timeit timer "calc_branch" calculate_branching(column_flow, pief_flow)
+            # first, search for a fractional vertex cover to branch on
+            is_fractional_vertex = false
+            if bp_params.branch_on_vertex
+                vertex_to_branch, is_fractional_vertex = get_branching_vertex(graph, column_flow, pief_flow)
+            end
 
-            # branch on the selected fractional arc
-            branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool, bp_params.verbose)
+            if is_fractional_vertex
+                # branch on the selected fractional vertex
+                branch_on_vertex(vertex_to_branch, mastermodel, tree, current_node, column_pool, bp_params.verbose)
+            else
+                # select a fractional arc to branch on
+                arc_to_branch, is_cg_branching = @timeit timer "calc_branch" get_branching_arc(column_flow, pief_flow)
+
+                # branch on the selected fractional arc
+                branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool, bp_params.verbose)
+            end
         else
             if verbose println("The node is either infeasible or pruned by bound") end
         end
@@ -200,10 +211,9 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 end
 
 """
-    calculate_branching
+    get_branching_arc
 Find a fractional arc to branch. The fractional arc closest to 0.5 will be
-selected to branch, if there is no fractional arc in the solution, then
-a artifitial arc 0=>0 is returned.
+selected to branch, if there is no fractional arc in the solution
 
 # Input parameters
 * `column_flow::Dict{Pair{Int,Int}, Float64}` : The dictionary containing the nonzero flow on each arc due to the selection of columns
@@ -213,31 +223,27 @@ a artifitial arc 0=>0 is returned.
 * `arc_to_branch::Pair{Int,Int}` : The arc to be branched
 * `is_cg_branching::Bool`: True if the branching impacts the subproblem of the coluln generation, false if it impacts only the master problem
 """
-function calculate_branching(column_flow::Dict{Pair{Int,Int}, Float64}, pief_flow::Dict{Pair{Int,Int}, Float64})
+function get_branching_arc(column_flow::Dict{Pair{Int,Int}, Float64}, pief_flow::Dict{Pair{Int,Int}, Float64})
     arc_to_branch = (0=>0)
     is_cg_branching = false  # true if the branching impacts subproblems of column generation
-    val = Inf
+    val = 0.5  # measure of fractionality
     # first search for a branching on the arcs included in the columns
     for it in column_flow
-        if it.second > ϵ && it.second < 1-ϵ
-            if abs(it.second-0.5) < val
-                val = abs(it.second-0.5)
-                arc_to_branch = it.first
-                is_cg_branching = true
-                if val < ϵ break end
-            end
+        if abs(it.second-0.5) < val - ϵ
+            val = abs(it.second-0.5)
+            arc_to_branch = it.first
+            is_cg_branching = true
+            if val < ϵ break end
         end
     end
 
     # if no arc with fractional column flow was found, search for an arc with a fractional chain flow in the solution of the pief model
     if !is_cg_branching
         for it in pief_flow
-            if it.second > ϵ && it.second < 1-ϵ
-                if abs(it.second-0.5) < val
-                    val = abs(it.second-0.5)
-                    arc_to_branch = it.first
-                    if val < ϵ break end
-                end
+            if abs(it.second-0.5) < val - ϵ
+                val = abs(it.second-0.5)
+                arc_to_branch = it.first
+                if val < ϵ break end
             end
         end
     end
@@ -250,16 +256,56 @@ function calculate_branching(column_flow::Dict{Pair{Int,Int}, Float64}, pief_flo
 end
 
 """
+    get_branching_vertex
+Find a fractional vertex cover to branch. The fractional vertex closest to 0.5 will be selected to branch
+
+# Input parameters
+* `column_flow::Dict{Pair{Int,Int}, Float64}` : The dictionary containing the nonzero flow on each arc due to the selection of columns
+* `pief_flow::Dict{Pair{Int,Int}, Float64}` : The dictionary containing the flow on each arc from the pief model for chain search (if applicable)
+
+# Output parameters
+* `vertex_to_branch::Int` : The vertex to be branched on, nothing if none was found
+"""
+function get_branching_vertex(graph::SimpleDiGraph, column_flow::Dict{Pair{Int,Int}, Float64}, pief_flow::Dict{Pair{Int,Int}, Float64})
+    vertex_to_branch = 0
+    is_fractional_vertex = false
+    val = 0.5
+    vertex_cover = zeros(nv(graph))
+    # compute the total cover of each vertex
+    for it in column_flow
+        arc = it.first
+        vertex_cover[arc[2]] += it.second
+    end
+    for it in pief_flow
+        arc = it.first
+        vertex_cover[arc[2]] += it.second
+    end
+
+    # get the most fractional cover
+    for v in vertices(graph)
+        if abs(vertex_cover[v]-0.5) < val - ϵ
+            val = abs(vertex_cover[v]-0.5)
+            vertex_to_branch = v
+            is_fractional_vertex = true
+            if val < ϵ break end
+        end
+    end
+
+    return vertex_to_branch, is_fractional_vertex
+end
+
+
+"""
     branch_on_arc
 Update the branch-and-bound tree with two new nodes by branching on the given arc with the specified branching (only on master problem or both in master and in subproblem)
 
 # Input parameters
 * `arc_to_branch::Pair{Int,Int}` : The arc to be branched
+* `master::Model`: Master model where the branching constraints are added
 * `is_cg_branching::Bool`: True if the branching impacts the subproblem of the coluln generation, false if it impacts only the master problem
 * `tree::Vector{TreeNode}`: Branch-and-bound tree
 * `current_node::TreeNode`: Branch-and-bound node currently treated
-
-# Output parameters
+* `column_pool::Vector{Column}`: Pool of all columns in current master problem
 """
 function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, verbose::Bool = true)
     current_index = current_node.index
@@ -300,6 +346,38 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
         master[:branch_one_pief][arc_to_branch] = @constraint(master, sum(chain_flow[e[1],e[2],k] for k in 1:L) >= 0, base_name = "branch_one_pief[$arc_to_branch]")
         master[:branch_zero_pief][arc_to_branch] = @constraint(master, sum(chain_flow[e[1],e[2],k] for k in 1:L) <= 1, base_name = "branch_zero_pief[$arc_to_branch]")
     end
+end
+"""
+    branch_on_vertex
+Update the branch-and-bound tree with two new nodes by branching on the given vertex.
+
+# Input parameters
+* `vertex_to_branch::Int` : The arc to be branched
+* `master::Model`: Master model where the branching constraints are added
+* `tree::Vector{TreeNode}`: Branch-and-bound tree
+* `current_node::TreeNode`: Branch-and-bound node currently treated
+* `column_pool::Vector{Column}`: Pool of all columns in current master problem
+"""
+function branch_on_vertex(vertex_to_branch::Int, master::Model,  tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, verbose::Bool = true)
+    current_index = current_node.index
+    next_index = 2 * current_index
+
+    y = master[:y]
+    if verbose println("Two new nodes are created by branching on vertex cover $vertex_to_branch") end
+
+    # add each branching node in the tree
+    node_zero = TreeNode(current_node)
+    node_zero.index = next_index
+    push!(node_zero.setzero_vertex, vertex_to_branch)
+    push!(tree, node_zero)
+    node_one = TreeNode(current_node)
+    node_one.index = next_index + 1
+    push!(node_one.setone_vertex, vertex_to_branch)
+    push!(tree, node_one)
+
+    # add the corresponding constraints in the master model, but deactivate them by default: they will activated only in relevant BP nodes
+    master[:branch_one_vertex][vertex_to_branch] = @constraint(master, sum(y[c] for c in 1:length(column_pool) if vertex_to_branch in (column_pool[c]).vertices) >= 0, base_name = "branch_one_vertex[$vertex_to_branch]")
+    master[:branch_zero_vertex][vertex_to_branch] = @constraint(master, sum(y[c] for c in 1:length(column_pool) if vertex_to_branch in (column_pool[c]).vertices) <= 1, base_name = "branch_zero_vertex[$vertex_to_branch]")
 end
 
 """

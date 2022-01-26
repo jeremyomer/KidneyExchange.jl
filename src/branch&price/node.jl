@@ -20,11 +20,25 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
     # verbose outputs
     if verbose
         printstyled("Processing node $(tree_node.index)\n\n" ; color = :yellow)
-        println("- the arcs set to zero in columns are:", tree_node.setzero)
-        println("- the arcs set to one in columns are:", tree_node.setone)
+        if !isempty(tree_node.setzero_vertex)
+            println("- the vertices set to zero are:", tree_node.setzero_vertex)
+        end
+        if !isempty(tree_node.setone_vertex)
+            println("- the vertices set to one are:", tree_node.setone_vertex)
+        end
+        if !isempty(tree_node.setzero)
+            println("- the arcs set to zero are:", tree_node.setzero)
+        end
+        if !isempty(tree_node.setone)
+            println("- the arcs set to one are:", tree_node.setone)
+        end
         if (bp_params.is_pief)
-            println("- the arcs set to zero in pief are:", tree_node.setzero_pief)
-            println("- the arcs set to one in pief are:", tree_node.setone_pief)
+            if !isempty(tree_node.setzero_pief)
+                println("- the arcs set to zero in pief are:", tree_node.setzero_pief)
+            end
+            if !isempty(tree_node.setone_pief)
+                println("- the arcs set to one in pief are:", tree_node.setone_pief)
+            end
         end
     end
 
@@ -74,7 +88,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         end
         λ = JuMP.shadow_price.(mastermodel[:capacity])
 
-        # get the dual values of the branching constraints
+        # get the dual values of the arc branching constraints
         δ_one = Dict{Pair{Int64, Int64}, Float64}()
         δ_zero = Dict{Pair{Int64, Int64}, Float64}()
         for arc in keys(mastermodel[:branch_one])
@@ -89,6 +103,24 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
             if δ_zero[arc] < 0
                 δ_zero[arc] = -δ_zero[arc]
+            end
+        end
+
+        # get the dual values of the vertex branching constraints
+        δ_one_vertex = Dict{Int, Float64}()
+        δ_zero_vertex = Dict{Int, Float64}()
+        for v in keys(mastermodel[:branch_one_vertex])
+            δ_one_vertex[v] = -shadow_price(mastermodel[:branch_one_vertex][v])
+            # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+            if δ_one_vertex[v] > 0
+                δ_one_vertex[v] = -δ_one_vertex[v]
+            end
+        end
+        for v in keys(mastermodel[:branch_zero_vertex])
+            δ_zero_vertex[v] = shadow_price(mastermodel[:branch_zero_vertex][v])
+            # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+            if δ_zero_vertex[v] < 0
+                δ_zero_vertex[v] = -δ_zero_vertex[v]
             end
         end
 
@@ -153,7 +185,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # arc costs need to be updated only if not at root node
         max_cost = 0.0
         if !instance.is_vertex_weighted || tree_node.index >= 2
-            @timeit timer "calc arc cost" max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero)
+            @timeit timer "calc arc cost" max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero, δ_one_vertex, δ_zero_vertex)
             arc_cost_trans = permutedims(arc_cost)
         else
             vertex_cost .= instance.vertex_weight
@@ -321,9 +353,14 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 # initialize the MIP for chain search if L >= K+2
                 @timeit timer "create_chain_mip" subgraphs.chain_mip = create_chain_mip(graph,  L, bp_params.optimizer, time_limit)
             end
+
+            # compute are reduced costs
+            @timeit timer "calc arc cost" max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero)
+
+            # solve each subproblem independently
             for l in subproblems_for_mip
                 # need to initialize mips first
-                is_positive_chain, chain = MIP_chain_search(subgraphs.chain_mip, graph, subgraphs.sources[l], subgraphs.is_vertex_list[l], λ, verbose)
+                is_positive_chain, chain = MIP_chain_search(subgraphs.chain_mip, graph, subgraphs.sources[l], subgraphs.is_vertex_list[l], arc_cost, verbose)
                 if (is_positive_chain)
                     push!(positive_paths, chain)
                 end
@@ -508,6 +545,18 @@ function add_column_to_master(column::Column, mastermodel::Model, tree_node::Tre
     for arc in keys(branch_zero)
         if arc in column.arcs
             set_normalized_coefficient(branch_zero[arc], y[end], 1)
+        end
+    end
+    branch_one_vertex = mastermodel[:branch_one_vertex]
+    for v in keys(branch_one_vertex)
+        if v in column.vertices
+            set_normalized_coefficient(branch_one_vertex[v], y[end], 1)
+        end
+    end
+    branch_zero_vertex = mastermodel[:branch_zero_vertex]
+    for v in keys(branch_zero_vertex)
+        if v in column.vertices
+            set_normalized_coefficient(branch_zero_vertex[v], y[end], 1)
         end
     end
 end

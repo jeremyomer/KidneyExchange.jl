@@ -5,13 +5,15 @@ mutable struct TreeNode
   setone::Vector{Pair{Int,Int}}  # list of of branching arcs set to one in the column cover, stored as Pair (vertex n => vertex m)
   setzero_pief::Vector{Pair{Int,Int}}  # list of branching arcs set to zero in the pief chain cover, stored as Pair (vertex n => vertex m)
   setone_pief::Vector{Pair{Int,Int}}  # list of branching arcs set to one in the pief chain cover, stored as Pair (vertex n => vertex m)
+  setzero_vertex::Vector{Int}  # list of branching vertices set to zero in the column cover
+  setone_vertex::Vector{Int}  # list of of branching vertices set to one in the column cover
 
   function TreeNode(node::TreeNode)
-    return new(node.index, node.ub, copy(node.setzero), copy(node.setone), copy(node.setzero_pief), copy(node.setone_pief))
+    return new(node.index, node.ub, copy(node.setzero), copy(node.setone), copy(node.setzero_pief), copy(node.setone_pief), copy(node.setzero_vertex), copy(node.setone_vertex))
   end
 
-  function TreeNode(_index::Int, _ub::Float64, _setzero::Vector{Pair{Int,Int}}, _setone::Vector{Pair{Int,Int}}, _setzero_pief::Vector{Pair{Int,Int}}, _setone_pief::Vector{Pair{Int,Int}})
-    return new(_index, _ub, copy(_setzero), copy(_setone), copy(_setzero_pief), copy(_setone_pief))
+  function TreeNode(_index::Int, _ub::Float64, _setzero::Vector{Pair{Int,Int}}, _setone::Vector{Pair{Int,Int}}, _setzero_pief::Vector{Pair{Int,Int}}, _setone_pief::Vector{Pair{Int,Int}},  _setzero_vertex::Vector{Int}, _setone_vertex::Vector{Int})
+    return new(_index, _ub, copy(_setzero), copy(_setone), copy(_setzero_pief), copy(_setone_pief), copy(_setzero_vertex), copy(_setone_vertex))
   end
 end
 
@@ -95,12 +97,13 @@ mutable struct BP_params
   time_limit_master_IP::Float64
   freq_solve_master_IP::Int
   restart_for_IP::Bool
+  branch_on_vertex::Bool
 
-  function BP_params(_optimizer::String = "GLPK-Cbc", _verbose::Bool = true, _is_pief = false, _fvs = true,  _reduce_vertices = true, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 10.0,  _freq_solve_master_IP = 1, _restart_for_IP = true)
-    return new(_optimizer, _verbose, _is_pief, _fvs, _reduce_vertices, _is_column_disjoint, _max_intersecting_columns, _is_tabu_list, _solve_master_IP, _time_limit_IP, _freq_solve_master_IP, _restart_for_IP)
+  function BP_params(_optimizer::String = "GLPK-Cbc", _verbose::Bool = true, _is_pief = false, _fvs = true,  _reduce_vertices = true, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 10.0,  _freq_solve_master_IP = 1, _restart_for_IP = true, _branch_on_vertex = false)
+    return new(_optimizer, _verbose, _is_pief, _fvs, _reduce_vertices, _is_column_disjoint, _max_intersecting_columns, _is_tabu_list, _solve_master_IP, _time_limit_IP, _freq_solve_master_IP, _restart_for_IP, _branch_on_vertex)
   end
   function BP_params(_is_pief::Bool, _verbose::Bool = false)
-    return new("GLPK-Cbc", _verbose, _is_pief, true, true, true, 6, true, true, 10.0, 1, true)
+    return new("GLPK-Cbc", _verbose, _is_pief, true, true, true, 6, true, true, 10.0, 1, true, false)
   end
 end
 

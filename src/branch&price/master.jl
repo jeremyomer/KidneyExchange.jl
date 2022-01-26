@@ -1,21 +1,15 @@
 """
     node_master
 
-Defines and optimizes the restricted master problem
+Initialization of the restricted master problem
 
 #Input parameters
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains.
 * `column_pool::Vector{Column}`: the set of initial columns of the master
-* `tree_node::TreeNode`: BP tree currently processed
-* `is_pief::Bool`: true if the chains search is in the master problem with a position-indexed model, false if they are they are found by column generation
-* `optimizer::String`: name of the optimizer
+* `bp_params::BP_params`: parameters of the branch-and-price
 * `time_limit::Float64`: time limit for each solution of the master relaxation
 
 #Output Parameters
-* `vertex_disjoint:: Array{ConstraintRef,1}`: vertex-disjoint constraints
-* `branch_one::Dict{Pair{Int,Int}, ConstraintRef}` : branching constraints for arcs to be selected
-* `branch_zero::Dict{Pair{Int,Int}, ConstraintRef}` : branching constraints for arcs to not be selected
-* `y::Vector{VariableRef}`: decision variables indicating whether cycles are selected
 * `master::Model`: the model of the restricted master problem
 """
 function node_master(instance::Instance, column_pool::Vector{Column}, bp_params::BP_params = BP_params(), time_limit::Float64 = 10000.0)
@@ -79,6 +73,8 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
     # - branching constraints on the arcs covered by the columns
     master[:branch_one] = Dict{Pair{Int64, Int64}, ConstraintRef}()
     master[:branch_zero] = Dict{Pair{Int64, Int64}, ConstraintRef}()
+    master[:branch_one_vertex] = Dict{Int, ConstraintRef}()
+    master[:branch_zero_vertex] = Dict{Int, ConstraintRef}()
 
     # - branching constraints on the arcs covered by the chain variables of the master when using pief model
     if bp_params.is_pief
@@ -86,7 +82,7 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
         master[:branch_zero_pief] = Dict{Pair{Int64, Int64}, ConstraintRef}()
     end
 
-    #objective
+    # objective
     if bp_params.is_pief && L >= 1
         @objective(master, Max, sum(column_pool[c].weight * y[c] for c in 1:length(column_pool)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,1] for  u in instance.altruists for v in outneighbors(graph, u)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,k] for u in instance.pairs for v in outneighbors(graph, u) for k  in 2:L))
     else
@@ -96,6 +92,11 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
     return master
 end
 
+"""
+    activate_branching_constraints
+
+Activate the all the branching constraints corresponding to a given node of the branch-and-price enumeration tree.
+"""
 function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_params::BP_params)
     # - branching constraints on the arcs covered by the columns
     branch_one = master[:branch_one]
@@ -105,6 +106,16 @@ function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_p
     end
     for e in tree_node.setzero
         set_normalized_rhs(branch_zero[e], 0)
+    end
+
+    # - branching constraints on the vertices covered by the columns
+    branch_one_vertex = master[:branch_one_vertex]
+    branch_zero_vertex = master[:branch_zero_vertex]
+    for v in tree_node.setone_vertex
+        set_normalized_rhs(branch_one_vertex[v], 1)
+    end
+    for v in tree_node.setzero_vertex
+        set_normalized_rhs(branch_zero_vertex[v], 0)
     end
 
     # - branching constraints on the arcs covered by the chain variables of the master when using pief model
@@ -120,6 +131,11 @@ function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_p
     end
 end
 
+"""
+    deactivate_branching_constraints
+
+Deactivate the all the branching constraints corresponding to a given node of the branch-and-price enumeration tree.
+"""
 function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp_params::BP_params)
     # - branching constraints on the arcs covered by the columns
     branch_one = master[:branch_one]
@@ -129,6 +145,16 @@ function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp
     end
     for e in tree_node.setzero
         set_normalized_rhs(branch_zero[e], 1)
+    end
+
+    # - branching constraints on the vertices covered by the columns
+    branch_one_vertex = master[:branch_one_vertex]
+    branch_zero_vertex = master[:branch_zero_vertex]
+    for v in tree_node.setone_vertex
+        set_normalized_rhs(branch_one_vertex[v], 0)
+    end
+    for v in tree_node.setzero_vertex
+        set_normalized_rhs(branch_zero_vertex[v], 1)
     end
 
     # - branching constraints on the arcs covered by the chain variables of the master when using pief model
@@ -144,6 +170,20 @@ function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp
     end
 end
 
+"""
+    initialize_master_IP
+
+Initialization of the master problem with integer columns
+
+#Input parameters
+* `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains.
+* `column_pool::Vector{Column}`: the set of initial columns of the master
+* `bp_params::BP_params`: parameters of the branch-and-price
+* `time_limit::Float64`: time limit for each solution of the master relaxation
+
+#Output Parameters
+* `master::Model`: the model of the restricted master problem
+"""
 function initialize_master_IP(instance::Instance, column_pool::Vector{Column}, bp_params::BP_params = BP_params(), time_limit::Float64 = 10000.0)
     # Local variables
     graph = instance.graph

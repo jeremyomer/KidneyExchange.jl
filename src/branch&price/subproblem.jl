@@ -11,7 +11,7 @@ Calculates in parallel the cost of arcs of the original graph
 * `δ_val::Array{Array{Float64,1},1}`: dual value of the branching constraints associated with arcs to be branched
 """
 # JO: in my view, this function is not useful, we could directly use the vectors of dual variables in the subproblem, and it would make the code easier to read
-function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::Vector{Float64}, δ_one::Dict{Pair{Int64, Int64}, Float64}, δ_zero::Dict{Pair{Int64, Int64}, Float64})
+function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::Vector{Float64}, δ_one::Dict{Pair{Int64, Int64}, Float64}, δ_zero::Dict{Pair{Int64, Int64}, Float64}, δ_one_vertex::Dict{Int, Float64}, δ_zero_vertex::Dict{Int, Float64})
     # initialize all arc costs with arc weights and retrieve destination dual cost for all vertices; also retrieve source dual for arcs outgoing from altruists
     for u in vertices(instance.graph)
         for v in outneighbors(instance.graph, u)
@@ -31,6 +31,16 @@ function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::V
     end
     for arc in keys(δ_zero)
         arc_cost[arc[1],arc[2]] -= δ_zero[arc]
+    end
+    for v in keys(δ_one_vertex)
+        for u in inneighbors(instance.graph, v)
+            arc_cost[u,v] -= δ_one_vertex[v]
+        end
+    end
+    for v in keys(δ_zero_vertex)
+        for u in inneighbors(instance.graph, v)
+            arc_cost[u,v] -= δ_zero_vertex[v]
+        end
     end
     return maximum(arc_cost)
 end
@@ -592,6 +602,8 @@ function create_chain_mip(graph::SimpleDiGraph, L::Int, optimizer::String, time_
 
     # add the flow constraints at each vertex
     @constraint(mip, ct_flow_conservation[v in vertices(graph)], sum(is_arc[v=>w] for w in outneighbors(graph, v)) + is_arc[v=>sink] - sum(is_arc[u=>v] for u in inneighbors(graph, v)) == 0)
+
+    # add constraints that will be used to ignore the vertices that are not in the considered graph copy
     @constraint(mip, ct_flow_max[v in vertices(graph)], sum(is_arc[u=>v] for u in inneighbors(graph, v)) <= 1)
 
     # flow constraint at sink
@@ -606,27 +618,32 @@ end
 """
     MIP_chain_search
 
-MIP model with cycle constraint generation for the optimal search of positive cost chains
+IP model with subtour elimination constraints. The constraints are the  generalized cutset inequalities (GCS) and they are added dynamically in a row generation algorithm.
+Refer for instance to the following reference for a presentation of the GCS.
+Taccari, Leonardo. « Integer Programming Formulations for the Elementary Shortest Path Problem ». European Journal of Operational Research 252, nᵒ 1 (2016).
 
 #Input parameters
+* `mip::Model`: The JuMP model initialized with the flow conservation constraints and the bound on the length of the chain
 * `graph::SimpleDiGraph` : The directed graph with cost on each arc
 * `source::Int`: Index of the source vertex
 * `is_vertex::BitVector`: For each vertex, indicates if it is in the considered subgraph
-* `vertex_cost::Vector{Float64}`: Dual costs of the vertices
+* `arc_cost::Vector{Float64}`: Matrix of reduced costs of every arc
 
 #Output Parameters
 * `is_positivie_chain::Bool`: True if a positive chain was found
 * `chain::Vector{Int}:` Positive chain that was found
 """
-function MIP_chain_search(mip::Model, graph::SimpleDiGraph, source::Int, is_vertex::BitVector, vertex_cost::Vector{Float64}, verbose::Bool = true)
+function MIP_chain_search(mip::Model, graph::SimpleDiGraph, source::Int, is_vertex::BitVector, arc_cost::Matrix{Float64}, verbose::Bool = true)
+    sink = nv(graph) + 1
     if verbose
         println("- solve mip chain search")
-        println("   . cost of source vertex = ", vertex_cost[source])
+        println("   . $source is the souce and $sink is the artificial sink" )
     end
+
     # set the objective of the MIP
-    E = [e.src=>e.dst for e in edges(graph) if (is_vertex[e.src] && is_vertex[e.dst])]
     is_arc = mip[:is_arc]
-    @objective(mip, Max, -vertex_cost[source] + sum((1 - vertex_cost[e[2]]) * is_arc[e[1]=>e[2]] for e in E))
+    E = [e.src=>e.dst for e in edges(graph) if (is_vertex[e.src] && is_vertex[e.dst])]
+    @objective(mip, Max, sum(arc_cost[e[1],e[2]] * is_arc[e[1]=>e[2]] for e in E))
 
     # modify the constraints of the MIP to consider only the vertices in the graph copy and set the right source
     set_normalized_rhs(mip[:ct_flow_conservation][source], 1)
@@ -644,58 +661,66 @@ function MIP_chain_search(mip::Model, graph::SimpleDiGraph, source::Int, is_vert
         if (termination_status(mip) != MOI.OPTIMAL)
             error("The mip chain search model was not solved to optimality")
         end
+
+        # get the graph induced by the support of the solution
         is_arc_val = value.(is_arc)
         arcs = E[findall([is_arc_val[e] for e in E] .>= 1 - ϵ)]
+        vertex_list = [e[1] for e in arcs]  # list of covered vertices
+        successor = Dict{Int,Int}()  # successor of each covered vertex
+        for e in arcs
+            successor[e[1]] = e[2]
+        end
+        if verbose println("   . solution found: ", arcs, ", objective value: ", objective_value(mip)) end
+        if verbose println("   . arc from source to sink: $(is_arc_val[source=>sink])") end
+
+        # stop if the optimal value is non-positive
         if objective_value(mip) <= ϵ
-            if verbose
-                println("   . solution found: ", arcs, ", objective value: ", objective_value(mip))
-                println("   . cost of other vertices = ", [vertex_cost[e[2]] for e in arcs])
-                println("   . the mip search did not find any positive cost chain")
-            end
+            if verbose println("   . the mip search did not find any positive cost chain") end
             break
         end
 
-        # build the positive chain or detect a positivie cycle
+        # build the positive chain or detect a positive cycle
         # - initialize the chain with arc leaving the source
         chain = Vector{Int}()
-        chain_arcs = Vector{Pair{Int,Int}}()
-        is_in_chain = falses(length(arcs))
-        for i in 1:length(arcs)
-            e = arcs[i]
-            if e[1] == source
-                push!(chain, e[1])
-                push!(chain, e[2])
-                push!(chain_arcs, e)
-                is_in_chain[i] = true
-                break
+        subtour = copy(vertex_list)
+        ind_source = findfirst(vertex_list .== source)
+        if ind_source != nothing
+            push!(chain, source)
+            push!(chain, successor[source])
+
+            # - build the path iteratively from the source; no cycle can be found because of the flow constraints
+            while haskey(successor, chain[end])
+                 push!(chain, successor[chain[end]])
             end
-        end
-        if isempty(chain)
-            error("The source should be covered by the selected arcs")
-        end
 
-        # - build the path iteratively from the source; no cycle can be found because of the flow constraints
-        ind_next = findfirst([e[1] for e in arcs] .== chain[end])
-        if verbose println("arcs = ", arcs) end
-        while ind_next != nothing
-             next_arc = arcs[ind_next]
-             is_in_chain[ind_next] = true
-             push!(chain_arcs, next_arc)
-             push!(chain, next_arc[2])
-             ind_next = findfirst([e[1] for e in arcs] .== chain[end])
-         end
-
-         # at this stage, we have found a chain: check its cost
-         cost =  length(chain)-1 - sum(vertex_cost[v] for v in chain)
-         if cost > ϵ
-             is_positive_chain = true
-             break
+             # at this stage, we have found a chain starting from source and ending at sink: check its cost
+             cost =  sum(arc_cost[chain[i],chain[i+1]] for i in 1:length(chain)-2)
+             if cost > ϵ
+                 is_positive_chain = true
+                 break
+             end
+         else
+             if verbose println("    . source goes directly to sink in solution") end
          end
 
          # if the cost is non-positive, there is a positive cycle: delete the chain from the solution and add a cut to forbid what's left
-         deleteat!(arcs, is_in_chain)
-         if verbose println("add a cut to forbid cycle(s) : ", arcs) end
-         @constraint(mip, sum(is_arc[e] for e in arcs) <= length(arcs)-1)
+         subtour = Vector{Int}()
+         is_in_subtour = trues(length(vertex_list))
+         for v in chain
+             is_in_subtour[v] = false
+         end
+         subtour = vertex_list[findall(is_in_subtour .== true)]
+         is_in_subtour = falses(nv(graph))
+         for v in subtour
+             is_in_subtour[v] = true
+         end
+
+         if verbose println("add constraints to eliminate subtour: ", subtour) end
+         delta_subtour = [u=>v for u in subtour for v in outneighbors(graph, u) if !is_in_subtour[v]]
+         delta_subtour = [delta_subtour ; [u=>sink for u in subtour]]
+         for u in subtour
+             @constraint(mip, sum(is_arc[e] for e in delta_subtour) >= sum(is_arc[u=>v] for v in outneighbors(graph, u)))
+         end
     end
 
     # reset the constraints of the MIP
