@@ -9,8 +9,11 @@ Contruct a KEP graph from a `.wmd` and a `.dat` input files
 """
 function read_kep_file(wmd_file::String, dat_file::String)
 
-    wmd_file_name = split(split(wmd_file, '/')[end], '.')[1]
-    dat_file_name = split(split(dat_file, '/')[end], '.')[1]
+    #wmd_file_name = split(split(wmd_file, '/')[end], '.')[1]
+    #dat_file_name = split(split(dat_file, '/')[end], '.')[1]
+	
+	wmd_file_name = first(splitext(last(splitpath(wmd_file))))
+	dat_file_name = first(splitext(last(splitpath(dat_file))))
 
     wmd_file_name == dat_file_name || throw(ArgumentError(".wmd and .dat files do not correspond to the same dataset."))
     isfile(wmd_file) || throw(ArgumentError("$(wmd_file): file not found."))
