@@ -1,7 +1,9 @@
-using KEP
+using KidneyExchange
 using Test
 
-@testset "KEP.jl" begin
+const KEP = KidneyExchange
+
+@testset "KidneyExchange.jl" begin
     tests_K3_L0 = Dict("tests_cycles/MD-00001-00000001" => 4, "tests_cycles/MD-00001-00000120" => 83, "tests_cycles/heterogeneous_128_0_1" => 85,  "tests_cycles/sparse_128_0_1" => 28)
     # "tests_cycles/MD-00001-00000160" => 159, "tests_cycles/heterogeneous_256_0_1" => 170, "tests_cycles/sparse_256_0_1" => 100
 
