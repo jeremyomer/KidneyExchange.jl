@@ -3,13 +3,13 @@
 
 Initialization of the restricted master problem
 
-#Input parameters
+# Arguments
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains.
 * `column_pool::Vector{Column}`: the set of initial columns of the master
 * `bp_params::BP_params`: parameters of the branch-and-price
 * `time_limit::Float64`: time limit for each solution of the master relaxation
 
-#Output Parameters
+# Return values
 * `master::Model`: the model of the restricted master problem
 """
 function node_master(instance::Instance, column_pool::Vector{Column}, bp_params::BP_params = BP_params(), time_limit::Float64 = 10000.0)
@@ -175,13 +175,13 @@ end
 
 Initialization of the master problem with integer columns
 
-#Input parameters
+# Arguments
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains.
 * `column_pool::Vector{Column}`: the set of initial columns of the master
 * `bp_params::BP_params`: parameters of the branch-and-price
 * `time_limit::Float64`: time limit for each solution of the master relaxation
 
-#Output Parameters
+# Return values
 * `master::Model`: the model of the restricted master problem
 """
 function initialize_master_IP(instance::Instance, column_pool::Vector{Column}, bp_params::BP_params = BP_params(), time_limit::Float64 = 10000.0)

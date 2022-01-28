@@ -8,7 +8,7 @@ include("subproblem.jl")
 
 This is the main function to call for an execution of the branch-and-price algorithm on input file with given bounds on the length of covering cycles and chains and given options
 
-#Input parameters
+# Arguments
 * `filename::String`: path of the input data files, this should include the name of the files, but not the .dat and .wmd extensions
 * `K::Int`: maximum length of cycles
 * `L::Int`: maximum length of chains
@@ -58,7 +58,7 @@ end
 
 Core function of the KEP solution with branch-and-price. It requires a parsed instance and the description of the graph copies. The column generation model is that of Riazcos-Alvarez et al (2020), but the many improvements have been added, in particular in the solution of the subproblem.
 
-#Input parameters
+# Arguments
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains
 * `subgraphs::Graph_copies`: Description of the graph copies of the extended edge formulation
 * `bp_params::BP_params`: solution parameters of the branch-and-price

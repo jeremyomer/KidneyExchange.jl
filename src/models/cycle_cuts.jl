@@ -3,13 +3,13 @@
 
 Initialize the MIP model with cycle constraint generation for the optimal search of positive cost chains. Only one model is created for every copy to save a great amount of initialization time and memory. The model will then need to be modified for each graph copy to keep only the vertices of the graph and select the right source vertex
 
-#Input parameters
+# Arguments
 * `graph::SimpleDiGraph` : The directed graph with cost on each arc
 * `L::Int`: The maximal length of chains
 * `optimizer::String`: Name of the MIP sover
 * `time_limit::Real`: Time limit of the solver
 
-#Output Parameters
+# Return values
 * `model::Model`: Initial JuMP model for the search of a positive chain
 """
 function buid_cycle_cuts(instance::Instance, subgraphs::Graph_copies, params::MIP_params, maxtime::Float64 = 600)
@@ -116,13 +116,13 @@ end
 
 MIP model with cycle constraint generation for the optimal search of positive cost chains
 
-#Input parameters
+# Arguments
 * `graph::SimpleDiGraph` : The directed graph with cost on each arc
 * `source::Int`: Index of the source vertex
 * `is_vertex::BitVector`: For each vertex, indicates if it is in the considered subgraph
 * `vertex_cost::Vector{Float64}`: Dual costs of the vertices
 
-#Output Parameters
+# Return values
 * `is_positivie_chain::Bool`: True if a positive chain was found
 * `chain::Vector{Int}:` Positive chain that was found
 """

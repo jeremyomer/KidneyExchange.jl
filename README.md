@@ -46,7 +46,7 @@ For instance, if solving the instance stored in `filename.wmd` and `filename.dat
 
 Load the module
 ```
-include("src/KEP.jl")
+include("src/KidneyExchange.jl")
 using Main.KEP
 ```
 
@@ -63,7 +63,7 @@ Solve the instance using one of its compact MIP formulations (HPIEF by default)
 `solve_with_mip("sparse/sparse_500_25_1", 3, 4);`
 
 Specify another MIP formulation (true is to keep verbosity)
-`solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KEP.EXTENDED_EDGE, true));`
+`solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KidneyExchange.EXTENDED_EDGE, true));`
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 [docs-dev-url]: https://jeremyomer.github.io/KidneyExchange.jl/dev/

@@ -436,7 +436,7 @@ end
 
 Extract a integer feasible solution from the fractional solution by conserving a set of vertex-disjoint cycles or chains
 
-#Input parameters
+# Arguments
 * `fractional_solution::Array{Array{Float64,1},1}`: The set of value of variables indicating whether or not cycles and chains are selected
 * `node_columns::Array{Array{Column,1},1}`: The set of cycles and chains associated with variables
 
@@ -487,7 +487,7 @@ end
 
 Gives a set of indices of cycle in cycles who have common vertices with cycle
 
-#Input parameters
+# Arguments
 * `cycle::Array{Int,1}`: The vertices of cycle
 * `cycles::Array{Array{Int,1},1}`: The set of cycles
 
@@ -514,11 +514,11 @@ end
 """
 add_column_to_master
 
-#Input parameters
+# Arguments
 * `column::Column`: Column to add to the master model
 * `mastermodel::Model`: JuMP model for current master problem
 * `treenode::TreeNode`: Information on current tree node
-#Output parameters: None
+# Return values: None
 """
 
 function add_column_to_master(column::Column, mastermodel::Model, tree_node::TreeNode)
@@ -580,11 +580,11 @@ end
 Calculates the relaxed value of the decision variable x_(i,j) of arc (i->j) in A.
 x_(i,j) whose value >0 is stored in x::Dict{Pair{Int,Int}, Float64}
 
-#Input parameters
+# Arguments
 * `mastersol::Vector{Float64}`: solution value of the master problem, ie: y[c] for c in cycles
 * `node_columns::Vector{Column}`: The corresponding cycles of current node
 
-#Output parameters
+# Return values
 * `x:: Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)
 """
 function compute_arc_flow(mastersol::Vector{Float64}, node_columns::Vector{Column})

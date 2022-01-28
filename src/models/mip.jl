@@ -7,7 +7,7 @@ include("relaxed_arc.jl")
 
 This is the main function to call to solve the input instance with given bounds on the length of covering cycles and chains and given options
 
-#Input parameters
+# Arguments
 * `filename::String`: path of the input data files, this should include the name of the files, but not the .dat and .wmd extensions
 * `K::Int`: maximum length of cycles
 * `L::Int`: Maximum length of chains

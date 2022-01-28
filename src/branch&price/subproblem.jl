@@ -3,7 +3,7 @@
 
 Calculates in parallel the cost of arcs of the original graph
 
-#Input parameters
+# Arguments
 * `original_graph::MyDirectedGraph` : The original graph
 * `arc_cost::SharedMatrix{Float64}` : The cost of arcs to be calculated
 * `λ:: Vector{Float64}` : The dual values of the vertex disjoint constraints
@@ -50,12 +50,12 @@ end
 
 Inner function for Bellman_Ford_cycle_search to return path of exactly (n-1) of length ending at v from the table of predecessor
 
-#Input parameters
+# Arguments
 * `v::Int` : The ending vertex
 * `pred::Array{Array{Tuple{Int,Int},1},1}`: table of predecessor containing tuples of predecessor and legnth of path to arrive the vertex
 * `n::Int`: the length of the path
 
-#Output Parameters
+# Return values
 * `c=Array{Int,1}`: path of exactly (n-1) of length ending at v
 """
 
@@ -76,14 +76,14 @@ end
 
 Bellman-Ford style search for one positive cost cycle
 
-#Input parameters
+# Arguments
 * `graph::SimpleDiGraph` : The directed graph with cost on each arc
 * `arc_cost::Matrix{Float64}`:
 * `source::Int` : The local vertex index from which starts the search
 * `K::Int` : The maximal length of cycles
 * pred[k][v] contains u if u is a predecessor of v in a path of length k from source
 
-#Output Parameters
+# Return values
 * `cycle::Vector{Int}`: the positive cycle found, [] if none
 """
 function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Float64}, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64})
@@ -573,7 +573,7 @@ end
 
 Initialize the MIP model with cycle constraint generation for the optimal search of positive cost chains. Only one model is created for every copy to save a great amount of initialization time and memory. The model will then need to be modified for each graph copy to keep only the vertices of the graph and select the right source vertex
 
-#Input parameters
+# Arguments
 * `graph::SimpleDiGraph` : The directed graph with cost on each arc
 * `L::Int`: The maximal length of chains
 * `optimizer::String`: Name of the MIP sover
@@ -583,7 +583,7 @@ ln("   . solution found: ", arcs, ", objective value: ", objective_value(mip))
                 println("   . cost of other vertices = ", [vertex_cost[e[2]] for e in arcs])
                 println("   . the mip search did not find any positive cost chain")
             end
-#Output Parameters
+# Return values
 * `mip::Model`: Initial JuMP model for the search of a positive chain
 """
 function create_chain_mip(graph::SimpleDiGraph, L::Int, optimizer::String, time_limit::Float64)
@@ -622,14 +622,14 @@ IP model with subtour elimination constraints. The constraints are the  generali
 Refer for instance to the following reference for a presentation of the GCS.
 Taccari, Leonardo. « Integer Programming Formulations for the Elementary Shortest Path Problem ». European Journal of Operational Research 252, nᵒ 1 (2016).
 
-#Input parameters
+# Arguments
 * `mip::Model`: The JuMP model initialized with the flow conservation constraints and the bound on the length of the chain
 * `graph::SimpleDiGraph` : The directed graph with cost on each arc
 * `source::Int`: Index of the source vertex
 * `is_vertex::BitVector`: For each vertex, indicates if it is in the considered subgraph
 * `arc_cost::Vector{Float64}`: Matrix of reduced costs of every arc
 
-#Output Parameters
+# Return values
 * `is_positivie_chain::Bool`: True if a positive chain was found
 * `chain::Vector{Int}:` Positive chain that was found
 """
