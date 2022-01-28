@@ -14,9 +14,8 @@ makedocs(
     modules = [KidneyExchange],
     pages = [
         "Home"       => "index.md",
-        "Models"     => "models.md",
-        "Functions"  => "functions.md",
         "Types"      => "types.md",
+        "Functions"  => "functions.md",
         "References" => "references.md"
     ]
 )
