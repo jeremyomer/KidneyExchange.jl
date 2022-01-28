@@ -15,7 +15,7 @@ This is the main function to call to solve the input instance with given bounds 
 * `timer::TimerOutput`: a timer that will provide detail of where the computational time was spent during the branch-and-price
 * `time_limit::Float64`: time limit of the algorithm, including parsing and prepreprocessing times
 
-#Output parametes
+# Output parametes
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains.
 * `subgraphs::Graph_copies`: Description of the graph copies of the extended edge formulation
 * `bp_status::BP_status`:  Structure containing every relevant information on the execution of the algorithm (including the optimal solution)

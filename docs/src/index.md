@@ -2,7 +2,10 @@
 
 Documentation for KidneyExchange.jl
 
-```@autodocs
-Modules = [KidneyExchange]
-Order   = [:type, :function]
+```@contents
+```
+
+## Index
+
+```@index
 ```
