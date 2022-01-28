@@ -1,8 +1,8 @@
 """
-    reduced_extended_edge_formulation
+    build_reduced_extended_edge_mip(instance, subgraphs, params; maxtime = 600)
 
-    A compact MIP formulation originally proposed by Constantino et al. (2013). for the cycles-only variant of the problem.
-    Here it is adapted to the graph copies based on FVS and chains are considered with position-indexed variables.
+A compact MIP formulation originally proposed by [Constantino2013](@cite) for the cycles-only variant of the problem.
+Here it is adapted to the graph copies based on FVS and chains are considered with position-indexed variables.
 """
 function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Graph_copies, params::MIP_params, maxtime::Float64 = 600)
     if params.verbose println("- build the JuMP model") end
