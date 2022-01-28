@@ -619,8 +619,7 @@ end
     MIP_chain_search
 
 IP model with subtour elimination constraints. The constraints are the  generalized cutset inequalities (GCS) and they are added dynamically in a row generation algorithm.
-Refer for instance to the following reference for a presentation of the GCS.
-Taccari, Leonardo. « Integer Programming Formulations for the Elementary Shortest Path Problem ». European Journal of Operational Research 252, nᵒ 1 (2016).
+Refer for instance to the following reference for a presentation of the GCS: [Taccari2016](@cite).
 
 # Arguments
 * `mip::Model`: The JuMP model initialized with the flow conservation constraints and the bound on the length of the chain
