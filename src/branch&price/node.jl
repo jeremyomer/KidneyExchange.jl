@@ -3,11 +3,11 @@
 
 Columns generation of the node
 
-#Input parameter
-* `tree_node::TreeNode`: Branch-and-bound node to solve with column generation
+# Input parameter
+- `tree_node::TreeNode`: Branch-and-bound node to solve with column generation
 
-#Output parameter
-* `column_flow::Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)`
+# Output parameter
+- `column_flow::Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)`
 """
 function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Model, subgraphs::Graph_copies, bp_status::BP_status, column_pool::Vector{Column},  bp_params::BP_params, master_IP::Model, timer::TimerOutput, time_limit::Float64)
     # local variables
@@ -440,7 +440,7 @@ Extract a integer feasible solution from the fractional solution by conserving a
 * `fractional_solution::Array{Array{Float64,1},1}`: The set of value of variables indicating whether or not cycles and chains are selected
 * `node_columns::Array{Array{Column,1},1}`: The set of cycles and chains associated with variables
 
-#Output parametes
+# Output parameters
 * `feas_val::Real`:  The objective value of the feasible solution
 * `columns::Array{Array{Int,1},1}`: The set of selected cycles and chains of the feasible solution
 """
@@ -577,6 +577,7 @@ end
 
 """
     compute_arc_flow
+
 Calculates the relaxed value of the decision variable x_(i,j) of arc (i->j) in A.
 x_(i,j) whose value >0 is stored in x::Dict{Pair{Int,Int}, Float64}
 

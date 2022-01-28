@@ -1,12 +1,15 @@
 """
-	The generator code in this file is a translation of the corresponding Java functions in the code publicly shared by John Dickerson at https://github.com/JohnDickerson/KidneyExchange.
+
+The generator code in this file is a translation of the corresponding Java functions in the code publicly shared by John Dickerson at https://github.com/JohnDickerson/KidneyExchange.
 """
 
 """
- Compatibility graph generator based on the following paper:
- Increasing the Opportunity of Live Kidney Donation by Matching for Two and Three Way Exchanges. S. L. Saidman, Alvin Roth, Tayfun Sonmez, Utku Unver, Frank Delmonico. Transplantation, Volume 81, Number 5, March 15, 2006.
+    PoolGenerator
 
- This is known colloquially as the "Saidman Generator".
+Compatibility graph generator based on the following paper:
+Increasing the Opportunity of Live Kidney Donation by Matching for Two and Three Way Exchanges. S. L. Saidman, Alvin Roth, Tayfun Sonmez, Utku Unver, Frank Delmonico. Transplantation, Volume 81, Number 5, March 15, 2006.
+
+This is known colloquially as the "Saidman Generator".
 """
 mutable struct PoolGenerator
 	Pr_FEMALE::Float64
@@ -41,17 +44,22 @@ end
 
 
 """
+    SparseUNOSSaidmanPoolGenerator(id)
+
 A tweak to the published Saidman generator; distributions VERY ROUGHLY
 mimic the UNOS pool as of April 15, 2013.  Data taken from the KPD Work
 Group Data Analysis - CMR - June 2013 report.
-@author John P. Dickerson"""
+author John P. Dickerson
+"""
 function SparseUNOSSaidmanPoolGenerator(id::Int)
 	return PoolGenerator(0.4090, 0.4897, 0.216, 0.16, 0.50, 0.80, 0.98, 0.75, 0.651, 0.200, 0.124, 0.345, 0.459, 0.197, id)
 end
 
 """
- * Draws a random patient's blood type from the US distribution
- * @return Blood_type.{O,A,B,AB}
+    drawPatientBlood_type(pool_gen)
+
+* Draws a random patient's blood type from the US distribution
+* return Blood_type.{O,A,B,AB}
 """
 function drawPatientBlood_type(pool_gen::PoolGenerator)
 	r = rand()
@@ -68,10 +76,11 @@ function drawPatientBlood_type(pool_gen::PoolGenerator)
 end
 
 """
-  Draws a random donor's blood type from the US distribution
-  @return Blood_type.{O,A,B,AB}
- """
+    drawDonorBlood_type(pool_gen)
 
+- Draws a random donor's blood type from the US distribution
+- return Blood_type.{O,A,B,AB}
+"""
 function drawDonorBlood_type(pool_gen::PoolGenerator)
 	r = rand()
 
@@ -87,8 +96,10 @@ function drawDonorBlood_type(pool_gen::PoolGenerator)
 end
 
 """
- Draws a random gender from the US waitlist distribution
- @return true if patient is female, false otherwise
+    isPatientFemale(pool_gen)
+
+- Draws a random gender from the US waitlist distribution
+- return true if patient is female, false otherwise
 
 """
 function isPatientFemale(pool_gen::PoolGenerator)
@@ -96,29 +107,35 @@ function isPatientFemale(pool_gen::PoolGenerator)
 end
 
 """
- Draws a random spousal relationship between donor and patient
- @return true if willing donor is patient's spouse, false otherwise
- """
+    isDonorSpouse(pool_gen)
+
+- Draws a random spousal relationship between donor and patient
+- return true if willing donor is patient's spouse, false otherwise
+"""
 function isDonorSpouse(pool_gen::PoolGenerator)
 	return rand() <= pool_gen.Pr_SPOUSAL_DONOR
 end
 
 
 """
- Random roll to see if a patient and donor are crossmatch compatible
- @param pr_PraIncompatibility probability of a PRA-based incompatibility
- @return true is simulated positive crossmatch, false otherwise
- """
+    isPositiveCrossmatch(pr_PraIncompatibility::Float64)
+
+Random roll to see if a patient and donor are crossmatch compatible
+- `pr_PraIncompatibility`: probability of a PRA-based incompatibility
+- return true is simulated positive crossmatch, false otherwise
+"""
 function isPositiveCrossmatch(pr_PraIncompatibility::Float64)
 	return rand() <= pr_PraIncompatibility
 end
 
 """
+    generatePraIncompatibility(pool_gen, isWifePatient)
+
 Randomly generates CPRA (Calculated Panel Reactive Antibody) for a
 patient-donor pair, using the Saidman method.  If the patient is the
 donor's wife, then CPRA is increased.
-@param isWifePatient is the patent the wife of the donor?
-@return scaled CPRA double value between 0 and 1.0
+- `isWifePatient` is the patent the wife of the donor?
+- return scaled CPRA double value between 0 and 1.0
 """
 function generatePraIncompatibility(pool_gen::PoolGenerator, isWifePatient::Bool)
 	pr_PraIncompatibility = 0.0
@@ -146,10 +163,12 @@ function isCompatible(blood_type_donor::Blood_type, blood_type_patient::Blood_ty
 end
 
 """
- Randomly rolls a patient-donor pair (possibly compatible or incompatible)
- @param ID unique identifier for the vertex
- @return a patient-donor pair KPDVertexPair
- """
+    generatePair(pool_gen)
+
+Randomly rolls a patient-donor pair (possibly compatible or incompatible)
+- `ID` unique identifier for the vertex
+- return a patient-donor pair KPDVertexPair
+"""
 function generatePair(pool_gen::PoolGenerator)
 
 	# draw blood types for patient and donor, along with spousal details and probability of PositiveXM
@@ -165,9 +184,11 @@ function generatePair(pool_gen::PoolGenerator)
 end
 
 """
+    generateAltruist(pool_gen)
+
 Random rolls an altruistic donor (donor with no attached patient)
-@param ID unique identifier for the vertex
-@return altruistic donor vertex KPDVertexAltruist
+- `ID` unique identifier for the vertex
+- return altruistic donor vertex KPDVertexAltruist
 """
 function generateAltruist(pool_gen::PoolGenerator)
 	# Draw blood type for the altruist
