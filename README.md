@@ -1,4 +1,4 @@
-# KEP
+# KidneyExchange
 
 
 | **Documentation**                                                 | **Build Status**                                                                                |
@@ -34,8 +34,8 @@ To choose the solver, you need set the field `optimizer` of the `BP_params` or `
 - `Clp`: use Cbc for every integer program and solve the linear relaxations with Clp
 - `Cbc`: exactly the same as `Clp` (***default for MIP approaches***)
 - `GLPK-Cbc`: use Cbc for every integer program and solve the linear relaxations with GLPK (***default for branch-and-price***)
-- `CPLEX`: use exclusively CPLEX
-- `Gurobi`: use exclusively Gurobi
+- `CPLEX`: use exclusively CPLEX (_requires a licensed installation of CPLEX_)
+- `Gurobi`: use exclusively Gurobi (_requires a licensed installation of Gurobi_)
 
 For instance, if solving the instance stored in `filename.wmd` and `filename.dat`
 
