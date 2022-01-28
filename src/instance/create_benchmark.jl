@@ -13,6 +13,9 @@ Generate a KEP dataset and write in two text files with extensions .dat and .wmd
 * `index::Int`: index of the dataset, which will appear in the filename
 
 # Reference
+
+[RePEc:pra:mprapa:58247](@cite)
+
 "Increasing the Opportunity of Live Kidney Donation by Matching for Two and Three Way Exchanges". S. L. Saidman, Alvin Roth, Tayfun Sonmez, Utku Unver, Frank Delmonico. Transplantation, Volume 81, Number 5, March 15, 2006.
  """
 function generate_saidman_instance(nb_pairs::Int, nb_altruists::Int, index::Int)
@@ -64,7 +67,8 @@ end
 """
     generate_abraham_benchmark
 
-Generate a benchmark using the same method as that used in
+Generate a benchmark using the same method as that used in [Abraham2007ClearingAF](@cite)
+
 Abraham, David J., Avrim Blum, et Tuomas Sandholm. "Clearing Algorithms for Barter Exchange Markets: Enabling Nationwide Kidney Exchanges". In Proceedings of the 8th ACM Conference on Electronic Commerce, 295‑304. EC ’07. New York, NY, USA: ACM, 2007. https://doi.org/10.1145/1250910.1250954.
 """
 function generate_abraham_benchmark()
