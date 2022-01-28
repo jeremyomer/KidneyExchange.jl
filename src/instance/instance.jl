@@ -44,7 +44,7 @@ struct Instance
     # Parse instance from file
     function Instance(filename::String, K::Int, L::Int = 0)
         inst = string(filename)
-        data_folder = joinpath(join(split(@__DIR__, "/")[1:(end-2)], "/"), "data")
+		data_folder = joinpath(pkgdir(KidneyExchange), "data")
         wmd_file = joinpath(data_folder, join([inst, ".wmd"]))
         dat_file = joinpath(data_folder, join([inst, ".dat"]))
 
