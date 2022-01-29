@@ -3,6 +3,10 @@ include("master.jl")
 include("node.jl")
 include("subproblem.jl")
 
+function solve(filename::AbstractString, K::Int, L::Int, bp_params::BP_params, timer::TimerOutput = TimerOutput(), time_limit::Float64 = 600.0)
+    solve_with_BP(filename, K, L, bp_params, timer, time_limit)
+end
+
 """
     solve_with_BP
 

@@ -46,8 +46,9 @@ For instance, if solving the instance stored in `filename.wmd` and `filename.dat
 
 Load the module
 ```
-include("src/KidneyExchange.jl")
-using Main.KEP
+using Pkg
+pkg" add https://github.com/jeremyomer/KidneyExchange.jl.git"
+using KidneyExchange
 ```
 
 Generate an instance with 500 pairs of incompatible donors and receivers and 25 altruist donors

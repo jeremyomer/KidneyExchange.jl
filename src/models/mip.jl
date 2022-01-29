@@ -2,6 +2,10 @@ include("hpief.jl")
 include("reduced_extended_edge.jl")
 include("relaxed_arc.jl")
 
+function solve(filename::String, K::Int, L::Int, params::MIP_params, timer::TimerOutput = TimerOutput(), time_limit::Float64 = 600.0)
+    solve_with_mip(filename, K::Int, L::Int, params, timer, time_limit)
+end
+
 """
     solve_with_mip
 
