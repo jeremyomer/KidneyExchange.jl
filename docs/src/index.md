@@ -12,5 +12,5 @@ Depth = 2
 
 ## Index
 
-``@index
+```@index
 ```
