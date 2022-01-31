@@ -184,12 +184,20 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # ===============================================================
         # arc costs need to be updated only if not at root node
         max_cost = 0.0
-        if !instance.is_vertex_weighted || tree_node.index >= 2
+        if !instance.is_vertex_weighted || !isempty(tree_node.setone) || !isempty(tree_node.setzero)
             @timeit timer "calc arc cost" max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero, δ_one_vertex, δ_zero_vertex)
             arc_cost_trans = permutedims(arc_cost)
         else
             vertex_cost .= instance.vertex_weight
             vertex_cost .-= λ
+            if || !isempty(tree_node.setone_vertex) || !isempty(tree_node.setzero_vertex)
+                for v in keys(δ_one_vertex)
+                    vertex_cost[v] -= δ_one_vertex[v]
+                end
+                for v in keys(δ_zero_vertex)
+                    vertex_cost[v] -= δ_zero_vertex[v]
+                end
+            end
         end
 
         # 1. Search only for cycles at first

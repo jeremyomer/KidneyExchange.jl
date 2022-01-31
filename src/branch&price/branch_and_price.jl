@@ -101,7 +101,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 
     # initialise branch & price information
     bp_info = BP_info(-Inf,Inf,0)  # LB=-Inf, UB=Inf, nb_col_root=0
-    bp_status = BP_status(bp_info, "ON_GOING", -Inf, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 0, 0.0)
+    bp_status = BP_status(bp_info, "ON_GOING", -Inf, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 1, 0.0)
 
     while length(tree) >= 1
         current_node = pop!(tree)
@@ -116,9 +116,8 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
         column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
 
         # update branch & price information
-        bp_status.node_count += 1
-        if current_node.index == 1
-            bp_info.nb_col_root = 0
+        if bp_status.node_count == 1
+            # specific treatment for root node
             bp_info.nb_col_root += length(column_pool)
             if verbose println("After processing root node: LB = $(bp_info.LB), UB = $(current_node.ub)") end
 
@@ -157,14 +156,15 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 
             if is_fractional_vertex
                 # branch on the selected fractional vertex
-                branch_on_vertex(vertex_to_branch, mastermodel, tree, current_node, column_pool, bp_params.verbose)
+                branch_on_vertex(vertex_to_branch, mastermodel, tree, current_node, column_pool, bp_status.node_count, bp_params.verbose)
             else
                 # select a fractional arc to branch on
                 arc_to_branch, is_cg_branching = @timeit timer "calc_branch" get_branching_arc(column_flow, pief_flow)
 
                 # branch on the selected fractional arc
-                branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool, bp_params.verbose)
+                branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool, bp_status.node_count, bp_params.verbose)
             end
+            bp_status.node_count += 2
         else
             if verbose println("The node is either infeasible or pruned by bound") end
         end
@@ -310,22 +310,20 @@ Update the branch-and-bound tree with two new nodes by branching on the given ar
 * `tree::Vector{TreeNode}`: Branch-and-bound tree
 * `current_node::TreeNode`: Branch-and-bound node currently treated
 * `column_pool::Vector{Column}`: Pool of all columns in current master problem
+* `node_count::Int`: Number of BP nodes enumerated until now
 """
-function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, verbose::Bool = true)
-    current_index = current_node.index
-    next_index = 2 * current_index
-
+function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, node_count::Int, verbose::Bool = true)
     y = master[:y]
     if is_cg_branching
         if verbose println("Two new nodes are created by branching on variable column_flow[$(arc_to_branch.first), $(arc_to_branch.second)]") end
 
         # add each branching node in the tree
         node_zero = TreeNode(current_node)
-        node_zero.index = next_index
+        node_zero.index = node_count + 1
         push!(node_zero.setzero, arc_to_branch)
         push!(tree, node_zero)
         node_one = TreeNode(current_node)
-        node_one.index = next_index + 1
+        node_one.index = node_count + 2
         push!(node_one.setone, arc_to_branch)
         push!(tree, node_one)
 
@@ -337,11 +335,11 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
 
         # add each branching node in the tree
         node_zero = TreeNode(current_node)
-        node_zero.index = next_index
+        node_zero.index = node_count + 1
         push!(node_zero.setzero_pief, arc_to_branch)
         push!(tree, node_zero)
         node_one = TreeNode(current_node)
-        node_one.index = next_index + 1
+        node_one.index = node_count + 2
         push!(node_one.setone_pief, arc_to_branch)
         push!(tree, node_one)
 
@@ -361,21 +359,19 @@ Update the branch-and-bound tree with two new nodes by branching on the given ve
 * `tree::Vector{TreeNode}`: Branch-and-bound tree
 * `current_node::TreeNode`: Branch-and-bound node currently treated
 * `column_pool::Vector{Column}`: Pool of all columns in current master problem
+** `node_count::Int`: Number of BP nodes enumerated until now
 """
-function branch_on_vertex(vertex_to_branch::Int, master::Model,  tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, verbose::Bool = true)
-    current_index = current_node.index
-    next_index = 2 * current_index
-
+function branch_on_vertex(vertex_to_branch::Int, master::Model,  tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, node_count::Int, verbose::Bool = true)
     y = master[:y]
     if verbose println("Two new nodes are created by branching on vertex cover $vertex_to_branch") end
 
     # add each branching node in the tree
     node_zero = TreeNode(current_node)
-    node_zero.index = next_index
+    node_zero.index = node_count + 1
     push!(node_zero.setzero_vertex, vertex_to_branch)
     push!(tree, node_zero)
     node_one = TreeNode(current_node)
-    node_one.index = next_index + 1
+    node_one.index = node_count + 2
     push!(node_one.setone_vertex, vertex_to_branch)
     push!(tree, node_one)
 
