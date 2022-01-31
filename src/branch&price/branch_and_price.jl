@@ -91,7 +91,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     end
     tree = Vector{TreeNode}()
 
-    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}()))   #the branch and price tree is initialized with the root node
+    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}(), nv(graph), 0))   #the branch and price tree is initialized with the root node
 
     # initialize the master problem
     initial_time_limit_master_IP = bp_params.time_limit_master_IP
@@ -148,16 +148,33 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 
         # if the relaxation is not infeasible OR not eliminated by bound
         if (!isempty(column_flow) || !isempty(pief_flow)) && current_node.ub > bp_info.LB + ϵ
+            branching_done = false
+            if (K == 2) && (L == 0)
+                total_nb_arcs = 0.0
+                for it in column_flow
+                    total_nb_arcs += it.second
+                end
+                for it in pief_flow
+                    total_nb_arcs += it.second
+                end
+                total_nb_arcs = floor(Int, total_nb_arcs+ϵ)
+                if total_nb_arcs%2 != 0
+                     branch_on_nb_cols(total_nb_arcs, tree, current_node, bp_status.node_count)
+                     branching_done = true
+                end
+            end
             # first, search for a fractional vertex cover to branch on
             is_fractional_vertex = false
-            if bp_params.branch_on_vertex
-                vertex_to_branch, is_fractional_vertex = get_branching_vertex(graph, column_flow, pief_flow)
+            if bp_params.branch_on_vertex && !branching_done
+                vertex_to_branch, branching_done = get_branching_vertex(graph, column_flow, pief_flow)
+
+                if  branching_done
+                    # branch on the selected fractional vertex
+                    branch_on_vertex(vertex_to_branch, mastermodel, tree, current_node, column_pool, bp_status.node_count, bp_params.verbose)
+                end
             end
 
-            if is_fractional_vertex
-                # branch on the selected fractional vertex
-                branch_on_vertex(vertex_to_branch, mastermodel, tree, current_node, column_pool, bp_status.node_count, bp_params.verbose)
-            else
+            if !branching_done
                 # select a fractional arc to branch on
                 arc_to_branch, is_cg_branching = @timeit timer "calc_branch" get_branching_arc(column_flow, pief_flow)
 
@@ -349,6 +366,21 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
         master[:branch_zero_pief][arc_to_branch] = @constraint(master, sum(chain_flow[e[1],e[2],k] for k in 1:L) <= 1, base_name = "branch_zero_pief[$arc_to_branch]")
     end
 end
+
+function branch_on_nb_cols(total_nb_arcs::Int, tree::Vector{TreeNode}, current_node::TreeNode, node_count::Int, verbose::Bool = true)
+    if verbose println("Two new nodes are created by branching on the total number of arcs to get an even number") end
+
+    # add each branching node in the tree
+    node_max = TreeNode(current_node)
+    node_max.index = node_count + 1
+    node_max.nb_cols_max = (total_nb_arcs - 1)/2
+    push!(tree, node_max)
+    node_min = TreeNode(current_node)
+    node_min.index = node_count + 2
+    node_min.nb_cols_min = (total_nb_arcs + 1)/2
+    push!(tree, node_min)
+end
+
 """
     branch_on_vertex
 Update the branch-and-bound tree with two new nodes by branching on the given vertex.

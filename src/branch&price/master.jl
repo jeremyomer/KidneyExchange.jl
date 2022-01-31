@@ -82,6 +82,11 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
         master[:branch_zero_pief] = Dict{Pair{Int64, Int64}, ConstraintRef}()
     end
 
+    # branching constraint on the total number of arcs which should be even when K=2 and L=0
+    @constraint(master, branch_nb_arcs_max, sum(y[c] for c in 1:length(column_pool)) <= nv(graph))
+    @constraint(master, branch_nb_arcs_min, sum(y[c] for c in 1:length(column_pool)) >= 0)
+
+
     # objective
     if bp_params.is_pief && L >= 1
         @objective(master, Max, sum(column_pool[c].weight * y[c] for c in 1:length(column_pool)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,1] for  u in instance.altruists for v in outneighbors(graph, u)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,k] for u in instance.pairs for v in outneighbors(graph, u) for k  in 2:L))
@@ -129,6 +134,10 @@ function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_p
             set_normalized_rhs(branch_zero_pief[e], 0)
         end
     end
+
+    # - branching constraints on the number of arcs in the solution
+    set_normalized_rhs(master[:branch_nb_arcs_max], tree_node.nb_cols_max)
+    set_normalized_rhs(master[:branch_nb_arcs_min], tree_node.nb_cols_min)
 end
 
 """
@@ -168,6 +177,10 @@ function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp
             set_normalized_rhs(branch_zero_pief[e], 1)
         end
     end
+
+    # - branching constraints on the number of arcs in the solution
+    set_normalized_rhs(master[:branch_nb_arcs_max], tree_node.nb_cols_max)
+    set_normalized_rhs(master[:branch_nb_arcs_min], tree_node.nb_cols_min)
 end
 
 """

@@ -40,6 +40,12 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 println("- the arcs set to one in pief are:", tree_node.setone_pief)
             end
         end
+        if tree_node.nb_cols_max < nv(graph)
+            println("- maximum number of arcs in solution $(2*tree_node.nb_cols_max)")
+        end
+        if tree_node.nb_cols_min > 0
+            println("- minimum number of arcs in solution $(2*tree_node.nb_cols_min)")
+        end
     end
 
     # start by solving the relaxed master problem
@@ -76,6 +82,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # ==============================================================
         if JuMP.termination_status(mastermodel) != MOI.OPTIMAL
             # println(mastermodel)
+            return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
             error("The master problem relaxation has not been solved to optimality")
         end
         master_value = JuMP.objective_value(mastermodel)
@@ -123,6 +130,18 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 δ_zero_vertex[v] = -δ_zero_vertex[v]
             end
         end
+
+        # get the duals of the branching constraint on the number of arcs (useful only for K=2, L=0)
+        δ_nb_arcs_max = shadow_price(mastermodel[:branch_nb_arcs_max])
+        δ_nb_arcs_min = shadow_price(mastermodel[:branch_nb_arcs_min])
+        # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+        if δ_nb_arcs_max < 0
+            δ_nb_arcs_max = -δ_nb_arcs_max
+        end
+        if δ_nb_arcs_min > 0
+            δ_nb_arcs_min = -δ_nb_arcs_min
+        end
+        δ_nb_arcs = δ_nb_arcs_max + δ_nb_arcs_min
 
         # ===============================================================
         #  Check whether the solution is integer or not and recover the corresponding solution if it is integer
@@ -227,9 +246,9 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
             # in the presence of branching constraints on the arcs covered by columns, there are dual variables on arcs, so a different cycle search must be called
             if !instance.is_vertex_weighted || !isempty(tree_node.setzero) || !isempty(tree_node.setone)
-                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, arc_cost, arc_cost_trans, max_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, arc_cost, arc_cost_trans, max_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
             else
-                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, vertex_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, vertex_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
             end
 
             # add one column for each positive cycle we just found
@@ -285,15 +304,15 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 # in the presence of branching constraints on the arcs covered by columns, there are dual variables on arcs, so a different chain search must be called
                 if !instance.is_vertex_weighted || !isempty(tree_node.setone) || !isempty(tree_node.setzero)
                     if to_optimality && !cycle_added
-                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     else
-                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     end
                 else
                     if to_optimality && !cycle_added
-                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     else
-                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     end
                 end
 
@@ -545,6 +564,8 @@ function add_column_to_master(column::Column, mastermodel::Model, tree_node::Tre
     set_objective_coefficient(mastermodel, y[end], column.weight)
 
     # set the coefficient of the new column in every branching constraint (including those that are not active at this node)
+    set_normalized_coefficient(mastermodel[:branch_nb_arcs_max], y[end], 1)
+    set_normalized_coefficient(mastermodel[:branch_nb_arcs_min], y[end], 1)
     branch_one = mastermodel[:branch_one]
     for arc in keys(branch_one)
         if arc in column.arcs

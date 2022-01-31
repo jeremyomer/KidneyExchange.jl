@@ -86,7 +86,7 @@ Bellman-Ford style search for one positive cost cycle
 # Return values
 * `cycle::Vector{Int}`: the positive cycle found, [] if none
 """
-function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Float64}, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64})
+function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Float64}, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d::Vector{Float64}, constant_cost::Float64)
     if K <= 1 return [] end
 
     # initialize distances
@@ -95,7 +95,7 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Flo
         d[u] = -Inf
         pred[1][u]=0
     end
-    d[source] = vertex_cost[source]  # we can count the return arc cost right away
+    d[source] = constant_cost + vertex_cost[source]  # we can count the return arc cost right away
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
@@ -205,14 +205,14 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Flo
     return []
 end
 
-function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64,2}, arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64})
+function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64,2}, arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d::Vector{Float64}, constant_cost::Float64)
     if K <= 1 return [] end
     # initialize distances
     for u in 1:nv(graph)
         d[u] = -Inf
     end
     pred[1] .= zeros(Int, nv(graph))
-    d[source] = 0.0
+    d[source] = constant_cost
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
@@ -273,7 +273,7 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64
 end
 
 
-function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, verbose::Bool = true)
+function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
     if L == 0   return []    end
     # initialize distances to vertices
     tmp_d = Vector{Float64}(undef, nv(graph))
@@ -281,7 +281,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = vertex_cost[source]  # count the dual cost of the altruist source vertex
+    d[source] = constant_cost + vertex_cost[source]  # count the dual cost of the altruist source vertex
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
@@ -352,7 +352,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{
     return []
 end
 
-function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, verbose::Bool = true)
+function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
     if L == 0   return [], false    end
     # initialize distances to vertices
     tmp_d = Vector{Float64}(undef, nv(graph))
@@ -360,7 +360,7 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_co
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = vertex_cost[source]  # count the dual cost of the altruist source vertex
+    d[source] = constant_cost + vertex_cost[source]  # count the dual cost of the altruist source vertex
     is_positive_cycle = false  # true if a positive cycle was found at some point
 
     # Bellman-Ford search
@@ -427,7 +427,7 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_co
     return [], is_positive_cycle
 end
 
-function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, verbose::Bool = true)
+function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
     if L == 0
         return []
     end
@@ -437,7 +437,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matr
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = 0.0
+    d[source] = constant_cost
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
@@ -497,7 +497,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matr
     return []
 end
 
-function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, verbose::Bool = true)
+function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
     if L == 0
         return [], false
     end
@@ -507,7 +507,7 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    arc_cost_
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = 0.0
+    d[source] = constant_cost
     is_positive_cycle = false  # true if a positive cycle was found at some point
 
     # Bellman-Ford search
