@@ -101,7 +101,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 
     # initialise branch & price information
     bp_info = BP_info(-Inf,Inf,0)  # LB=-Inf, UB=Inf, nb_col_root=0
-    bp_status = BP_status(bp_info, "ON_GOING", -Inf, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 1, 0.0)
+    bp_status = BP_status(bp_info, "ON_GOING", -Inf, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 1, 0.0, 0)
 
     while length(tree) >= 1
         current_node = pop!(tree)

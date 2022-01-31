@@ -137,6 +137,7 @@ end
   * `best_chains::Vector{Vector{Int}}`: selected chains in the best primal value
   * `node_count::Int`: total number of branch-and-bound nodes explored during the solution proces
   * `solve_time::Float64`: time spent in the solution process; this might be different from the specified time limit even if status is TIME_LIMIT, since parsing and preprocessing is counted in cpu time
+  * `nb_cols_last_ip::Int`: number of columns in the master IP at last solution
 """
 mutable struct BP_status
   bp_info:: BP_info
@@ -147,4 +148,5 @@ mutable struct BP_status
   best_chains::Vector{Vector{Int}}
   node_count::Int
   solve_time::Float64
+  nb_cols_last_ip::Int
 end
