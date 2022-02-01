@@ -1,4 +1,4 @@
-module KEP
+module KidneyExchange
 
 # Package dependencies
 using Cbc

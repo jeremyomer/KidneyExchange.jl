@@ -7,14 +7,17 @@ Contruct a KEP graph from a `.wmd` and a `.dat` input files
 * `wmd_file::String` : Absolute path of the `.wmd` file.
 * `dat_file::String` : Absolute path of the `.dat` file.
 """
-function read_kep_file(wmd_file::String, dat_file::String)
+function read_kep_file(wmd_file::AbstractString, dat_file::AbstractString)
 
-    wmd_file_name = split(split(wmd_file, '/')[end], '.')[1]
-    dat_file_name = split(split(dat_file, '/')[end], '.')[1]
+    #wmd_file_name = split(split(wmd_file, '/')[end], '.')[1]
+    #dat_file_name = split(split(dat_file, '/')[end], '.')[1]
+	
+	wmd_file_name = first(splitext(last(splitpath(wmd_file))))
+	dat_file_name = first(splitext(last(splitpath(dat_file))))
 
     wmd_file_name == dat_file_name || throw(ArgumentError(".wmd and .dat files do not correspond to the same dataset."))
-    isfile(wmd_file) || throw(ArgumentError("$(wmd_file): file not found."))
-    isfile(dat_file) || throw(ArgumentError(".dat file not found."))
+	isfile(abspath(wmd_file)) || throw(ArgumentError("$(abspath(wmd_file)): file not found."))
+	isfile(abspath(dat_file)) || throw(ArgumentError(".dat file not found."))
 
 	# Get the number of vertices and edges from the first line of wmd file
     wmd_io = open(wmd_file, "r")

@@ -1,4 +1,4 @@
-include("src/KEP.jl")
+include("src/KidneyExchange.jl")
 using Main.KEP
 using ArgParse
 using Gurobi

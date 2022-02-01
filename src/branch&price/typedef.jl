@@ -7,13 +7,15 @@ mutable struct TreeNode
   setone_pief::Vector{Pair{Int,Int}}  # list of branching arcs set to one in the pief chain cover, stored as Pair (vertex n => vertex m)
   setzero_vertex::Vector{Int}  # list of branching vertices set to zero in the column cover
   setone_vertex::Vector{Int}  # list of of branching vertices set to one in the column cover
+  nb_cols_max::Int  # maximum number of arcs in branching constraint
+  nb_cols_min::Int  # minimum number of arcs in branching constraint
 
   function TreeNode(node::TreeNode)
-    return new(node.index, node.ub, copy(node.setzero), copy(node.setone), copy(node.setzero_pief), copy(node.setone_pief), copy(node.setzero_vertex), copy(node.setone_vertex))
+    return new(node.index, node.ub, copy(node.setzero), copy(node.setone), copy(node.setzero_pief), copy(node.setone_pief), copy(node.setzero_vertex), copy(node.setone_vertex), copy(node.nb_cols_max), copy(node.nb_cols_min))
   end
 
-  function TreeNode(_index::Int, _ub::Float64, _setzero::Vector{Pair{Int,Int}}, _setone::Vector{Pair{Int,Int}}, _setzero_pief::Vector{Pair{Int,Int}}, _setone_pief::Vector{Pair{Int,Int}},  _setzero_vertex::Vector{Int}, _setone_vertex::Vector{Int})
-    return new(_index, _ub, copy(_setzero), copy(_setone), copy(_setzero_pief), copy(_setone_pief), copy(_setzero_vertex), copy(_setone_vertex))
+  function TreeNode(_index::Int, _ub::Float64, _setzero::Vector{Pair{Int,Int}}, _setone::Vector{Pair{Int,Int}}, _setzero_pief::Vector{Pair{Int,Int}}, _setone_pief::Vector{Pair{Int,Int}},  _setzero_vertex::Vector{Int}, _setone_vertex::Vector{Int}, _nb_arcs_max, _nb_arcs_min)
+    return new(_index, _ub, copy(_setzero), copy(_setone), copy(_setzero_pief), copy(_setone_pief), copy(_setzero_vertex), copy(_setone_vertex), _nb_arcs_max, _nb_arcs_min)
   end
 end
 
@@ -137,6 +139,7 @@ end
   * `best_chains::Vector{Vector{Int}}`: selected chains in the best primal value
   * `node_count::Int`: total number of branch-and-bound nodes explored during the solution proces
   * `solve_time::Float64`: time spent in the solution process; this might be different from the specified time limit even if status is TIME_LIMIT, since parsing and preprocessing is counted in cpu time
+  * `nb_cols_last_ip::Int`: number of columns in the master IP at last solution
 """
 mutable struct BP_status
   bp_info:: BP_info
@@ -147,4 +150,5 @@ mutable struct BP_status
   best_chains::Vector{Vector{Int}}
   node_count::Int
   solve_time::Float64
+  nb_cols_last_ip::Int
 end

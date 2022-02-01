@@ -3,12 +3,16 @@ include("master.jl")
 include("node.jl")
 include("subproblem.jl")
 
+function solve(filename::AbstractString, K::Int, L::Int, bp_params::BP_params, timer::TimerOutput = TimerOutput(), time_limit::Float64 = 600.0)
+    solve_with_BP(filename, K, L, bp_params, timer, time_limit)
+end
+
 """
     solve_with_BP
 
 This is the main function to call for an execution of the branch-and-price algorithm on input file with given bounds on the length of covering cycles and chains and given options
 
-#Input parameters
+# Arguments
 * `filename::String`: path of the input data files, this should include the name of the files, but not the .dat and .wmd extensions
 * `K::Int`: maximum length of cycles
 * `L::Int`: maximum length of chains
@@ -58,7 +62,7 @@ end
 
 Core function of the KEP solution with branch-and-price. It requires a parsed instance and the description of the graph copies. The column generation model is that of Riazcos-Alvarez et al (2020), but the many improvements have been added, in particular in the solution of the subproblem.
 
-#Input parameters
+# Arguments
 * `instance::Instance`: The parsed instance that is to be solved, it contains the KEP graph and the bounds on the length of covering cycles and chains
 * `subgraphs::Graph_copies`: Description of the graph copies of the extended edge formulation
 * `bp_params::BP_params`: solution parameters of the branch-and-price
@@ -87,7 +91,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     end
     tree = Vector{TreeNode}()
 
-    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}()))   #the branch and price tree is initialized with the root node
+    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}(), nv(graph), 0))   #the branch and price tree is initialized with the root node
 
     # initialize the master problem
     initial_time_limit_master_IP = bp_params.time_limit_master_IP
@@ -97,7 +101,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 
     # initialise branch & price information
     bp_info = BP_info(-Inf,Inf,0)  # LB=-Inf, UB=Inf, nb_col_root=0
-    bp_status = BP_status(bp_info, "ON_GOING", -Inf, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 0, 0.0)
+    bp_status = BP_status(bp_info, "ON_GOING", -Inf, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 1, 0.0, 0)
 
     while length(tree) >= 1
         current_node = pop!(tree)
@@ -112,9 +116,8 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
         column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
 
         # update branch & price information
-        bp_status.node_count += 1
-        if current_node.index == 1
-            bp_info.nb_col_root = 0
+        if bp_status.node_count == 1
+            # specific treatment for root node
             bp_info.nb_col_root += length(column_pool)
             if verbose println("After processing root node: LB = $(bp_info.LB), UB = $(current_node.ub)") end
 
@@ -145,22 +148,40 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 
         # if the relaxation is not infeasible OR not eliminated by bound
         if (!isempty(column_flow) || !isempty(pief_flow)) && current_node.ub > bp_info.LB + ϵ
+            branching_done = false
+            if (K == 2) && (L == 0)
+                total_nb_arcs = 0.0
+                for it in column_flow
+                    total_nb_arcs += it.second
+                end
+                for it in pief_flow
+                    total_nb_arcs += it.second
+                end
+                total_nb_arcs = floor(Int, total_nb_arcs+ϵ)
+                if total_nb_arcs%2 != 0
+                     branch_on_nb_cols(total_nb_arcs, tree, current_node, bp_status.node_count)
+                     branching_done = true
+                end
+            end
             # first, search for a fractional vertex cover to branch on
             is_fractional_vertex = false
-            if bp_params.branch_on_vertex
-                vertex_to_branch, is_fractional_vertex = get_branching_vertex(graph, column_flow, pief_flow)
+            if bp_params.branch_on_vertex && !branching_done
+                vertex_to_branch, branching_done = get_branching_vertex(graph, column_flow, pief_flow)
+
+                if  branching_done
+                    # branch on the selected fractional vertex
+                    branch_on_vertex(vertex_to_branch, mastermodel, tree, current_node, column_pool, bp_status.node_count, bp_params.verbose)
+                end
             end
 
-            if is_fractional_vertex
-                # branch on the selected fractional vertex
-                branch_on_vertex(vertex_to_branch, mastermodel, tree, current_node, column_pool, bp_params.verbose)
-            else
+            if !branching_done
                 # select a fractional arc to branch on
                 arc_to_branch, is_cg_branching = @timeit timer "calc_branch" get_branching_arc(column_flow, pief_flow)
 
                 # branch on the selected fractional arc
-                branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool, bp_params.verbose)
+                branch_on_arc(arc_to_branch, mastermodel, is_cg_branching, tree, current_node, column_pool, bp_status.node_count, bp_params.verbose)
             end
+            bp_status.node_count += 2
         else
             if verbose println("The node is either infeasible or pruned by bound") end
         end
@@ -306,22 +327,20 @@ Update the branch-and-bound tree with two new nodes by branching on the given ar
 * `tree::Vector{TreeNode}`: Branch-and-bound tree
 * `current_node::TreeNode`: Branch-and-bound node currently treated
 * `column_pool::Vector{Column}`: Pool of all columns in current master problem
+* `node_count::Int`: Number of BP nodes enumerated until now
 """
-function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, verbose::Bool = true)
-    current_index = current_node.index
-    next_index = 2 * current_index
-
+function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, node_count::Int, verbose::Bool = true)
     y = master[:y]
     if is_cg_branching
         if verbose println("Two new nodes are created by branching on variable column_flow[$(arc_to_branch.first), $(arc_to_branch.second)]") end
 
         # add each branching node in the tree
         node_zero = TreeNode(current_node)
-        node_zero.index = next_index
+        node_zero.index = node_count + 1
         push!(node_zero.setzero, arc_to_branch)
         push!(tree, node_zero)
         node_one = TreeNode(current_node)
-        node_one.index = next_index + 1
+        node_one.index = node_count + 2
         push!(node_one.setone, arc_to_branch)
         push!(tree, node_one)
 
@@ -333,11 +352,11 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
 
         # add each branching node in the tree
         node_zero = TreeNode(current_node)
-        node_zero.index = next_index
+        node_zero.index = node_count + 1
         push!(node_zero.setzero_pief, arc_to_branch)
         push!(tree, node_zero)
         node_one = TreeNode(current_node)
-        node_one.index = next_index + 1
+        node_one.index = node_count + 2
         push!(node_one.setone_pief, arc_to_branch)
         push!(tree, node_one)
 
@@ -347,6 +366,21 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
         master[:branch_zero_pief][arc_to_branch] = @constraint(master, sum(chain_flow[e[1],e[2],k] for k in 1:L) <= 1, base_name = "branch_zero_pief[$arc_to_branch]")
     end
 end
+
+function branch_on_nb_cols(total_nb_arcs::Int, tree::Vector{TreeNode}, current_node::TreeNode, node_count::Int, verbose::Bool = true)
+    if verbose println("Two new nodes are created by branching on the total number of arcs to get an even number") end
+
+    # add each branching node in the tree
+    node_max = TreeNode(current_node)
+    node_max.index = node_count + 1
+    node_max.nb_cols_max = (total_nb_arcs - 1)/2
+    push!(tree, node_max)
+    node_min = TreeNode(current_node)
+    node_min.index = node_count + 2
+    node_min.nb_cols_min = (total_nb_arcs + 1)/2
+    push!(tree, node_min)
+end
+
 """
     branch_on_vertex
 Update the branch-and-bound tree with two new nodes by branching on the given vertex.
@@ -357,21 +391,19 @@ Update the branch-and-bound tree with two new nodes by branching on the given ve
 * `tree::Vector{TreeNode}`: Branch-and-bound tree
 * `current_node::TreeNode`: Branch-and-bound node currently treated
 * `column_pool::Vector{Column}`: Pool of all columns in current master problem
+** `node_count::Int`: Number of BP nodes enumerated until now
 """
-function branch_on_vertex(vertex_to_branch::Int, master::Model,  tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, verbose::Bool = true)
-    current_index = current_node.index
-    next_index = 2 * current_index
-
+function branch_on_vertex(vertex_to_branch::Int, master::Model,  tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, node_count::Int, verbose::Bool = true)
     y = master[:y]
     if verbose println("Two new nodes are created by branching on vertex cover $vertex_to_branch") end
 
     # add each branching node in the tree
     node_zero = TreeNode(current_node)
-    node_zero.index = next_index
+    node_zero.index = node_count + 1
     push!(node_zero.setzero_vertex, vertex_to_branch)
     push!(tree, node_zero)
     node_one = TreeNode(current_node)
-    node_one.index = next_index + 1
+    node_one.index = node_count + 2
     push!(node_one.setone_vertex, vertex_to_branch)
     push!(tree, node_one)
 

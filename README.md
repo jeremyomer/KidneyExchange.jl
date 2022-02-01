@@ -1,4 +1,10 @@
-# KEP
+# KidneyExchange
+
+
+| **Documentation**                                                 | **Build Status**                                                                                |
+|:-----------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
+| [![][docs-dev-img]][docs-dev-url] | [![][ci-img]][ci-url] [![][codecov-img]][codecov-url] |
+
 
 This a Julia package to solve the deterministic kidney exchange problem. It provides five different solving methods, two of which are based on a branch-and-price algorithms. The other three methods consist in solving integer programming compact formulations. These methods are described in the following article:
 ***give the citation of the HAL report once submitted***
@@ -28,8 +34,8 @@ To choose the solver, you need set the field `optimizer` of the `BP_params` or `
 - `Clp`: use Cbc for every integer program and solve the linear relaxations with Clp
 - `Cbc`: exactly the same as `Clp` (***default for MIP approaches***)
 - `GLPK-Cbc`: use Cbc for every integer program and solve the linear relaxations with GLPK (***default for branch-and-price***)
-- `CPLEX`: use exclusively CPLEX
-- `Gurobi`: use exclusively Gurobi
+- `CPLEX`: use exclusively CPLEX (_requires a licensed installation of CPLEX_)
+- `Gurobi`: use exclusively Gurobi (_requires a licensed installation of Gurobi_)
 
 For instance, if solving the instance stored in `filename.wmd` and `filename.dat`
 
@@ -40,8 +46,9 @@ For instance, if solving the instance stored in `filename.wmd` and `filename.dat
 
 Load the module
 ```
-include("src/KEP.jl")
-using Main.KEP
+using Pkg
+pkg" add https://github.com/jeremyomer/KidneyExchange.jl.git"
+using KidneyExchange
 ```
 
 Generate an instance with 500 pairs of incompatible donors and receivers and 25 altruist donors
@@ -57,4 +64,13 @@ Solve the instance using one of its compact MIP formulations (HPIEF by default)
 `solve_with_mip("sparse/sparse_500_25_1", 3, 4);`
 
 Specify another MIP formulation (true is to keep verbosity)
-`solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KEP.EXTENDED_EDGE, true));`
+`solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KidneyExchange.EXTENDED_EDGE, true));`
+
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-dev-url]: https://jeremyomer.github.io/KidneyExchange.jl/dev/
+
+[ci-img]: https://github.com/jeremyomer/KidneyExchange.jl/workflows/CI/badge.svg?branch=master
+[ci-url]: https://github.com/jeremyomer/KidneyExchange.jl/actions?query=workflow%3A%22CI%22
+
+[codecov-img]: https://codecov.io/gh/jeremyomer/KidneyExchange.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/jeremyomer/KidneyExchange.jl

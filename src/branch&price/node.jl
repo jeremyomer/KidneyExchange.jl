@@ -3,11 +3,11 @@
 
 Columns generation of the node
 
-#Input parameter
-* `tree_node::TreeNode`: Branch-and-bound node to solve with column generation
+# Input parameter
+- `tree_node::TreeNode`: Branch-and-bound node to solve with column generation
 
-#Output parameter
-* `column_flow::Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)`
+# Output parameter
+- `column_flow::Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)`
 """
 function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Model, subgraphs::Graph_copies, bp_status::BP_status, column_pool::Vector{Column},  bp_params::BP_params, master_IP::Model, timer::TimerOutput, time_limit::Float64)
     # local variables
@@ -39,6 +39,12 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             if !isempty(tree_node.setone_pief)
                 println("- the arcs set to one in pief are:", tree_node.setone_pief)
             end
+        end
+        if tree_node.nb_cols_max < nv(graph)
+            println("- maximum number of arcs in solution $(2*tree_node.nb_cols_max)")
+        end
+        if tree_node.nb_cols_min > 0
+            println("- minimum number of arcs in solution $(2*tree_node.nb_cols_min)")
         end
     end
 
@@ -76,6 +82,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # ==============================================================
         if JuMP.termination_status(mastermodel) != MOI.OPTIMAL
             # println(mastermodel)
+            return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
             error("The master problem relaxation has not been solved to optimality")
         end
         master_value = JuMP.objective_value(mastermodel)
@@ -123,6 +130,18 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 δ_zero_vertex[v] = -δ_zero_vertex[v]
             end
         end
+
+        # get the duals of the branching constraint on the number of arcs (useful only for K=2, L=0)
+        δ_nb_arcs_max = shadow_price(mastermodel[:branch_nb_arcs_max])
+        δ_nb_arcs_min = shadow_price(mastermodel[:branch_nb_arcs_min])
+        # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+        if δ_nb_arcs_max < 0
+            δ_nb_arcs_max = -δ_nb_arcs_max
+        end
+        if δ_nb_arcs_min > 0
+            δ_nb_arcs_min = -δ_nb_arcs_min
+        end
+        δ_nb_arcs = δ_nb_arcs_max + δ_nb_arcs_min
 
         # ===============================================================
         #  Check whether the solution is integer or not and recover the corresponding solution if it is integer
@@ -184,12 +203,20 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # ===============================================================
         # arc costs need to be updated only if not at root node
         max_cost = 0.0
-        if !instance.is_vertex_weighted || tree_node.index >= 2
-            @timeit timer "calc arc cost" max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero, δ_one_vertex, δ_zero_vertex)
+        if !instance.is_vertex_weighted || !isempty(tree_node.setone) || !isempty(tree_node.setzero)
+            max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero, δ_one_vertex, δ_zero_vertex)
             arc_cost_trans = permutedims(arc_cost)
         else
             vertex_cost .= instance.vertex_weight
             vertex_cost .-= λ
+            if !isempty(tree_node.setone_vertex) || !isempty(tree_node.setzero_vertex)
+                for v in keys(δ_one_vertex)
+                    vertex_cost[v] -= δ_one_vertex[v]
+                end
+                for v in keys(δ_zero_vertex)
+                    vertex_cost[v] -= δ_zero_vertex[v]
+                end
+            end
         end
 
         # 1. Search only for cycles at first
@@ -219,9 +246,9 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
             # in the presence of branching constraints on the arcs covered by columns, there are dual variables on arcs, so a different cycle search must be called
             if !instance.is_vertex_weighted || !isempty(tree_node.setzero) || !isempty(tree_node.setone)
-                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, arc_cost, arc_cost_trans, max_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, arc_cost, arc_cost_trans, max_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
             else
-                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, vertex_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, vertex_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
             end
 
             # add one column for each positive cycle we just found
@@ -277,15 +304,15 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 # in the presence of branching constraints on the arcs covered by columns, there are dual variables on arcs, so a different chain search must be called
                 if !instance.is_vertex_weighted || !isempty(tree_node.setone) || !isempty(tree_node.setzero)
                     if to_optimality && !cycle_added
-                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     else
-                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     end
                 else
                     if to_optimality && !cycle_added
-                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     else
-                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman)
+                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
                     end
                 end
 
@@ -355,7 +382,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             end
 
             # compute are reduced costs
-            @timeit timer "calc arc cost" max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero)
+            max_cost = (instance, arc_cost, λ, δ_one, δ_zero, δ_one_vertex, δ_zero_vertex)
 
             # solve each subproblem independently
             for l in subproblems_for_mip
@@ -421,10 +448,12 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
     # find a feasible solution at current node by solving the master IP
     if bp_params.solve_master_IP &&
-        (bp_status.bp_info.LB < tree_node.ub - ϵ) &&  (bp_status.node_count%(bp_params.freq_solve_master_IP) == 0)
+        (bp_status.bp_info.LB < tree_node.ub - ϵ) &&  (bp_status.node_count%(bp_params.freq_solve_master_IP) == 0) &&
+        (length(column_pool) >= 1.10 * bp_status.nb_cols_last_ip)
         if verbose println("\n Search for a feasible solution at node $(tree_node.index)") end
 
         @timeit timer "IP_master" solve_master_IP(master_IP, column_pool, instance, bp_status, bp_params)
+        bp_status.nb_cols_last_ip = length(column_pool)
     end
 
     return column_flow, pief_flow
@@ -436,11 +465,11 @@ end
 
 Extract a integer feasible solution from the fractional solution by conserving a set of vertex-disjoint cycles or chains
 
-#Input parameters
+# Arguments
 * `fractional_solution::Array{Array{Float64,1},1}`: The set of value of variables indicating whether or not cycles and chains are selected
 * `node_columns::Array{Array{Column,1},1}`: The set of cycles and chains associated with variables
 
-#Output parametes
+# Output parameters
 * `feas_val::Real`:  The objective value of the feasible solution
 * `columns::Array{Array{Int,1},1}`: The set of selected cycles and chains of the feasible solution
 """
@@ -487,7 +516,7 @@ end
 
 Gives a set of indices of cycle in cycles who have common vertices with cycle
 
-#Input parameters
+# Arguments
 * `cycle::Array{Int,1}`: The vertices of cycle
 * `cycles::Array{Array{Int,1},1}`: The set of cycles
 
@@ -514,11 +543,11 @@ end
 """
 add_column_to_master
 
-#Input parameters
+# Arguments
 * `column::Column`: Column to add to the master model
 * `mastermodel::Model`: JuMP model for current master problem
 * `treenode::TreeNode`: Information on current tree node
-#Output parameters: None
+# Return values: None
 """
 
 function add_column_to_master(column::Column, mastermodel::Model, tree_node::TreeNode)
@@ -535,6 +564,8 @@ function add_column_to_master(column::Column, mastermodel::Model, tree_node::Tre
     set_objective_coefficient(mastermodel, y[end], column.weight)
 
     # set the coefficient of the new column in every branching constraint (including those that are not active at this node)
+    set_normalized_coefficient(mastermodel[:branch_nb_arcs_max], y[end], 1)
+    set_normalized_coefficient(mastermodel[:branch_nb_arcs_min], y[end], 1)
     branch_one = mastermodel[:branch_one]
     for arc in keys(branch_one)
         if arc in column.arcs
@@ -577,14 +608,15 @@ end
 
 """
     compute_arc_flow
+
 Calculates the relaxed value of the decision variable x_(i,j) of arc (i->j) in A.
 x_(i,j) whose value >0 is stored in x::Dict{Pair{Int,Int}, Float64}
 
-#Input parameters
+# Arguments
 * `mastersol::Vector{Float64}`: solution value of the master problem, ie: y[c] for c in cycles
 * `node_columns::Vector{Column}`: The corresponding cycles of current node
 
-#Output parameters
+# Return values
 * `x:: Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)
 """
 function compute_arc_flow(mastersol::Vector{Float64}, node_columns::Vector{Column})

@@ -1,7 +1,7 @@
 """
-    solve_hpief_mip
+    build_hpief_mip(instance, subgraphs, params; maxtime = 600)
 
-    A compact MIP formulation originally proposed by Dickerson et al. (2016). The hybrid position indexed edge formulation (HPIEF) handles cycles and chains in the same formulation.
+A compact MIP formulation originally proposed by [Dickerson2016](@cite). The hybrid position indexed edge formulation (HPIEF) handles cycles and chains in the same formulation.
 """
 function build_hpief_mip(instance::Instance, subgraphs::Graph_copies, params::MIP_params, maxtime::Float64 = 600)
     if params.verbose println("- build the JuMP model") end
