@@ -86,14 +86,14 @@ The instances are stored in the subdirectories `heterogeneous`, `sparse` and `sa
 """
 function generate_complete_benchmark()
     Random.seed!(30112021)
-    list_nb_pairs = [128,256,512,1024,2048,6000,1000]
+    list_nb_pairs = [128,256,512,1024,2048,6000,10000]
     for nb_pairs in list_nb_pairs
         for k in 1:10
             generate_heterogeneous_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
             generate_sparse_unos_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
         end
     end
-    list_nb_pairs = [6000,1000]
+    list_nb_pairs = [6000,10000]
     for nb_pairs in list_nb_pairs
         for k in 1:10
             generate_saidman_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
