@@ -59,11 +59,6 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
     if bp_params.is_tabu_list
         to_optimality = false
     end
-    subproblems_for_mip = Vector{Int}()  # list of subproblems that need to be solved optimally if no chain nor cycle was found
-    column_flow = Dict{Pair{Int,Int}, Float64}()  # flow on arcs due to the selection of columns (cycles or chains)
-    pief_flow = Dict{Pair{Int,Int}, Float64}()  # flow on arcs from the chain flow variables of the pief master model
-
-    # preallocated vectors for Bellman speedup
     pred_for_bellman = Vector{Vector{Int}}(undef, max(K,L))
     for k = 1:(max(K,L))
         pred_for_bellman[k] = zeros(Int, nv(graph))
