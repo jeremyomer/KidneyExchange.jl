@@ -24,6 +24,10 @@ function get_type(
         return ne(subgraph) - nv(subgraph) + 1
     end
 
+    if nv(subgraph) == 4
+        
+    end
+
     return 0
 end
 
@@ -44,10 +48,9 @@ function get_expectation(
 
 end
 
-function cycle_recursion(
+function path_recursion(
         instance::Instance,
-        cycles::Vector{Vector{Cycle}},
-        cycle_index::Int,
+        column_list::Vector{Column},
         node::Int,
         path::Vector{Int},
         path_length::Int
@@ -57,32 +60,28 @@ function cycle_recursion(
             continue
         end
         if next_node == path[1]
-            cycle_index = cycle_index + 1
-            cycle = Cycle(cycle_index, instance, path, true)
+            cycle = Cycle(instance, path, true)
             push!(cycles[cycle.type], cycle)
             continue
         end
         if path_length < K
             new_path = [path; next_node]
-            cycle_index = cycle_recursion(instance, cycles, cycle_index, next_node, new_path, path_length+1)
+            path_recursion(instance, column_list, next_node, new_path, path_length+1)
         end
     end
 
-    return cycle_index
+    return
 end
 
-function cycle_enumeration(instance::Instance)
-    cycles = Vector{Vector{Cycle}}(undef, 5) 
-    for i in 1:5
-        cycle[i] = Vector{Cycle}[]
+function column_enumeration(instance::Instance)
+    #column_list initialization
+    column_list = Column[]
+    for node in vertices(instance.graph)
+        path = [node]
+        path_length = 1
+        path_recursion(instance, column_list, node, path, path_length)
     end
-    cycle_index = 0
-        for node in vertices(instance.graph)
-            path = [node]
-            path_length = 1
-            cycle_index = cycle_recursion(instance, cycles, cycle_index, node, path, path_length)
-        end
 
-    return cycles, cycle_index
+    return column_list
 end
 
