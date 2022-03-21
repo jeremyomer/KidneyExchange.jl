@@ -15,21 +15,21 @@ try
 catch 
 end
 
-function get_type(
-        subgraph::SimpleDiGraph,
-        isCycle::Bool
-)
-    #Works for K = 2 and K = 3, not for K = 4
-    if nv(subgraph) ≤ 3 && isCycle
-        return ne(subgraph) - nv(subgraph) + 1
-    end
+# function get_type(
+#         subgraph::SimpleDiGraph,
+#         isCycle::Bool
+# )
+#     #Works for K = 2 and K = 3, noclut for K = 4
+#     if nv(subgraph) ≤ 3 && isCycle
+#         return ne(subgraph) - nv(subgraph) + 1
+#     end
 
-    if nv(subgraph) == 4
+#     if nv(subgraph) == 4
         
-    end
+#     end
 
-    return 0
-end
+#     return 0
+# end
 
 #Need to consider K = 4 and different weights and probabilities for vertices and edges
 function get_expectation(
@@ -49,39 +49,52 @@ function get_expectation(
 end
 
 function path_recursion(
-        instance::Instance,
+        graph::SimpleDiGraph,
         column_list::Vector{Column},
         node::Int,
         path::Vector{Int},
         path_length::Int
 )
-    for next_node in neighbors(instance.graph, node)
-        if next_node < path[1]
+    for next_node in neighbors(graph, node)
+        if next_node < path[1] || next_node in path[2:path_length]
             continue
         end
         if next_node == path[1]
-            cycle = Cycle(instance, path, true)
-            push!(cycles[cycle.type], cycle)
+            column = Column(path, true)
+            push!(column_list, column)
             continue
         end
-        if path_length < K
+        if path_length < 4
             new_path = [path; next_node]
-            path_recursion(instance, column_list, next_node, new_path, path_length+1)
+            path_recursion(graph, column_list, next_node, new_path, path_length+1)
         end
     end
 
     return
 end
 
-function column_enumeration(instance::Instance)
+function process_c_list(graph::SimpleDiGraph, column_list::Vector{Column})
+    get_type(graph, column_list)
+end
+
+function column_enumeration(graph::SimpleDiGraph)
+    to = TimerOutput()
+    reset_timer!(to)
+
     #column_list initialization
     column_list = Column[]
-    for node in vertices(instance.graph)
+    
+    #graph = instance.graph
+    @timeit to "Enumeration" for node in vertices(graph)
         path = [node]
         path_length = 1
-        path_recursion(instance, column_list, node, path, path_length)
+        path_recursion(graph, column_list, node, path, path_length)
     end
-
+    println(length(column_list), "columns enumerated.")
+    #Get types and expectation
+    
+    @timeit to "type" process_c_list(graph, column_list)
+    println(to)
     return column_list
 end
 

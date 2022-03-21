@@ -2,21 +2,26 @@ using Cbc
 using DelimitedFiles
 using GLPK
 using Graphs
+using Graphs.Experimental
 using JuMP
 using Random
 using Requires
 using TimerOutputs
 
 
-include("../instance.jl")
-include("typedef.jl")
+include("../../instance/instance.jl")
+include("../../branch&price/typedef.jl")
+include("../../branch&price/branch_and_price.jl")
+include("../../branch&price/master.jl")
+include("../../branch&price/subproblem.jl")
+include("../../branch&price/node.jl")
+include("../../branch&price/typedef.jl")
 include("../../createModel.jl")
 include("cycle.jl")
-include("branchnprice.jl")
-include("master.jl")
 
 
-function solveWithCycleEnumeration(
+
+function solve_with_CE(
         filename::String,
         K::Int,
         L::Int,
@@ -24,19 +29,6 @@ function solveWithCycleEnumeration(
         timer::TimerOutput = TimerOutput(),
         time_limit::Float64 = 600.0
 )
-    instance = @timeit timer "Parser" Instance(filename, K, L)
-
-    cycles, nb_cycles = cycle_enumeration(instance)
-
-    bp_status = @timeit timer "B&P" ce_branch_and_price(instance, cycles, nb_cycles, bp_params, timer, time_limit - (time() - start_time))
-
-    println(timer)
-
-    return bp_status
-    
-end
-
-function solve_with_BP(filename::String, K::Int, L::Int, bp_params::BP_params = BP_params(), timer::TimerOutput = TimerOutput(), time_limit::Float64 = 600.0)
     start_time = time()
     reset_timer!(timer)
     Random.seed!(10)
@@ -47,11 +39,11 @@ function solve_with_BP(filename::String, K::Int, L::Int, bp_params::BP_params = 
     # Parsing
     if bp_params.verbose
     printstyled("\n----------------------------------------------------------\n Parse the input file\n----------------------------------------------------------\n\n" ; color = :yellow) end
-    instance = @timeit timer "Parser" Instance(filename, K, L)
+    instance = @timeit timer "Parser" Instance_stochastic(filename, K, L)
 
     # Preprocessing
-    if bp_params.verbose printstyled("\n----------------------------------------------------------\n Preprocessing: compute the graph copies\n----------------------------------------------------------\n\n" ; color = :yellow) end
-    subgraphs = @timeit timer "Preprocessing" preprocess_graph_copies(instance, false, bp_params.reduce_vertices, bp_params.fvs)
+    if bp_params.verbose printstyled("\n----------------------------------------------------------\n Preprocessing: enumerate columns and compute their expected value\n----------------------------------------------------------\n\n" ; color = :yellow) end
+    column_pool = @timeit timer "Preprocessing" column_enumeration(instance)
 
     # Call the branch-and-price algorithm
     if bp_params.verbose printstyled("\n----------------------------------------------------------\n Solve with branch-and-price\n----------------------------------------------------------\n\n" ; color = :yellow) end
@@ -65,4 +57,13 @@ function solve_with_BP(filename::String, K::Int, L::Int, bp_params::BP_params = 
     if bp_params.verbose println(timer) end
 
     return bp_status, Graph_info(instance), Subgraph_info(subgraphs);
+    instance = @timeit timer "Parser" Instance(filename, K, L)
+
+    bp_status = @timeit timer "B&P" ce_branch_and_price(instance, cycles, nb_cycles, bp_params, timer, time_limit - (time() - start_time))
+
+    println(timer)
+
+    return bp_status
+    
 end
+

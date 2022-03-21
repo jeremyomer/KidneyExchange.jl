@@ -23,6 +23,7 @@ mutable struct Column
   weight:: Float64  # length of the cycle
   vertices::Vector{Int}  # vertices of the cycle in order
   arcs:: Vector{Pair{Int,Int}}  # arcs of the cycle in order
+  type::Int64 # type of the cycle for the column enumeration method
   is_cycle::Bool  # true if the column is a cycle, false if it is a chain
 
   # use this constructor to add an artificial column
@@ -31,7 +32,7 @@ mutable struct Column
     for k = 1:(length(path) - 1)
         push!(arcs, (path[k] => path[k+1]))
     end
-    return new(0, path, arcs, false)
+    return new(0, path, arcs, 0, false)
   end
 
 
@@ -47,7 +48,7 @@ mutable struct Column
     # compute the weight of the column
     _weight = sum(edge_weight[a[1], a[2]] for a in arcs)
 
-    return new(_weight, path, arcs, _is_cycle)
+    return new(_weight, path, arcs, 0, _is_cycle)
   end
 
   function Column(path::Vector{Int}, vertex_weight::Array{Float64}, _is_cycle::Bool = true)
@@ -62,10 +63,35 @@ mutable struct Column
     # compute the weight of the column
     _weight = sum(vertex_weight[v] for v in path)
 
-    return new(_weight, path, arcs, _is_cycle)
+    return new(_weight, path, arcs, 0, _is_cycle)
+  end
+
+  function Column(path::Vector{Int}, _is_cycle::Bool = true)
+    # get the arcs of the path
+    arcs = Vector{Pair{Int,Int}}(undef, 0)
+    for k = 1:(length(path) - 1)
+        push!(arcs, (path[k] => path[k+1]))
+    end
+    if _is_cycle
+        push!(arcs, (path[end] => path[1]))
+    end
+    return new(0, path, arcs, 0, _is_cycle)
+  end
+
+  function Column(path::Vector{Int}, _weight::Float64, _type::Int64, _is_cycle::Bool = true)
+    # get the arcs of the path
+    arcs = Vector{Pair{Int,Int}}(undef, 0)
+    for k = 1:(length(path) - 1)
+        push!(arcs, (path[k] => path[k+1]))
+    end
+    if _is_cycle
+        push!(arcs, (path[end] => path[1]))
+    end
+    return new(_weight, path, arcs, _type, _is_cycle)
   end
 end
 
+@enum ProblemType standard stochastic_ce_cycle
 
 """
   BP_params
@@ -100,12 +126,13 @@ mutable struct BP_params
   freq_solve_master_IP::Int
   restart_for_IP::Bool
   branch_on_vertex::Bool
+  problem_type::ProblemType
 
-  function BP_params(_optimizer::String = "GLPK-Cbc", _verbose::Bool = true, _is_pief = false, _fvs = true,  _reduce_vertices = true, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 10.0,  _freq_solve_master_IP = 1, _restart_for_IP = true, _branch_on_vertex = false)
-    return new(_optimizer, _verbose, _is_pief, _fvs, _reduce_vertices, _is_column_disjoint, _max_intersecting_columns, _is_tabu_list, _solve_master_IP, _time_limit_IP, _freq_solve_master_IP, _restart_for_IP, _branch_on_vertex)
+  function BP_params(_optimizer::String = "GLPK-Cbc", _verbose::Bool = true, _is_pief = false, _fvs = true,  _reduce_vertices = true, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 10.0,  _freq_solve_master_IP = 1, _restart_for_IP = true, _branch_on_vertex = false, _problem_type = standard)
+    return new(_optimizer, _verbose, _is_pief, _fvs, _reduce_vertices, _is_column_disjoint, _max_intersecting_columns, _is_tabu_list, _solve_master_IP, _time_limit_IP, _freq_solve_master_IP, _restart_for_IP, _branch_on_vertex, _problem_type)
   end
-  function BP_params(_is_pief::Bool, _verbose::Bool = false)
-    return new("GLPK-Cbc", _verbose, _is_pief, true, true, true, 6, true, true, 10.0, 1, true, false)
+  function BP_params(_is_pief::Bool, _verbose::Bool = false, _problem_type::ProblemType = standard)
+    return new("GLPK-Cbc", _verbose, _is_pief, true, true, true, 6, true, true, 10.0, 1, true, false, _problem_type)
   end
 end
 
