@@ -42,9 +42,10 @@ function solve_with_BP(filename::String, K::Int, L::Int, bp_params::BP_params = 
     if bp_params.verbose printstyled("\n----------------------------------------------------------\n Preprocessing: compute the graph copies\n----------------------------------------------------------\n\n" ; color = :yellow) end
     subgraphs = @timeit timer "Preprocessing" preprocess_graph_copies(instance, false, bp_params.reduce_vertices, bp_params.fvs)
 
+
     # Call the branch-and-price algorithm
     if bp_params.verbose printstyled("\n----------------------------------------------------------\n Solve with branch-and-price\n----------------------------------------------------------\n\n" ; color = :yellow) end
-    bp_status = @timeit timer "B&P" branch_and_price(instance, subgraphs, bp_params, timer, time_limit - (time() - start_time))
+    bp_status = @timeit timer "B&P" branch_and_price(instance, subgraphs, Vector{Column}(), bp_params, timer, time_limit - (time() - start_time))
     bp_status.solve_time = TimerOutputs.time(timer["B&P"])/10^9
 
     # print the number of cycles and chains for each column's length
@@ -72,7 +73,7 @@ Core function of the KEP solution with branch-and-price. It requires a parsed in
 #Output parametes
 * `bp_status::BP_status`:  Structure containing every relevant information on the execution of the algorithm (including the optimal solution)
 """
-function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params::BP_params, timer::TimerOutput, time_limit::Real)
+function branch_and_price(instance::Instance, subgraphs::Graph_copies, column_list::Vector{Column}, bp_params::BP_params, timer::TimerOutput, time_limit::Real)
     # initialization of local variables
     verbose = bp_params.verbose
     graph = instance.graph
@@ -113,7 +114,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
         activate_branching_constraints(mastermodel, current_node, bp_params)
 
          # solve the node relaxation using column generation
-        column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
+        column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, column_list, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
 
         # update branch & price information
         if bp_status.node_count == 1
@@ -135,7 +136,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
                     for i in deleted_columns[1:ncols]
                         JuMP.set_upper_bound(y[i], 0)
                     end
-                    column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
+                    column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, column_list, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
                     for i in deleted_columns
                         JuMP.set_upper_bound(y[i], 1)
                     end

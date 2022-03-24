@@ -9,7 +9,7 @@ Columns generation of the node
 # Output parameter
 - `column_flow::Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)`
 """
-function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Model, subgraphs::Graph_copies, bp_status::BP_status, column_pool::Vector{Column},  bp_params::BP_params, master_IP::Model, timer::TimerOutput, time_limit::Float64)
+function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Model, subgraphs::Graph_copies, column_list::Vector{Column}, bp_status::BP_status, column_pool::Vector{Column},  bp_params::BP_params, master_IP::Model, timer::TimerOutput, time_limit::Float64)
     # local variables
     graph = instance.graph
     K = instance.max_cycle_length
@@ -72,71 +72,12 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         node_infeasible=false
         nb_iter += 1
         if verbose printstyled("\nIteration $nb_iter:\n") end
+
         # ==============================================================
         #  Collect values from the solution of the restricted master problem
         # ==============================================================
-        if JuMP.termination_status(mastermodel) != MOI.OPTIMAL
-            # println(mastermodel)
-            return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
-            error("The master problem relaxation has not been solved to optimality")
-        end
-        master_value = JuMP.objective_value(mastermodel)
-        if verbose println("- current master value: ", master_value) end
-
-        # dual values of the vertex-disjoint constraints
-        if !JuMP.has_duals(mastermodel)
-            # println(mastermodel)
-            error("The master problem has no dual solution")
-        end
-        λ = JuMP.shadow_price.(mastermodel[:capacity])
-
-        # get the dual values of the arc branching constraints
-        δ_one = Dict{Pair{Int64, Int64}, Float64}()
-        δ_zero = Dict{Pair{Int64, Int64}, Float64}()
-        for arc in keys(mastermodel[:branch_one])
-            δ_one[arc] = -shadow_price(mastermodel[:branch_one][arc])
-            # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
-            if δ_one[arc] > 0
-                δ_one[arc] = -δ_one[arc]
-            end
-        end
-        for arc in keys(mastermodel[:branch_zero])
-            δ_zero[arc] = shadow_price(mastermodel[:branch_zero][arc])
-            # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
-            if δ_zero[arc] < 0
-                δ_zero[arc] = -δ_zero[arc]
-            end
-        end
-
-        # get the dual values of the vertex branching constraints
-        δ_one_vertex = Dict{Int, Float64}()
-        δ_zero_vertex = Dict{Int, Float64}()
-        for v in keys(mastermodel[:branch_one_vertex])
-            δ_one_vertex[v] = -shadow_price(mastermodel[:branch_one_vertex][v])
-            # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
-            if δ_one_vertex[v] > 0
-                δ_one_vertex[v] = -δ_one_vertex[v]
-            end
-        end
-        for v in keys(mastermodel[:branch_zero_vertex])
-            δ_zero_vertex[v] = shadow_price(mastermodel[:branch_zero_vertex][v])
-            # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
-            if δ_zero_vertex[v] < 0
-                δ_zero_vertex[v] = -δ_zero_vertex[v]
-            end
-        end
-
-        # get the duals of the branching constraint on the number of arcs (useful only for K=2, L=0)
-        δ_nb_arcs_max = shadow_price(mastermodel[:branch_nb_arcs_max])
-        δ_nb_arcs_min = shadow_price(mastermodel[:branch_nb_arcs_min])
-        # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
-        if δ_nb_arcs_max < 0
-            δ_nb_arcs_max = -δ_nb_arcs_max
-        end
-        if δ_nb_arcs_min > 0
-            δ_nb_arcs_min = -δ_nb_arcs_min
-        end
-        δ_nb_arcs = δ_nb_arcs_max + δ_nb_arcs_min
+        λ, δ_one,  δ_zero, δ_one_vertex, δ_zero_vertex,  δ_nb_arcs = collect_dual_values(mastermodel)
+       
 
         # ===============================================================
         #  Check whether the solution is integer or not and recover the corresponding solution if it is integer
@@ -191,7 +132,6 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             bp_status.best_chains = selected_chains
             if verbose println("\e[32m New incumbent with value $master_value found during the solution of the restricted master \e[00m") end
         end
-
 
         # ===============================================================
         #  Solve the subproblem
@@ -699,4 +639,71 @@ function solve_master_IP(master_IP::Model, column_pool::Vector{Column}, instance
             if bp_params.verbose printstyled("\nNew incumbent found with value $obj_val found by solving the IP with every column of the pool\n" ; color = :green) end
         end
     end
+end
+
+function collect_dual_values(mastermodel::Model)
+    if JuMP.termination_status(mastermodel) != MOI.OPTIMAL
+        # println(mastermodel)
+        return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
+        error("The master problem relaxation has not been solved to optimality")
+    end
+    master_value = JuMP.objective_value(mastermodel)
+    if verbose println("- current master value: ", master_value) end
+
+    # dual values of the vertex-disjoint constraints
+    if !JuMP.has_duals(mastermodel)
+        # println(mastermodel)
+        error("The master problem has no dual solution")
+    end
+    λ = JuMP.shadow_price.(mastermodel[:capacity])
+
+    # get the dual values of the arc branching constraints
+    δ_one = Dict{Pair{Int64, Int64}, Float64}()
+    δ_zero = Dict{Pair{Int64, Int64}, Float64}()
+    for arc in keys(mastermodel[:branch_one])
+        δ_one[arc] = -shadow_price(mastermodel[:branch_one][arc])
+        # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+        if δ_one[arc] > 0
+            δ_one[arc] = -δ_one[arc]
+        end
+    end
+    for arc in keys(mastermodel[:branch_zero])
+        δ_zero[arc] = shadow_price(mastermodel[:branch_zero][arc])
+        # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+        if δ_zero[arc] < 0
+            δ_zero[arc] = -δ_zero[arc]
+        end
+    end
+
+    # get the dual values of the vertex branching constraints
+    δ_one_vertex = Dict{Int, Float64}()
+    δ_zero_vertex = Dict{Int, Float64}()
+    for v in keys(mastermodel[:branch_one_vertex])
+        δ_one_vertex[v] = -shadow_price(mastermodel[:branch_one_vertex][v])
+        # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+        if δ_one_vertex[v] > 0
+            δ_one_vertex[v] = -δ_one_vertex[v]
+        end
+    end
+    for v in keys(mastermodel[:branch_zero_vertex])
+        δ_zero_vertex[v] = shadow_price(mastermodel[:branch_zero_vertex][v])
+        # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+        if δ_zero_vertex[v] < 0
+            δ_zero_vertex[v] = -δ_zero_vertex[v]
+        end
+    end
+
+    # get the duals of the branching constraint on the number of arcs (useful only for K=2, L=0)
+    δ_nb_arcs_max = shadow_price(mastermodel[:branch_nb_arcs_max])
+    δ_nb_arcs_min = shadow_price(mastermodel[:branch_nb_arcs_min])
+    # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
+    if δ_nb_arcs_max < 0
+        δ_nb_arcs_max = -δ_nb_arcs_max
+    end
+    if δ_nb_arcs_min > 0
+        δ_nb_arcs_min = -δ_nb_arcs_min
+    end
+    δ_nb_arcs = δ_nb_arcs_max + δ_nb_arcs_min
+
+    return λ, δ_one,  δ_zero, δ_one_vertex, δ_zero_vertex,  δ_nb_arcs
 end

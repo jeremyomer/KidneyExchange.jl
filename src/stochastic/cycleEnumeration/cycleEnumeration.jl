@@ -42,12 +42,14 @@ function solve_with_CE(
     instance = @timeit timer "Parser" Instance_stochastic(filename, K, L)
 
     # Preprocessing
+    if bp_params.verbose printstyled("\n----------------------------------------------------------\n Preprocessing: compute the graph copies\n----------------------------------------------------------\n\n" ; color = :yellow) end
+    subgraphs = @timeit timer "Preprocessing subgraph" preprocess_graph_copies(instance, false, bp_params.reduce_vertices, bp_params.fvs)
     if bp_params.verbose printstyled("\n----------------------------------------------------------\n Preprocessing: enumerate columns and compute their expected value\n----------------------------------------------------------\n\n" ; color = :yellow) end
-    column_pool = @timeit timer "Preprocessing" column_enumeration(instance)
+    column_list = @timeit timer "Preprocessing column list" column_enumeration(instance)
 
     # Call the branch-and-price algorithm
     if bp_params.verbose printstyled("\n----------------------------------------------------------\n Solve with branch-and-price\n----------------------------------------------------------\n\n" ; color = :yellow) end
-    bp_status = @timeit timer "B&P" branch_and_price(instance, subgraphs, bp_params, timer, time_limit - (time() - start_time))
+    bp_status = @timeit timer "B&P" branch_and_price(instance, subgraphs, column_list, bp_params, timer, time_limit - (time() - start_time))
     bp_status.solve_time = TimerOutputs.time(timer["B&P"])/10^9
 
     # print the number of cycles and chains for each column's length

@@ -1,19 +1,19 @@
-try
-    mutable struct Cycle
-        index::Int
-        type::Int
-        expectation::Float64
-        nodes::Vector{Int}
+# try
+#     mutable struct Cycle
+#         index::Int
+#         type::Int
+#         expectation::Float64
+#         nodes::Vector{Int}
     
-        function Cycle(_index::Int, instance::Instance, _nodes::Vector{Int}, isCycle::Bool)
-            subgraph = induced_subgraph(instance.graph, _nodes)[1]
-            _type = get_type(subgraph, isCycle)
-            _expectation = get_expectation(instance.pv, instance.pa, _type)
-            return new(_index, _type, _expectation, _nodes)
-        end
-    end
-catch 
-end
+#         function Cycle(_index::Int, instance::Instance, _nodes::Vector{Int}, isCycle::Bool)
+#             subgraph = induced_subgraph(instance.graph, _nodes)[1]
+#             _type = get_type(subgraph, isCycle)
+#             _expectation = get_expectation(instance.pv, instance.pa, _type)
+#             return new(_index, _type, _expectation, _nodes)
+#         end
+#     end
+# catch 
+# end
 
 # function get_type(
 #         subgraph::SimpleDiGraph,
@@ -31,21 +31,64 @@ end
 #     return 0
 # end
 
-#Need to consider K = 4 and different weights and probabilities for vertices and edges
-function get_expectation(
-        pv::Float64, #probability of vertice failure
-        pa::Float64, #probability of edge failure
-        type::Int
-)
-    if type == 0
-        return 0
-    end
-    if type == 1
-        return 2*((1-pv)*(1-pa))^2
-    end
+# function get_expectation(
+#         pv::Float64, #probability of vertice failure
+#         pa::Float64, #probability of edge failure
+#         type::Int
+# )
+#     if type == 0
+#         return 0
+#     end
+#     if type == 1
+#         return 2*((1-pv)*(1-pa))^2
+#     end
     
-    return 3*((1-pv)*(1-pa))^3 + 2*(type-2)((1-pv)*(1-pa))^2
+#     return 3*((1-pv)*(1-pa))^3 + 2*(type-2)((1-pv)*(1-pa))^2
 
+# end
+
+function get_type(graph::SimpleDiGraph, column_list::Vector{Column})
+    type_dict = Dict{SimpleDiGraph, Any}()
+    isomorph_list = SimpleDiGraph[]
+    println(typeof(isomorph_list))
+    type_index = 1
+    sort!(column_list, by = c -> length(c.vertices))
+    
+    for (index, column) in enumerate(column_list)
+
+        if index%100000 == 0
+             println(index, " cycles got a type !")
+        end
+        if length(column.vertices) == 2
+            column.type = type_index
+            continue
+        end
+
+        subgraph = induced_subgraph(graph, column.vertices)[1]
+        in_search = true
+        for isomorph in isomorph_list
+            if in_search && has_isomorph(subgraph, isomorph)
+                column.type = type_dict[isomorph]
+                in_search = false
+            end
+        end
+
+        if in_search
+            push!(isomorph_list, subgraph)
+            type_index = type_index + 1
+            type_dict[subgraph] = type_index
+            column.type = type_index
+        end
+    end
+end
+
+function get_expectation()
+    
+end
+
+function process_c_list(instance::Instance, column_list::Vector{Column})
+    get_type(instance::Instance, column_list)
+    get_expectation(instance::Instance, column_list)
 end
 
 function path_recursion(
@@ -71,10 +114,6 @@ function path_recursion(
     end
 
     return
-end
-
-function process_c_list(graph::SimpleDiGraph, column_list::Vector{Column})
-    get_type(graph, column_list)
 end
 
 function column_enumeration(graph::SimpleDiGraph)
