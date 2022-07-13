@@ -53,3 +53,22 @@ function create_model(time_limit::Float64, optimizer::String, is_integer::Bool =
   end
   return model
 end
+
+function set_time_limit(model::Model, time_limit::Float64, optimizer::String)
+  if optimizer=="CPLEX"
+    set_optimizer_attribute(model, "CPX_PARAM_TILIM", max(0.0,time_limit))
+  elseif optimizer=="Gurobi"
+    set_optimizer_attribute(model, "TimeLimit", max(0.0,time_limit))
+  elseif optimizer=="GLPK"
+    set_optimizer_attribute(model, "tm_lim", round(Int, time_limit) * 1_000)
+  elseif optimizer=="GLPK-Cbc"
+    set_optimizer_attribute(model, "seconds", time_limit)
+  elseif optimizer=="Clp"
+      set_optimizer_attribute(model, "seconds", time_limit)
+  elseif optimizer=="Cbc"
+      set_optimizer_attribute(model, "seconds", time_limit)
+  else
+    println(optimizer)
+    error("The chosen optimizer is unknown!")
+  end
+end

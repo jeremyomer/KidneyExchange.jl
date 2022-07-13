@@ -430,30 +430,36 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
             #check whether artificial column is used
             if !isempty(tree_node.setone)
-                if column_val[end][1] > ϵ
-                    node_infeasible = true
-                    if verbose printstyled("\n Node is infeasible\n" ; color = :green) end
-                end
+                # TODO: we need to add an artificial column for possible infeasibility
+                # if column_val[end] > ϵ
+                #     node_infeasible = true
+                #     if verbose printstyled("\n Node is infeasible\n" ; color = :green) end
+                #     # if the node is infeasible, return an empty vector
+                #     return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
+                # end
             end
-            if node_infeasible
-                # if the node is infeasible, return an empty vector
-                return column_flow, pief_flow
-            else
-                # otherwise compute the arc flows resulting from the selction of columns
-                column_flow = compute_arc_flow(column_val, column_pool)
-                break
-            end
+            # if not compute the arc flows resulting from the selction of columns
+            column_flow = compute_arc_flow(column_val, column_pool)
+            break
         end
     end
 
     # find a feasible solution at current node by solving the master IP
     if bp_params.solve_master_IP &&
-        (bp_status.bp_info.LB < tree_node.ub - ϵ) &&  (bp_status.node_count%(bp_params.freq_solve_master_IP) == 0) &&
-        (length(column_pool) >= 1.10 * bp_status.nb_cols_last_ip)
+        (bp_status.bp_info.LB < tree_node.ub - ϵ) &&  
+        ( (bp_status.termination_status_last_ip != OPTIMAL) || 
+            (length(column_pool) > bp_status.nb_cols_last_ip) )
         if verbose println("\n Search for a feasible solution at node $(tree_node.index)") end
 
         @timeit timer "IP_master" solve_master_IP(master_IP, column_pool, instance, bp_status, bp_params)
         bp_status.nb_cols_last_ip = length(column_pool)
+        bp_status.node_count_last_ip = bp_status.node_count
+        bp_status.termination_status_last_ip == termination_status(master_IP)
+
+        if (termination_status != OPTIMAL)
+            bp_params.time_limit_master_IP = max(bp_params.time_limit_master_IP + 10.0, 300.0)
+            set_time_limit(master_IP, bp_params.time_limit_master_IP, bp_params.optimizer)
+        end
     end
 
     return column_flow, pief_flow

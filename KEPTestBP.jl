@@ -1,5 +1,5 @@
 include("src/KidneyExchange.jl")
-using Main.KEP
+using Main.KidneyExchange
 using ArgParse
 using Gurobi
 using TimerOutputs
@@ -27,9 +27,10 @@ cycle_limit = parsed_args["k"]
 chain_limit = parsed_args["l"]
 
 bp_params = BP_params()
-bp_params.optimizer = "CPLEX"
+bp_params.optimizer = "Gurobi"
+bp_params.time_limit_master_IP = 30.0
 timer = TimerOutput()
-max_time = 600.0
+max_time = 7200.0
 
 solve_with_BP("heterogeneous/heterogeneous_128_0_1", 3, 4, bp_params, timer, max_time)
 
