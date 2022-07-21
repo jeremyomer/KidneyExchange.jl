@@ -1,0 +1,1779 @@
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 128 rows, 230 columns and 542 nonzeros
+Model fingerprint: 0xeb11e474
+Variable types: 0 continuous, 230 integer (230 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 3e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 60.0000000
+Presolve removed 63 rows and 51 columns
+Presolve time: 0.00s
+Presolved: 65 rows, 179 columns, 406 nonzeros
+Found heuristic solution: objective 80.0000000
+Variable types: 0 continuous, 179 integer (179 binary)
+
+Root relaxation: objective 8.800000e+01, 85 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0   88.00000    0   10   80.00000   88.00000  10.0%     -    0s
+H    0     0                      87.0000000   88.00000  1.15%     -    0s
+H    0     0                      88.0000000   88.00000  0.00%     -    0s
+     0     0   88.00000    0   10   88.00000   88.00000  0.00%     -    0s
+
+Explored 1 nodes (143 simplex iterations) in 0.02 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 4: 88 87 80 60 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 8.800000000000e+01, best bound 8.800000000000e+01, gap 0.0000%
+
+User-callback calls 67, time in user-callback 0.00 sec
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 6600 rows, 28907 columns and 91943 nonzeros
+Model fingerprint: 0x46ae8fed
+Variable types: 0 continuous, 28907 integer (28907 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 6e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 2930.0000000
+Presolve removed 2463 rows and 1647 columns
+Presolve time: 0.34s
+Presolved: 4137 rows, 27260 columns, 74071 nonzeros
+Found heuristic solution: objective 3773.0000000
+Variable types: 0 continuous, 27260 integer (27260 binary)
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+   22941    4.6999990e+03   7.494323e+03   0.000000e+00      5s
+   36793    4.6699996e+03   3.376843e+04   0.000000e+00     10s
+   46038    4.6699991e+03   8.063286e+02   0.000000e+00     15s
+   46693    4.6700000e+03   0.000000e+00   0.000000e+00     16s
+
+Root relaxation: objective 4.670000e+03, 46693 iterations, 15.35 seconds
+Total elapsed time = 23.70s
+Total elapsed time = 53.13s
+Total elapsed time = 61.69s
+Total elapsed time = 67.96s
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 4670.00000    0  319 3773.00000 4670.00000  23.8%     -   72s
+H    0     0                    4657.0000000 4670.00000  0.28%     -   73s
+H    0     0                    4663.0000000 4670.00000  0.15%     -   73s
+     0     0 4670.00000    0  869 4663.00000 4670.00000  0.15%     -   80s
+H    0     0                    4668.0000000 4670.00000  0.04%     -   92s
+     0     0 4670.00000    0   11 4668.00000 4670.00000  0.04%     -  124s
+H    0     0                    4669.0000000 4670.00000  0.02%     -  124s
+     0     0 4670.00000    0   15 4669.00000 4670.00000  0.02%     -  135s
+     0     0 4670.00000    0  544 4669.00000 4670.00000  0.02%     -  192s
+     0     0 4670.00000    0  718 4669.00000 4670.00000  0.02%     -  195s
+     0     0 4670.00000    0  697 4669.00000 4670.00000  0.02%     -  195s
+     0     0 4670.00000    0  135 4669.00000 4670.00000  0.02%     -  221s
+     0     0 4670.00000    0   20 4669.00000 4670.00000  0.02%     -  238s
+H    0     0                    4670.0000000 4670.00000  0.00%     -  238s
+     0     0 4670.00000    0   20 4670.00000 4670.00000  0.00%     -  238s
+
+Cutting planes:
+  Clique: 3
+  Zero half: 10
+
+Explored 1 nodes (667964 simplex iterations) in 238.25 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 7: 4670 4669 4668 ... 2930
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.670000000000e+03, best bound 4.670000000000e+03, gap 0.0000%
+
+User-callback calls 6177, time in user-callback 0.00 sec
+
+********************************************************************************
+ Solve heterogeneous/heterogeneous_128_0_1 with (K,L) = (3,4) using branch-and-price
+ - master model uses PIEF = false 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: -0.0
+[32m New incumbent with value -0.0 found during the solution of the restricted master [00m
+- nb of cycles added = 55
+nb of chains added = 0
+
+Iteration 2:
+- current master value: 36.0
+[32m New incumbent with value 36.0 found during the solution of the restricted master [00m
+- nb of cycles added = 52
+nb of chains added = 0
+
+Iteration 3:
+- current master value: 52.0
+[32m New incumbent with value 52.0 found during the solution of the restricted master [00m
+- nb of cycles added = 48
+nb of chains added = 0
+
+Iteration 4:
+- current master value: 67.0
+[32m New incumbent with value 67.0 found during the solution of the restricted master [00m
+- nb of cycles added = 41
+nb of chains added = 0
+
+Iteration 5:
+- current master value: 81.0
+- nb of cycles added = 24
+nb of chains added = 0
+
+Iteration 6:
+- current master value: 86.0
+- nb of cycles added = 8
+nb of chains added = 0
+
+Iteration 7:
+- current master value: 86.0
+- nb of cycles added = 1
+nb of chains added = 0
+
+Iteration 8:
+- current master value: 87.0
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 9:
+- current master value: 87.0
+- nb of cycles added = 1
+nb of chains added = 0
+
+Iteration 10:
+- current master value: 88.0
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 11:
+- current master value: 88.0
+- nb of cycles added = 0
+nb of chains added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 88.0, tree lower bound is 67.0
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 230
+
+
+New incumbent found with value 88.0 found by solving the IP with every column of the pool
+After processing root node: LB = 88.0, UB = 88.0
+The node is either infeasible or pruned by bound
+LB = 88.0, UB = 88.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 88.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 26 cycles
+- k = 3: 12 cycles
+In total, 88 pairs are covered by cycles
+
+The computed cost of the solution is 88.0
+ ─────────────────────────────────────────────────────────────────────────────
+                                     Time                    Allocations      
+                            ───────────────────────   ────────────────────────
+      Tot / % measured:          20.2s /  95.9%           1.86GiB /  99.0%    
+
+ Section            ncalls     time    %tot     avg     alloc    %tot      avg
+ ─────────────────────────────────────────────────────────────────────────────
+ B&P                     1    17.8s   91.7%   17.8s   1.74GiB   94.2%  1.74GiB
+   Process_Node          1    10.1s   51.9%   10.1s    915MiB   48.4%   915MiB
+     opt_master          9    5.35s   27.6%   594ms    553MiB   29.3%  61.5MiB
+     Bellman-Ford      395    875ms    4.5%  2.22ms   60.4MiB    3.2%   156KiB
+     IP_master           1    339ms    1.7%   339ms   19.5MiB    1.0%  19.5MiB
+ Parser                  1    933ms    4.8%   933ms   50.5MiB    2.7%  50.5MiB
+ Preprocessing           1    674ms    3.5%   674ms   60.0MiB    3.2%  60.0MiB
+ ─────────────────────────────────────────────────────────────────────────────
+
+********************************************************************************
+ Solve heterogeneous/heterogeneous_6000_600_9 with (K,L) = (2,6) using branch-and-price
+ - master model uses PIEF = false 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: -0.0
+[32m New incumbent with value -0.0 found during the solution of the restricted master [00m
+- nb of cycles added = 2772
+nb of chains added = 600
+
+Iteration 2:
+- current master value: 1209.0
+[32m New incumbent with value 1209.0 found during the solution of the restricted master [00m
+- nb of cycles added = 2274
+nb of chains added = 600
+
+Iteration 3:
+- current master value: 2071.0
+[32m New incumbent with value 2071.0 found during the solution of the restricted master [00m
+- nb of cycles added = 1858
+nb of chains added = 600
+
+Iteration 4:
+- current master value: 2762.0
+[32m New incumbent with value 2762.0 found during the solution of the restricted master [00m
+- nb of cycles added = 1559
+nb of chains added = 600
+
+Iteration 5:
+- current master value: 3001.0
+[32m New incumbent with value 3001.0 found during the solution of the restricted master [00m
+- nb of cycles added = 347
+nb of chains added = 600
+
+Iteration 6:
+- current master value: 3559.0
+- nb of cycles added = 14
+nb of chains added = 600
+
+Iteration 7:
+- current master value: 3689.0
+- nb of cycles added = 1
+nb of chains added = 600
+
+Iteration 8:
+- current master value: 3782.0
+- nb of cycles added = 0
+nb of chains added = 600
+
+Iteration 9:
+- current master value: 3861.0
+- nb of cycles added = 0
+nb of chains added = 600
+
+Iteration 10:
+- current master value: 3932.0
+- nb of cycles added = 0
+nb of chains added = 600
+
+Iteration 11:
+- current master value: 4009.0
+- nb of cycles added = 0
+nb of chains added = 599
+
+Iteration 12:
+- current master value: 4056.5
+- nb of cycles added = 0
+nb of chains added = 598
+
+Iteration 13:
+- current master value: 4075.0
+- nb of cycles added = 0
+nb of chains added = 598
+
+Iteration 14:
+- current master value: 4080.9999999999995
+- nb of cycles added = 0
+nb of chains added = 598
+
+Iteration 15:
+- current master value: 4106.5
+- nb of cycles added = 0
+nb of chains added = 598
+
+Iteration 16:
+- current master value: 4120.0
+- nb of cycles added = 0
+nb of chains added = 598
+
+Iteration 17:
+- current master value: 4144.999999999999
+- nb of cycles added = 0
+nb of chains added = 598
+
+Iteration 18:
+- current master value: 4242.000000000002
+- nb of cycles added = 0
+nb of chains added = 597
+
+Iteration 19:
+- current master value: 4315.0
+- nb of cycles added = 0
+nb of chains added = 597
+
+Iteration 20:
+- current master value: 4373.999999999999
+- nb of cycles added = 0
+nb of chains added = 596
+
+Iteration 21:
+- current master value: 4431.0
+- nb of cycles added = 0
+nb of chains added = 596
+
+Iteration 22:
+- current master value: 4435.0
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 23:
+- current master value: 4479.999999999998
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 24:
+- current master value: 4512.249999999998
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 25:
+- current master value: 4523.999999999996
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 26:
+- current master value: 4554.2928571428565
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 27:
+- current master value: 4567.36419753086
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 28:
+- current master value: 4572.857142857141
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 29:
+- current master value: 4599.641025641027
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 30:
+- current master value: 4610.333333333334
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 31:
+- current master value: 4632.809963454519
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 32:
+- current master value: 4633.603486137798
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 33:
+- current master value: 4635.451889992739
+- nb of cycles added = 0
+nb of chains added = 593
+
+Iteration 34:
+- current master value: 4647.999999999996
+- nb of cycles added = 0
+nb of chains added = 298
+
+Iteration 35:
+- current master value: 4664.999999999997
+- nb of cycles added = 0
+nb of chains added = 78
+
+Iteration 36:
+- current master value: 4666.999999999995
+- nb of cycles added = 0
+nb of chains added = 12
+
+Iteration 37:
+- current master value: 4667.999999999996
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 38:
+- current master value: 4667.999999999996
+- nb of cycles added = 0
+nb of chains added = 1
+
+Iteration 39:
+- current master value: 4667.999999999994
+- nb of cycles added = 0
+nb of chains added = 1
+
+Iteration 40:
+- current master value: 4669.000000000005
+- nb of cycles added = 0
+nb of chains added = 1
+
+Iteration 41:
+- current master value: 4668.999999999998
+- nb of cycles added = 0
+nb of chains added = 1
+
+Iteration 42:
+- current master value: 4669.0
+- nb of cycles added = 0
+nb of chains added = 1
+
+Iteration 43:
+- current master value: 4670.000000000006
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 44:
+- current master value: 4670.000000000006
+- nb of cycles added = 0
+nb of chains added = 0
+- solve 246 subproblems to optimality as MIPs
+- solve mip chain search
+   . 6467 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6095 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6132 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6306 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6050 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6330 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6352 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6437 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6298 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6359 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6366 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6524 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6014 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6574 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6482 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6071 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6114 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6587 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6221 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6535 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6421 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6449 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6414 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6356 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6381 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6545 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6497 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6503 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6055 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6559 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6369 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6156 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6548 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6013 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6434 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6571 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6402 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6398 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6465 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6052 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6319 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6081 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6334 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6226 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6523 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6214 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6585 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6333 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6105 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6166 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6144 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6513 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6248 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6134 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6088 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6267 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6151 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6318 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6259 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6254 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6292 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6031 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6486 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6139 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6426 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6107 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6233 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6445 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6033 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6085 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6562 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6034 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6090 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6420 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6509 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6127 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6478 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6276 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6520 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6390 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6507 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6163 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6198 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6591 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6253 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6441 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6005 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6588 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6073 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6442 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6533 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6555 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6407 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6048 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6284 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6098 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6264 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6028 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6142 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6597 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6100 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6039 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6495 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6302 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6446 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6570 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6345 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6519 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6053 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6174 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6408 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6179 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6460 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6189 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6062 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6457 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6025 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6087 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6164 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6235 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6118 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6231 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6287 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6268 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6525 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6305 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6103 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6512 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6309 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6243 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6430 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6560 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6223 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6320 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6567 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6511 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6051 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6455 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6342 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6401 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6451 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6159 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6123 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6027 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6283 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6400 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6384 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6278 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6133 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6255 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6190 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6573 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6074 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6347 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6553 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6078 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6077 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6540 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6403 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6001 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6518 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6307 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6344 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6447 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6249 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6158 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6404 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6047 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6269 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6186 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6160 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6129 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6577 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6285 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6335 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6329 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6343 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6489 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6128 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6145 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6376 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6340 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6060 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6099 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6244 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6424 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6354 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6581 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6440 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6195 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6122 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6260 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6590 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6181 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6542 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6572 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6108 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6257 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6035 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6316 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6386 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6017 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6046 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6331 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6126 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6121 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6450 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6180 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6271 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6541 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6566 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6205 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6575 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6491 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6175 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6443 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6488 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6508 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6325 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6324 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6196 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6466 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6266 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6422 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6522 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6584 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6150 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6308 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6314 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6423 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6565 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6419 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6066 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6554 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6600 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6251 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6387 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6317 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6593 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6438 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6539 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6530 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6416 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6279 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6061 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+- solve mip chain search
+   . 6018 is the souce and 6601 is the artificial sink
+   . solution found: Pair{Int64,Int64}[], objective value: -0.0
+   . arc from source to sink: 1.0
+   . the mip search did not find any positive cost chain
+
+Node relaxation is solved to optimality
+- node upper bound is 4670.0, tree lower bound is 3001.0
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 28907
+
+
+New incumbent found with value 4670.0 found by solving the IP with every column of the pool
+After processing root node: LB = 4670.0, UB = 4670.0
+The node is either infeasible or pruned by bound
+LB = 4670.0, UB = 4670.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 4670.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 1204 cycles
+In total, 2408 pairs are covered by cycles
+
+Numbers of chains per chain length
+- l = 1: 2 chains
+- l = 2: 10 chains
+- l = 3: 230 chains
+- l = 4: 260 chains
+- l = 5: 78 chains
+- l = 6: 20 chains
+In total, 2262 pairs are covered by chains
+
+The computed cost of the solution is 4670.0
+ ────────────────────────────────────────────────────────────────────────────────
+                                        Time                    Allocations      
+                               ───────────────────────   ────────────────────────
+       Tot / % measured:            6535s / 100.0%            758GiB / 100.0%    
+
+ Section               ncalls     time    %tot     avg     alloc    %tot      avg
+ ────────────────────────────────────────────────────────────────────────────────
+ B&P                        1    6513s   99.7%   6513s    752GiB   99.2%   752GiB
+   Process_Node             1    6513s   99.7%   6513s    752GiB   99.2%   752GiB
+     IP_master              1     238s    3.6%    238s   51.1MiB    0.0%  51.1MiB
+     Bellman-Ford-c...  21.9k     214s    3.3%  9.76ms   12.3GiB    1.6%   587KiB
+     opt_master            42     102s    1.6%   2.43s   17.7MiB    0.0%   432KiB
+     create_chain_mip       1    60.2s    0.9%   60.2s   10.8GiB    1.4%  10.8GiB
+     Bellman-Ford       17.8k    1.52s    0.0%  85.5μs    918MiB    0.1%  52.8KiB
+ Parser                     1    13.1s    0.2%   13.1s   3.08GiB    0.4%  3.08GiB
+ Preprocessing              1    8.02s    0.1%   8.02s   3.03GiB    0.4%  3.03GiB
+ ────────────────────────────────────────────────────────────────────────────────
+	Command being timed: "sh /home/aarslan//jobs-running/1598151/miriel011.5/BP_2_6_het_6000_9"
+	User time (seconds): 6439.26
+	System time (seconds): 195.52
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:49:58
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 12784284
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 76
+	Minor (reclaiming a frame) page faults: 97850236
+	Voluntary context switches: 1907701
+	Involuntary context switches: 125286
+	Swaps: 0
+	File system inputs: 351944
+	File system outputs: 216
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

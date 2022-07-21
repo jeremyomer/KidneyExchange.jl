@@ -28,7 +28,6 @@ chain_limit = parsed_args["l"]
 
 bp_params = BP_params()
 bp_params.optimizer = "Gurobi"
-bp_params.time_limit_master_IP = 30.0
 timer = TimerOutput()
 max_time = 7200.0
 
