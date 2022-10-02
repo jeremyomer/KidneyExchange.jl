@@ -1,0 +1,401 @@
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 512 rows, 12563 columns and 33180 nonzeros
+Model fingerprint: 0x1c63fc90
+Variable types: 0 continuous, 12563 integer (12563 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 3e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 64.5000000
+Presolve removed 449 rows and 12156 columns
+Presolve time: 0.01s
+Presolved: 63 rows, 407 columns, 823 nonzeros
+Found heuristic solution: objective 75.5156250
+Variable types: 0 continuous, 407 integer (407 binary)
+
+Root relaxation: objective 8.843750e+01, 136 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+H    0     0                      88.4375000  862.01562   875%     -    0s
+     0     0          -    0        88.43750   88.43750  0.00%     -    0s
+
+Explored 0 nodes (209 simplex iterations) in 0.02 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 3: 88.4375 75.5156 64.5 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 8.843750000000e+01, best bound 8.843750000000e+01, gap 0.0000%
+
+User-callback calls 60, time in user-callback 0.00 sec
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 10854 rows, 4378464 columns and 12108936 nonzeros
+Model fingerprint: 0xf664aeed
+Variable types: 0 continuous, 4378464 integer (4378464 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 2e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 1453.5595703
+Found heuristic solution: objective 1541.5595703
+Presolve removed 308 rows and 1365 columns (presolve time = 9s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 10s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 15s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 20s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 25s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 30s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 35s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 40s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 45s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 50s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 55s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 60s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 65s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 70s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 75s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 80s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 93s) ...
+Presolve removed 308 rows and 1365 columns (presolve time = 99s) ...
+Presolve removed 308 rows and 1365 columns
+Presolve time: 98.84s
+Presolved: 10546 rows, 4377099 columns, 12104841 nonzeros
+Variable types: 0 continuous, 4377099 integer (4377099 binary)
+
+Root simplex log...
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    6.9552378e+05   1.322689e+06   0.000000e+00    114s
+
+Starting sifting (using dual simplex for sub-problems)...
+
+    Iter     Pivots    Primal Obj      Dual Obj        Time
+       0          0     infinity     -6.9552378e+05    115s
+       1      10310   1.0843764e+12  -6.9502523e+05    116s
+       2      32776   9.9815347e+11  -6.9448407e+05    118s
+       3      52220   9.5606749e+11  -6.9393903e+05    120s
+       4      71637   9.3571950e+11  -6.9339176e+05    122s
+       5      90988   9.2591450e+11  -6.9302421e+05    124s
+       6     110232   9.2089951e+11  -6.9267306e+05    126s
+       7     129221   9.1829951e+11  -6.9233102e+05    128s
+       8     148314   9.1692951e+11  -6.9195851e+05    130s
+       9     167390   9.1622151e+11  -1.5324304e+05    132s
+      10     186383   9.1560851e+11  -1.5318383e+05    132s
+      11     205504   8.3699555e+11  -1.5316182e+05    133s
+      12     224899   7.5963859e+11  -1.5314833e+05    135s
+      13     244418   6.7985063e+11  -1.5314677e+05    137s
+      14     264732   5.9292067e+11  -1.5315244e+05    139s
+      15     284724   5.2851971e+11  -1.5316566e+05    141s
+      16     304945   4.3642876e+11  -1.5318134e+05    143s
+      17     325761   3.6690080e+11  -1.5320056e+05    145s
+      18     347839   3.0630983e+11  -1.5322117e+05    147s
+      19     370388   2.4864186e+11  -1.5323063e+05    150s
+      20     390754   1.9955789e+11  -1.5322827e+05    153s
+      21     408582   1.5324792e+11  -1.5322258e+05    155s
+      22     426047   1.1088094e+11  -1.5323361e+05    157s
+      23     443372   5.1871971e+10  -1.5323763e+05    159s
+      24     460953   7.6969945e+09  -1.5319955e+05    161s
+      25     476394   6.1549957e+09  -1.5316371e+05    163s
+      26     499198   3.2999891e+08  -1.5314450e+05    168s
+      27     533331   7.0999081e+07  -1.5314266e+05    181s
+      28     579155   1.1998587e+07  -1.5131196e+05    197s
+      29     646852   2.9984116e+06  -1.5131167e+05    220s
+      30     720012  -1.5973659e+03  -1.5117976e+05    251s
+      31     774894  -1.5973666e+03  -1.5101512e+05    289s
+      32     827306  -1.5993688e+03  -1.5086331e+05    331s
+      33     879508  -1.5993708e+03  -1.5070113e+05    374s
+      34     931686  -1.5993716e+03  -1.5054178e+05    414s
+
+Sifting complete
+
+ 1013057    1.5993530e+03   0.000000e+00   1.576232e+03    446s
+ 1022807    1.5993541e+03   0.000000e+00   4.957619e+03    457s
+ 1032557    1.5993551e+03   0.000000e+00   2.513609e+03    467s
+ 1042307    1.5993581e+03   0.000000e+00   3.988464e+03    476s
+ 1052057    1.5993591e+03   0.000000e+00   1.437145e+03    485s
+ 1061807    1.5993635e+03   0.000000e+00   4.013643e+03    491s
+ 1071557    1.5993684e+03   0.000000e+00   1.364864e+03    497s
+ 1081314    1.5993699e+03   0.000000e+00   7.197983e+03    504s
+ 1091206    1.5993719e+03   0.000000e+00   1.148213e+03    509s
+ 1101070    1.5993763e+03   0.000000e+00   1.371398e+03    514s
+ 1111018    1.5993826e+03   0.000000e+00   2.528995e+03    519s
+ 1120803    1.5993870e+03   0.000000e+00   2.248405e+03    524s
+ 1131110    1.5993910e+03   0.000000e+00   3.399854e+03    528s
+ 1141327    1.5993964e+03   0.000000e+00   5.125271e+03    532s
+ 1151915    1.5994035e+03   0.000000e+00   7.088399e+03    535s
+ 1172149    1.5994109e+03   0.000000e+00   3.143065e+03    544s
+ 1181986    1.5994148e+03   0.000000e+00   2.742411e+03    550s
+ 1191822    1.5994188e+03   0.000000e+00   1.588284e+03    555s
+ 1202242    1.5994241e+03   0.000000e+00   2.070337e+03    559s
+ 1212089    1.5994280e+03   0.000000e+00   1.605853e+03    563s
+ 1222136    1.5994303e+03   0.000000e+00   1.083714e+04    568s
+ 1232488    1.5994373e+03   0.000000e+00   1.683283e+03    573s
+ 1242264    1.5994402e+03   0.000000e+00   4.973544e+03    579s
+ 1252014    1.5994437e+03   0.000000e+00   2.154926e+03    586s
+ 1261936    1.5994442e+03   0.000000e+00   4.932433e+03    592s
+ 1272174    1.5994485e+03   0.000000e+00   3.751175e+03    596s
+ 1282324    1.5994515e+03   0.000000e+00   2.128806e+03    600s
+ 1292143    1.5994516e+03   0.000000e+00   7.940633e+02    606s
+ 1312507    1.5994640e+03   0.000000e+00   5.534725e+03    612s
+ 1322380    1.5994656e+03   0.000000e+00   5.519820e+02    618s
+ 1332796    1.5994671e+03   0.000000e+00   1.378836e+03    622s
+ 1342747    1.5994719e+03   0.000000e+00   6.640406e+03    626s
+ 1352602    1.5994729e+03   0.000000e+00   3.457005e+03    632s
+ 1362365    1.5994767e+03   0.000000e+00   3.528832e+03    637s
+ 1372310    1.5994796e+03   0.000000e+00   4.918978e+03    643s
+ 1382063    1.5994797e+03   0.000000e+00   1.486339e+03    649s
+ 1391906    1.5994798e+03   0.000000e+00   3.934749e+03    655s
+ 1401688    1.5994819e+03   0.000000e+00   4.911385e+03    661s
+ 1411451    1.5994834e+03   0.000000e+00   6.871405e+03    667s
+ 1421201    1.5994846e+03   0.000000e+00   1.687060e+05    672s
+ 1430953    1.5994858e+03   0.000000e+00   9.666041e+03    678s
+ 1440769    1.5994875e+03   0.000000e+00   8.379071e+04    684s
+ 1450718    1.5994914e+03   0.000000e+00   1.318074e+04    690s
+ 1460672    1.5994941e+03   0.000000e+00   4.888269e+03    697s
+ 1470756    1.5994968e+03   0.000000e+00   5.675458e+03    702s
+ 1480541    1.5994988e+03   0.000000e+00   3.641797e+03    709s
+ 1490562    1.5995003e+03   0.000000e+00   1.065004e+03    715s
+ 1500714    1.5995025e+03   0.000000e+00   1.509296e+03    720s
+ 1510832    1.5995056e+03   0.000000e+00   1.125324e+04    724s
+ 1520841    1.5995076e+03   0.000000e+00   3.904516e+03    729s
+ 1530591    1.5995090e+03   0.000000e+00   1.609846e+03    735s
+ 1550831    1.5995152e+03   0.000000e+00   5.987004e+04    744s
+ 1560927    1.5995193e+03   0.000000e+00   5.249786e+03    749s
+ 1571676    1.5995218e+03   0.000000e+00   1.571482e+03    753s
+ 1582565    1.5995238e+03   0.000000e+00   4.627509e+03    756s
+ 1592566    1.5995283e+03   0.000000e+00   4.729421e+03    761s
+ 1602518    1.5995315e+03   0.000000e+00   1.535846e+03    766s
+ 1612305    1.5995325e+03   0.000000e+00   9.579776e+02    771s
+ 1622294    1.5995336e+03   0.000000e+00   5.078551e+03    776s
+ 1632226    1.5995364e+03   0.000000e+00   3.675606e+03    781s
+ 1642055    1.5995383e+03   0.000000e+00   9.281228e+02    786s
+ 1652295    1.5995384e+03   0.000000e+00   6.598317e+03    792s
+ 1662979    1.5995404e+03   0.000000e+00   1.883432e+03    796s
+ 1683260    1.5995433e+03   0.000000e+00   2.215488e+03    805s
+ 1693826    1.5995462e+03   0.000000e+00   1.218836e+03    808s
+ 1704405    1.5995481e+03   0.000000e+00   1.854611e+03    812s
+ 1714557    1.5995501e+03   0.000000e+00   1.040562e+03    816s
+ 1724401    1.5995512e+03   0.000000e+00   3.407523e+03    822s
+ 1734436    1.5995531e+03   0.000000e+00   4.399469e+03    828s
+ 1744540    1.5995555e+03   0.000000e+00   3.021487e+02    833s
+ 1754388    1.5995565e+03   0.000000e+00   3.369463e+02    837s
+ 1764163    1.5995584e+03   0.000000e+00   7.180449e+02    840s
+ 1784338    1.5995595e+03   0.000000e+00   2.469571e+03    848s
+ 1794664    1.5995627e+03   0.000000e+00   1.515729e+03    851s
+ 1814831    1.5995648e+03   0.000000e+00   9.524837e+02    860s
+ 1835601    1.5995693e+03   0.000000e+00   5.298606e+02    868s
+ 1845630    1.5995702e+03   0.000000e+00   4.085509e+02    871s
+ 1867165    1.5995711e+03   0.000000e+00   1.004302e+03    878s
+ 1877973    1.5995721e+03   0.000000e+00   2.949819e+02    882s
+ 1904871    1.5995745e+03   0.000000e+00   1.178110e+02    887s
+ 1918093    1.5995747e+03   0.000000e+00   2.812283e+02    890s
+ 1946985    1.5995769e+03   0.000000e+00   5.133643e+01    896s
+ 1969023    1.5995791e+03   0.000000e+00   0.000000e+00    902s
+
+Root relaxation: objective 1.599579e+03, 1969023 iterations, 798.18 seconds
+Total elapsed time = 991.44s
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1599.57910    0   10 1541.55957 1599.57910  3.76%     - 1374s
+H    0     0                    1599.5781250 1599.57910  0.00%     - 1417s
+
+Explored 1 nodes (2408179 simplex iterations) in 1418.28 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 3: 1599.58 1541.56 1453.56 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.599578125000e+03, best bound 1.599579101562e+03, gap 0.0001%
+
+User-callback calls 20212, time in user-callback 0.07 sec
+
+********************************************************************************
+ Solve heterogeneous/heterogeneous_128_0_1 with (K,L) = (3,4) using branch-and-price
+ - master model uses PIEF = true 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Initialize column pool with 2-cycles when using PIEF
+- number of initial columns: 497
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: 76.0
+- nb of cycles added = 30
+
+Iteration 2:
+- current master value: 87.0
+- nb of cycles added = 3
+
+Iteration 3:
+- current master value: 88.0
+- nb of cycles added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 4:
+- current master value: 88.0
+- nb of cycles added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 88.0, tree lower bound is -Inf
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 530
+
+
+New incumbent found with value 88.0 found by solving the IP with every column of the pool
+After processing root node: LB = 88.0, UB = 88.0
+The node is either infeasible or pruned by bound
+LB = 88.0, UB = 88.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 88.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 29 cycles
+- k = 3: 10 cycles
+In total, 88 pairs are covered by cycles
+
+The computed cost of the solution is 88.0
+ ─────────────────────────────────────────────────────────────────────────────
+                                     Time                    Allocations      
+                            ───────────────────────   ────────────────────────
+      Tot / % measured:          25.5s /  96.2%           2.16GiB /  99.2%    
+
+ Section            ncalls     time    %tot     avg     alloc    %tot      avg
+ ─────────────────────────────────────────────────────────────────────────────
+ B&P                     1    22.7s   92.6%   22.7s   2.03GiB   95.0%  2.03GiB
+   Process_Node          1    9.12s   37.2%   9.12s    842MiB   38.4%   842MiB
+     opt_master          3    5.65s   23.1%   1.88s    571MiB   26.1%   190MiB
+     Bellman-Ford      143    986ms    4.0%  6.89ms   59.4MiB    2.7%   425KiB
+     IP_master           1    317ms    1.3%   317ms   29.4MiB    1.3%  29.4MiB
+ Parser                  1    1.04s    4.2%   1.04s   50.5MiB    2.3%  50.5MiB
+ Preprocessing           1    767ms    3.1%   767ms   60.0MiB    2.7%  60.0MiB
+ ─────────────────────────────────────────────────────────────────────────────
+
+********************************************************************************
+ Solve preflib/MD-00001-00000306 with (K,L) = (3,5) using branch-and-price
+ - master model uses PIEF = true 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Initialize column pool with 2-cycles when using PIEF
+- number of initial columns: 9995
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: 1598.9999999999998
+- nb of cycles added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 1599.0, tree lower bound is -Inf
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 9995
+
+
+New incumbent found with value 1599.0 found by solving the IP with every column of the pool
+After processing root node: LB = 1599.0, UB = 1599.0
+The node is either infeasible or pruned by bound
+LB = 1599.0, UB = 1599.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 1599.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 592 cycles
+In total, 1184 pairs are covered by cycles
+
+Numbers of chains per chain length
+- l = 1: 214 chains
+- l = 2: 80 chains
+- l = 3: 11 chains
+- l = 4: 2 chains
+In total, 415 pairs are covered by chains
+
+The computed cost of the solution is 1599.0
+ ─────────────────────────────────────────────────────────────────────────────
+                                     Time                    Allocations      
+                            ───────────────────────   ────────────────────────
+      Tot / % measured:          2287s / 100.0%           27.0GiB / 100.0%    
+
+ Section            ncalls     time    %tot     avg     alloc    %tot      avg
+ ─────────────────────────────────────────────────────────────────────────────
+ B&P                     1    2284s   99.8%   2284s   26.1GiB   96.9%  26.1GiB
+   Process_Node          1    2174s   95.1%   2174s   9.32GiB   34.5%  9.32GiB
+     IP_master           1    1526s   66.7%   1526s   4.64GiB   17.2%  4.64GiB
+     opt_master          1     647s   28.3%    647s   4.59GiB   17.0%  4.59GiB
+     Bellman-Ford      755    604ms    0.0%   800μs   37.3MiB    0.1%  50.6KiB
+ Parser                  1    2.67s    0.1%   2.67s    583MiB    2.1%   583MiB
+ Preprocessing           1    854ms    0.0%   854ms    268MiB    1.0%   268MiB
+ ─────────────────────────────────────────────────────────────────────────────
+	Command being timed: "sh /home/aarslan//jobs-running/1600550/miriel058.0/BP_3_5_pref_306"
+	User time (seconds): 2333.62
+	System time (seconds): 38.05
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 39:19.02
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 12359276
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 17556313
+	Voluntary context switches: 454572
+	Involuntary context switches: 1967
+	Swaps: 0
+	File system inputs: 8
+	File system outputs: 296
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

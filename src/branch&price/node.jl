@@ -446,8 +446,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
     # find a feasible solution at current node by solving the master IP
     if bp_params.solve_master_IP &&
-        (bp_status.bp_info.LB < tree_node.ub - ϵ) &&  
-        ( (bp_status.termination_status_last_ip != OPTIMAL) || 
+        (bp_status.bp_info.LB < tree_node.ub - ϵ) &&
+        ( (bp_status.termination_status_last_ip != OPTIMAL) ||
             (length(column_pool) > bp_status.nb_cols_last_ip) )
         if verbose println("\n Search for a feasible solution at node $(tree_node.index)") end
 

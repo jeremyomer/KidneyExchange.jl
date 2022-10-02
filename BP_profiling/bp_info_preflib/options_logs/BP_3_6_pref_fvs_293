@@ -1,0 +1,343 @@
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 128 rows, 221 columns and 541 nonzeros
+Model fingerprint: 0x48e0aa9a
+Variable types: 0 continuous, 221 integer (221 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 3e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 62.0000000
+Presolve removed 63 rows and 69 columns
+Presolve time: 0.00s
+Presolved: 65 rows, 152 columns, 351 nonzeros
+Found heuristic solution: objective 78.0000000
+Variable types: 0 continuous, 152 integer (152 binary)
+
+Root relaxation: objective 8.800000e+01, 102 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+H    0     0                      88.0000000  376.00000   327%     -    0s
+     0     0          -    0        88.00000   88.00000  0.00%     -    0s
+
+Explored 0 nodes (134 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 3: 88 78 62 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 8.800000000000e+01, best bound 8.800000000000e+01, gap 0.0000%
+
+User-callback calls 59, time in user-callback 0.00 sec
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 2252 rows, 6387 columns and 15211 nonzeros
+Model fingerprint: 0xdbc2fcc4
+Variable types: 0 continuous, 6387 integer (6387 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 3e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 1240.0000000
+Presolve removed 404 rows and 618 columns
+Presolve time: 0.06s
+Presolved: 1848 rows, 5769 columns, 13608 nonzeros
+Found heuristic solution: objective 1400.0000000
+Variable types: 0 continuous, 5769 integer (5769 binary)
+
+Root relaxation: objective 1.560000e+03, 5769 iterations, 0.51 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+H    0     0                    1560.0000000 11143.0000   614%     -    0s
+     0     0          -    0      1560.00000 1560.00000  0.00%     -    0s
+
+Explored 0 nodes (6603 simplex iterations) in 0.64 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 3: 1560 1400 1240 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.560000000000e+03, best bound 1.560000000000e+03, gap 0.0000%
+
+User-callback calls 262, time in user-callback 0.00 sec
+
+********************************************************************************
+ Solve heterogeneous/heterogeneous_128_0_1 with (K,L) = (3,4) using branch-and-price
+ - master model uses PIEF = false 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: -0.0
+[32m New incumbent with value -0.0 found during the solution of the restricted master [00m
+- nb of cycles added = 62
+nb of chains added = 0
+
+Iteration 2:
+- current master value: 56.0
+[32m New incumbent with value 56.0 found during the solution of the restricted master [00m
+- nb of cycles added = 60
+nb of chains added = 0
+
+Iteration 3:
+- current master value: 67.0
+- nb of cycles added = 54
+nb of chains added = 0
+
+Iteration 4:
+- current master value: 86.0
+[32m New incumbent with value 86.0 found during the solution of the restricted master [00m
+- nb of cycles added = 33
+nb of chains added = 0
+
+Iteration 5:
+- current master value: 87.0
+[32m New incumbent with value 87.0 found during the solution of the restricted master [00m
+- nb of cycles added = 6
+nb of chains added = 0
+
+Iteration 6:
+- current master value: 87.0
+- nb of cycles added = 5
+nb of chains added = 0
+
+Iteration 7:
+- current master value: 87.0
+- nb of cycles added = 1
+nb of chains added = 0
+
+Iteration 8:
+- current master value: 88.0
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 9:
+- current master value: 88.0
+- nb of cycles added = 0
+nb of chains added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 88.0, tree lower bound is 87.0
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 221
+
+
+New incumbent found with value 88.0 found by solving the IP with every column of the pool
+After processing root node: LB = 88.0, UB = 88.0
+The node is either infeasible or pruned by bound
+LB = 88.0, UB = 88.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 88.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 23 cycles
+- k = 3: 14 cycles
+In total, 88 pairs are covered by cycles
+
+The computed cost of the solution is 88.0
+ ─────────────────────────────────────────────────────────────────────────────
+                                     Time                    Allocations      
+                            ───────────────────────   ────────────────────────
+      Tot / % measured:          20.5s /  95.7%           1.85GiB /  99.0%    
+
+ Section            ncalls     time    %tot     avg     alloc    %tot      avg
+ ─────────────────────────────────────────────────────────────────────────────
+ B&P                     1    18.1s   92.1%   18.1s   1.74GiB   94.9%  1.74GiB
+   Process_Node          1    10.4s   52.8%   10.4s    916MiB   48.8%   916MiB
+     opt_master          8    5.52s   28.1%   690ms    554MiB   29.5%  69.3MiB
+     Bellman-Ford      477    904ms    4.6%  1.89ms   61.7MiB    3.3%   132KiB
+     IP_master           1    320ms    1.6%   320ms   19.4MiB    1.0%  19.4MiB
+ Parser                  1    996ms    5.1%   996ms   50.5MiB    2.7%  50.5MiB
+ Preprocessing           1    551ms    2.8%   551ms   46.2MiB    2.5%  46.2MiB
+ ─────────────────────────────────────────────────────────────────────────────
+
+********************************************************************************
+ Solve preflib/MD-00001-00000293 with (K,L) = (3,6) using branch-and-price
+ - master model uses PIEF = false 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: -0.0
+[32m New incumbent with value -0.0 found during the solution of the restricted master [00m
+- nb of cycles added = 1879
+nb of chains added = 204
+
+Iteration 2:
+- current master value: 1105.0
+[32m New incumbent with value 1105.0 found during the solution of the restricted master [00m
+- nb of cycles added = 1653
+nb of chains added = 204
+
+Iteration 3:
+- current master value: 1363.0
+- nb of cycles added = 460
+nb of chains added = 204
+
+Iteration 4:
+- current master value: 1399.9999999999993
+- nb of cycles added = 135
+nb of chains added = 204
+
+Iteration 5:
+- current master value: 1440.0000000000005
+- nb of cycles added = 84
+nb of chains added = 204
+
+Iteration 6:
+- current master value: 1473.9999999999995
+- nb of cycles added = 78
+nb of chains added = 204
+
+Iteration 7:
+- current master value: 1506.0
+- nb of cycles added = 70
+nb of chains added = 204
+
+Iteration 8:
+- current master value: 1524.9999999999998
+- nb of cycles added = 0
+nb of chains added = 204
+
+Iteration 9:
+- current master value: 1540.9999999999998
+- nb of cycles added = 0
+nb of chains added = 204
+
+Iteration 10:
+- current master value: 1544.0000000000002
+- nb of cycles added = 0
+nb of chains added = 186
+
+Iteration 11:
+- current master value: 1560.0000000000011
+- nb of cycles added = 0
+nb of chains added = 6
+
+Iteration 12:
+- current master value: 1559.999999999999
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 13:
+- current master value: 1559.999999999999
+- nb of cycles added = 0
+nb of chains added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 1560.0, tree lower bound is 1105.0
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 6387
+
+
+New incumbent found with value 1560.0 found by solving the IP with every column of the pool
+After processing root node: LB = 1560.0, UB = 1560.0
+The node is either infeasible or pruned by bound
+LB = 1560.0, UB = 1560.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 1560.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 363 cycles
+- k = 3: 196 cycles
+In total, 1314 pairs are covered by cycles
+
+Numbers of chains per chain length
+- l = 1: 162 chains
+- l = 2: 42 chains
+In total, 246 pairs are covered by chains
+
+The computed cost of the solution is 1560.0
+ ────────────────────────────────────────────────────────────────────────────────
+                                        Time                    Allocations      
+                               ───────────────────────   ────────────────────────
+       Tot / % measured:            11.6s / 100.0%           3.83GiB / 100.0%    
+
+ Section               ncalls     time    %tot     avg     alloc    %tot      avg
+ ────────────────────────────────────────────────────────────────────────────────
+ B&P                        1    7.71s   66.7%   7.71s   3.08GiB   80.6%  3.08GiB
+   Process_Node             1    7.69s   66.4%   7.69s   3.08GiB   80.5%  3.08GiB
+     Bellman-Ford-c...  2.44k    2.20s   19.0%   903μs    213MiB    5.4%  89.7KiB
+     opt_master            12    1.77s   15.3%   147ms   4.42MiB    0.1%   377KiB
+     Bellman-Ford       8.46k    1.12s    9.7%   133μs    263MiB    6.7%  31.9KiB
+     IP_master              1    686ms    5.9%   686ms   12.5MiB    0.3%  12.5MiB
+ Parser                     1    2.57s   22.2%   2.57s    518MiB   13.2%   518MiB
+ Preprocessing              1    1.29s   11.2%   1.29s    240MiB    6.1%   240MiB
+ ────────────────────────────────────────────────────────────────────────────────
+	Command being timed: "sh /home/aarslan//jobs-running/1645322/miriel029.3/BP_3_6_pref_fvs_293"
+	User time (seconds): 73.24
+	System time (seconds): 2.13
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:15.57
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 907204
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1
+	Minor (reclaiming a frame) page faults: 709969
+	Voluntary context switches: 8467
+	Involuntary context switches: 3658
+	Swaps: 0
+	File system inputs: 37200
+	File system outputs: 56
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

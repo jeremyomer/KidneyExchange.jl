@@ -1,0 +1,221 @@
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 512 rows, 12563 columns and 33180 nonzeros
+Model fingerprint: 0x1c63fc90
+Variable types: 0 continuous, 12563 integer (12563 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 3e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 64.5000000
+Presolve removed 449 rows and 12156 columns
+Presolve time: 0.01s
+Presolved: 63 rows, 407 columns, 823 nonzeros
+Found heuristic solution: objective 75.5156250
+Variable types: 0 continuous, 407 integer (407 binary)
+
+Root relaxation: objective 8.843750e+01, 136 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+H    0     0                      88.4375000  862.01562   875%     -    0s
+     0     0          -    0        88.43750   88.43750  0.00%     -    0s
+
+Explored 0 nodes (209 simplex iterations) in 0.02 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 3: 88.4375 75.5156 64.5 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 8.843750000000e+01, best bound 8.843750000000e+01, gap 0.0000%
+
+User-callback calls 60, time in user-callback 0.00 sec
+ERROR: LoadError: KeyError: key "Bellman-Ford" not found
+Stacktrace:
+ [1] getindex at ./dict.jl:477 [inlined]
+ [2] getindex(::TimerOutput, ::String) at /home/aarslan/.julia/packages/TimerOutputs/5tW2E/src/TimerOutput.jl:318
+ [3] top-level scope at /home/aarslan/KidneyExchange.jl/KEPTestBPPICEF.jl:45
+ [4] include at ./boot.jl:328 [inlined]
+ [5] include_relative(::Module, ::String) at ./loading.jl:1094
+ [6] include(::Module, ::String) at ./Base.jl:31
+ [7] exec_options(::Base.JLOptions) at ./client.jl:295
+ [8] _start() at ./client.jl:464
+in expression starting at /home/aarslan/KidneyExchange.jl/KEPTestBPPICEF.jl:45
+
+********************************************************************************
+ Solve heterogeneous/heterogeneous_128_0_1 with (K,L) = (3,4) using branch-and-price
+ - master model uses PIEF = true 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Initialize column pool with 2-cycles when using PIEF
+- number of initial columns: 497
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: 76.0
+- nb of cycles added = 30
+
+Iteration 2:
+- current master value: 87.0
+- nb of cycles added = 3
+
+Iteration 3:
+- current master value: 88.0
+- nb of cycles added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 4:
+- current master value: 88.0
+- nb of cycles added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 88.0, tree lower bound is -Inf
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 530
+
+
+New incumbent found with value 88.0 found by solving the IP with every column of the pool
+After processing root node: LB = 88.0, UB = 88.0
+The node is either infeasible or pruned by bound
+LB = 88.0, UB = 88.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 88.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 29 cycles
+- k = 3: 10 cycles
+In total, 88 pairs are covered by cycles
+
+The computed cost of the solution is 88.0
+ ─────────────────────────────────────────────────────────────────────────────
+                                     Time                    Allocations      
+                            ───────────────────────   ────────────────────────
+      Tot / % measured:          26.0s /  96.8%           2.16GiB /  99.2%    
+
+ Section            ncalls     time    %tot     avg     alloc    %tot      avg
+ ─────────────────────────────────────────────────────────────────────────────
+ B&P                     1    23.4s   92.8%   23.4s   2.03GiB   95.0%  2.03GiB
+   Process_Node          1    10.1s   39.9%   10.1s    842MiB   38.4%   842MiB
+     opt_master          3    6.63s   26.3%   2.21s    571MiB   26.1%   190MiB
+     Bellman-Ford      143    989ms    3.9%  6.92ms   59.4MiB    2.7%   425KiB
+     IP_master           1    338ms    1.3%   338ms   29.4MiB    1.3%  29.4MiB
+ Parser                  1    1.05s    4.2%   1.05s   50.5MiB    2.3%  50.5MiB
+ Preprocessing           1    772ms    3.1%   772ms   60.0MiB    2.7%  60.0MiB
+ ─────────────────────────────────────────────────────────────────────────────
+
+********************************************************************************
+ Solve preflib/MD-00001-00000307 with (K,L) = (4,6) using branch-and-price
+ - master model uses PIEF = true 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Initialize column pool with 2-cycles when using PIEF
+- number of initial columns: 10984
+
+Processing node 1
+
+
+Iteration 1:
+After processing root node: LB = -Inf, UB = Inf
+- the problem was not solved at root node
+    . deactivate column-disjoint CG and tabu list
+    . delete half the columns and restart solving to generate new columns
+Processing node 1
+
+
+Iteration 1:
+The node is either infeasible or pruned by bound
+LB = -Inf, UB = Inf
+[35m The time limit is exceeded [00m
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value -Inf with gap NaN %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+In total, 0 pairs are covered by cycles
+
+Numbers of chains per chain length
+In total, 0 pairs are covered by chains
+
+The computed cost of the solution is 0.0
+ ───────────────────────────────────────────────────────────────────────────
+                                   Time                    Allocations      
+                          ───────────────────────   ────────────────────────
+     Tot / % measured:        14706s / 100.0%           30.0GiB / 100.0%    
+
+ Section          ncalls     time    %tot     avg     alloc    %tot      avg
+ ───────────────────────────────────────────────────────────────────────────
+ B&P                   1   14702s  100.0%  14702s   29.1GiB   97.1%  29.1GiB
+   Process_Node        2   14534s   98.8%   7267s   6.38GiB   21.3%  3.19GiB
+     opt_master        2   14526s   98.8%   7263s   6.30GiB   21.0%  3.15GiB
+ Parser                1    2.81s    0.0%   2.81s    599MiB    2.0%   599MiB
+ Preprocessing         1    987ms    0.0%   987ms    296MiB    1.0%   296MiB
+ ───────────────────────────────────────────────────────────────────────────
+Command exited with non-zero status 1
+	Command being timed: "sh /home/aarslan//jobs-running/1600550/miriel033.5/BP_4_6_pref_307"
+	User time (seconds): 14784.83
+	System time (seconds): 71.20
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:06:19
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 10366716
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 26
+	Minor (reclaiming a frame) page faults: 15375605
+	Voluntary context switches: 2911396
+	Involuntary context switches: 9314
+	Swaps: 0
+	File system inputs: 82064
+	File system outputs: 32
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+Sat Jul 23 09:23:54 2022 -- miriel033.5/1600550 Status error code = 256

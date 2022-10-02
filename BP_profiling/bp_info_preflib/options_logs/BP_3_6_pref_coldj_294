@@ -1,0 +1,774 @@
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 128 rows, 264 columns and 631 nonzeros
+Model fingerprint: 0xe3c72846
+Variable types: 0 continuous, 264 integer (264 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 3e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 55.0000000
+Presolve removed 63 rows and 53 columns
+Presolve time: 0.00s
+Presolved: 65 rows, 211 columns, 487 nonzeros
+Found heuristic solution: objective 74.0000000
+Variable types: 0 continuous, 211 integer (211 binary)
+
+Root relaxation: objective 8.800000e+01, 105 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+H    0     0                      88.0000000  501.00000   469%     -    0s
+     0     0          -    0        88.00000   88.00000  0.00%     -    0s
+
+Explored 0 nodes (157 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 3: 88 74 55 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 8.800000000000e+01, best bound 8.800000000000e+01, gap 0.0000%
+
+User-callback calls 56, time in user-callback 0.00 sec
+Gurobi Optimizer version 9.1.2 build v9.1.2rc0 (linux64)
+Thread count: 24 physical cores, 24 logical processors, using up to 1 threads
+Optimize a model with 2252 rows, 36707 columns and 85560 nonzeros
+Model fingerprint: 0xcd5ec51f
+Variable types: 0 continuous, 36707 integer (36707 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 4e+00]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 1199.0000000
+Presolve removed 562 rows and 664 columns
+Presolve time: 0.28s
+Presolved: 1690 rows, 36043 columns, 83388 nonzeros
+Found heuristic solution: objective 1280.0000000
+Variable types: 0 continuous, 36043 integer (36043 binary)
+
+Root relaxation: objective 1.513000e+03, 9197 iterations, 1.24 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+H    0     0                    1513.0000000 65115.0000  4204%     -    3s
+     0     0          -    0      1513.00000 1513.00000  0.00%     -    3s
+
+Explored 0 nodes (22221 simplex iterations) in 3.30 seconds
+Thread count was 1 (of 24 available processors)
+
+Solution count 3: 1513 1280 1199 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.513000000000e+03, best bound 1.513000000000e+03, gap 0.0000%
+
+User-callback calls 295, time in user-callback 0.00 sec
+
+********************************************************************************
+ Solve heterogeneous/heterogeneous_128_0_1 with (K,L) = (3,4) using branch-and-price
+ - master model uses PIEF = false 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: -0.0
+[32m New incumbent with value -0.0 found during the solution of the restricted master [00m
+- nb of cycles added = 55
+nb of chains added = 0
+
+Iteration 2:
+- current master value: 32.0
+[32m New incumbent with value 32.0 found during the solution of the restricted master [00m
+- nb of cycles added = 55
+nb of chains added = 0
+
+Iteration 3:
+- current master value: 55.0
+[32m New incumbent with value 55.0 found during the solution of the restricted master [00m
+- nb of cycles added = 50
+nb of chains added = 0
+
+Iteration 4:
+- current master value: 64.5
+- nb of cycles added = 43
+nb of chains added = 0
+
+Iteration 5:
+- current master value: 69.0
+- nb of cycles added = 36
+nb of chains added = 0
+
+Iteration 6:
+- current master value: 86.0
+[32m New incumbent with value 86.0 found during the solution of the restricted master [00m
+- nb of cycles added = 20
+nb of chains added = 0
+
+Iteration 7:
+- current master value: 88.0
+- nb of cycles added = 5
+nb of chains added = 0
+
+Iteration 8:
+- current master value: 88.0
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 9:
+- current master value: 88.0
+- nb of cycles added = 0
+nb of chains added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 88.0, tree lower bound is 86.0
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 264
+
+
+New incumbent found with value 88.0 found by solving the IP with every column of the pool
+After processing root node: LB = 88.0, UB = 88.0
+The node is either infeasible or pruned by bound
+LB = 88.0, UB = 88.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 88.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 23 cycles
+- k = 3: 14 cycles
+In total, 88 pairs are covered by cycles
+
+The computed cost of the solution is 88.0
+ ─────────────────────────────────────────────────────────────────────────────
+                                     Time                    Allocations      
+                            ───────────────────────   ────────────────────────
+      Tot / % measured:          21.4s /  95.6%           1.87GiB /  99.0%    
+
+ Section            ncalls     time    %tot     avg     alloc    %tot      avg
+ ─────────────────────────────────────────────────────────────────────────────
+ B&P                     1    18.8s   91.7%   18.8s   1.74GiB   94.2%  1.74GiB
+   Process_Node          1    10.8s   52.7%   10.8s    916MiB   48.4%   916MiB
+     opt_master          8    5.64s   27.6%   705ms    553MiB   29.2%  69.1MiB
+     Bellman-Ford      374    950ms    4.6%  2.54ms   60.1MiB    3.2%   165KiB
+     IP_master           1    349ms    1.7%   349ms   19.5MiB    1.0%  19.5MiB
+ Parser                  1    980ms    4.8%   980ms   50.5MiB    2.7%  50.5MiB
+ Preprocessing           1    724ms    3.5%   724ms   60.0MiB    3.2%  60.0MiB
+ ─────────────────────────────────────────────────────────────────────────────
+
+********************************************************************************
+ Solve preflib/MD-00001-00000294 with (K,L) = (3,6) using branch-and-price
+ - master model uses PIEF = false 
+ - time limit is 7200.0 seconds
+********************************************************************************
+
+
+----------------------------------------------------------
+ Parse the input file
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Preprocessing: compute the graph copies
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+ Solve with branch-and-price
+----------------------------------------------------------
+
+Processing node 1
+
+
+Iteration 1:
+- current master value: -0.0
+[32m New incumbent with value -0.0 found during the solution of the restricted master [00m
+- nb of cycles added = 772
+nb of chains added = 204
+
+Iteration 2:
+- current master value: 289.0
+[32m New incumbent with value 289.0 found during the solution of the restricted master [00m
+- nb of cycles added = 728
+nb of chains added = 204
+
+Iteration 3:
+- current master value: 488.0
+- nb of cycles added = 695
+nb of chains added = 204
+
+Iteration 4:
+- current master value: 605.0
+[32m New incumbent with value 605.0 found during the solution of the restricted master [00m
+- nb of cycles added = 681
+nb of chains added = 204
+
+Iteration 5:
+- current master value: 699.9999999999998
+- nb of cycles added = 665
+nb of chains added = 204
+
+Iteration 6:
+- current master value: 767.0
+- nb of cycles added = 623
+nb of chains added = 204
+
+Iteration 7:
+- current master value: 825.0
+- nb of cycles added = 568
+nb of chains added = 204
+
+Iteration 8:
+- current master value: 869.0
+- nb of cycles added = 560
+nb of chains added = 204
+
+Iteration 9:
+- current master value: 917.0
+- nb of cycles added = 543
+nb of chains added = 204
+
+Iteration 10:
+- current master value: 956.0
+- nb of cycles added = 511
+nb of chains added = 204
+
+Iteration 11:
+- current master value: 982.0
+- nb of cycles added = 509
+nb of chains added = 204
+
+Iteration 12:
+- current master value: 999.3333333333331
+- nb of cycles added = 509
+nb of chains added = 204
+
+Iteration 13:
+- current master value: 1019.9999999999999
+- nb of cycles added = 508
+nb of chains added = 204
+
+Iteration 14:
+- current master value: 1038.5
+- nb of cycles added = 508
+nb of chains added = 204
+
+Iteration 15:
+- current master value: 1069.0
+- nb of cycles added = 505
+nb of chains added = 204
+
+Iteration 16:
+- current master value: 1093.8000000000004
+- nb of cycles added = 504
+nb of chains added = 204
+
+Iteration 17:
+- current master value: 1116.0
+- nb of cycles added = 504
+nb of chains added = 204
+
+Iteration 18:
+- current master value: 1139.5000000000002
+- nb of cycles added = 503
+nb of chains added = 204
+
+Iteration 19:
+- current master value: 1158.0
+- nb of cycles added = 498
+nb of chains added = 204
+
+Iteration 20:
+- current master value: 1180.0
+- nb of cycles added = 497
+nb of chains added = 204
+
+Iteration 21:
+- current master value: 1203.3333333333337
+- nb of cycles added = 497
+nb of chains added = 204
+
+Iteration 22:
+- current master value: 1221.0
+- nb of cycles added = 496
+nb of chains added = 204
+
+Iteration 23:
+- current master value: 1236.5
+- nb of cycles added = 496
+nb of chains added = 204
+
+Iteration 24:
+- current master value: 1255.5000000000002
+- nb of cycles added = 495
+nb of chains added = 204
+
+Iteration 25:
+- current master value: 1277.0
+- nb of cycles added = 476
+nb of chains added = 204
+
+Iteration 26:
+- current master value: 1299.0
+- nb of cycles added = 475
+nb of chains added = 204
+
+Iteration 27:
+- current master value: 1311.0
+- nb of cycles added = 462
+nb of chains added = 204
+
+Iteration 28:
+- current master value: 1334.0
+- nb of cycles added = 322
+nb of chains added = 204
+
+Iteration 29:
+- current master value: 1342.0
+- nb of cycles added = 320
+nb of chains added = 204
+
+Iteration 30:
+- current master value: 1350.5
+- nb of cycles added = 320
+nb of chains added = 204
+
+Iteration 31:
+- current master value: 1356.0
+- nb of cycles added = 317
+nb of chains added = 204
+
+Iteration 32:
+- current master value: 1365.0
+- nb of cycles added = 308
+nb of chains added = 204
+
+Iteration 33:
+- current master value: 1366.9999999999998
+- nb of cycles added = 165
+nb of chains added = 204
+
+Iteration 34:
+- current master value: 1377.0
+- nb of cycles added = 141
+nb of chains added = 204
+
+Iteration 35:
+- current master value: 1382.0000000000005
+- nb of cycles added = 128
+nb of chains added = 204
+
+Iteration 36:
+- current master value: 1386.333333333333
+- nb of cycles added = 128
+nb of chains added = 204
+
+Iteration 37:
+- current master value: 1390.9999999999998
+- nb of cycles added = 9
+nb of chains added = 204
+
+Iteration 38:
+- current master value: 1392.0000000000002
+- nb of cycles added = 9
+nb of chains added = 204
+
+Iteration 39:
+- current master value: 1393.0000000000002
+- nb of cycles added = 9
+nb of chains added = 204
+
+Iteration 40:
+- current master value: 1396.999999999999
+- nb of cycles added = 9
+nb of chains added = 204
+
+Iteration 41:
+- current master value: 1403.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 42:
+- current master value: 1403.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 43:
+- current master value: 1406.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 44:
+- current master value: 1410.9999999999998
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 45:
+- current master value: 1413.9999999999998
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 46:
+- current master value: 1419.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 47:
+- current master value: 1424.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 48:
+- current master value: 1433.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 49:
+- current master value: 1436.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 50:
+- current master value: 1439.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 51:
+- current master value: 1442.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 52:
+- current master value: 1443.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 53:
+- current master value: 1450.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 54:
+- current master value: 1452.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 55:
+- current master value: 1455.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 56:
+- current master value: 1458.0000000000005
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 57:
+- current master value: 1462.0000000000002
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 58:
+- current master value: 1469.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 59:
+- current master value: 1472.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 60:
+- current master value: 1476.5
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 61:
+- current master value: 1476.9999999999986
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 62:
+- current master value: 1479.4999999999998
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 63:
+- current master value: 1481.0
+- nb of cycles added = 8
+nb of chains added = 204
+
+Iteration 64:
+- current master value: 1482.0000000000007
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 65:
+- current master value: 1483.0000000000007
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 66:
+- current master value: 1482.9999999999998
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 67:
+- current master value: 1482.9999999999998
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 68:
+- current master value: 1486.0000000000005
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 69:
+- current master value: 1485.9999999999998
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 70:
+- current master value: 1488.0
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 71:
+- current master value: 1489.5000000000005
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 72:
+- current master value: 1489.666666666667
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 73:
+- current master value: 1489.9999999999993
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 74:
+- current master value: 1492.0
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 75:
+- current master value: 1491.9999999999998
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 76:
+- current master value: 1492.0000000000002
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 77:
+- current master value: 1493.9999999999995
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 78:
+- current master value: 1493.9999999999998
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 79:
+- current master value: 1493.9999999999989
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 80:
+- current master value: 1493.9999999999995
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 81:
+- current master value: 1495.9999999999989
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 82:
+- current master value: 1498.0
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 83:
+- current master value: 1498.0000000000007
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 84:
+- current master value: 1500.0000000000002
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 85:
+- current master value: 1500.9999999999998
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 86:
+- current master value: 1502.0000000000002
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 87:
+- current master value: 1503.000000000001
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 88:
+- current master value: 1504.0000000000002
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 89:
+- current master value: 1504.0
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 90:
+- current master value: 1506.0
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 91:
+- current master value: 1507.0
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 92:
+- current master value: 1507.0
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 93:
+- current master value: 1506.9999999999998
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 94:
+- current master value: 1507.9999999999993
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 95:
+- current master value: 1510.0000000000002
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 96:
+- current master value: 1509.9999999999993
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 97:
+- current master value: 1512.0000000000007
+- nb of cycles added = 0
+nb of chains added = 197
+
+Iteration 98:
+- current master value: 1512.9999999999993
+- nb of cycles added = 0
+nb of chains added = 0
+- no positive column was added, switch to optimality search
+
+Iteration 99:
+- current master value: 1512.9999999999993
+- nb of cycles added = 0
+nb of chains added = 0
+
+Node relaxation is solved to optimality
+- node upper bound is 1513.0, tree lower bound is 605.0
+
+ Search for a feasible solution at node 1
+- number of columns in master IP: 36707
+
+
+New incumbent found with value 1513.0 found by solving the IP with every column of the pool
+After processing root node: LB = 1513.0, UB = 1513.0
+The node is either infeasible or pruned by bound
+LB = 1513.0, UB = 1513.0
+
+----------------------------------------------------------
+ The execution of the branch-and-price is complete
+- the solution is optimal
+- best solution found: value 1513.0 with gap 0.0 %
+----------------------------------------------------------
+
+Numbers of cycles per cycle length
+- k = 2: 494 cycles
+- k = 3: 93 cycles
+In total, 1267 pairs are covered by cycles
+
+Numbers of chains per chain length
+- l = 1: 162 chains
+- l = 2: 42 chains
+In total, 246 pairs are covered by chains
+
+The computed cost of the solution is 1513.0
+ ────────────────────────────────────────────────────────────────────────────────
+                                        Time                    Allocations      
+                               ───────────────────────   ────────────────────────
+       Tot / % measured:            73.2s / 100.0%           84.2GiB / 100.0%    
+
+ Section               ncalls     time    %tot     avg     alloc    %tot      avg
+ ────────────────────────────────────────────────────────────────────────────────
+ B&P                        1    69.7s   95.3%   69.7s   83.4GiB   99.1%  83.4GiB
+   Process_Node             1    69.7s   95.2%   69.7s   83.4GiB   99.1%  83.4GiB
+     opt_master            98    14.8s   20.3%   151ms   5.71MiB    0.0%  59.7KiB
+     Bellman-Ford-c...  20.0k    3.66s    5.0%   183μs    832MiB    1.0%  42.7KiB
+     IP_master              1    3.47s    4.7%   3.47s   53.1MiB    0.1%  53.1MiB
+     Bellman-Ford       18.7k    1.45s    2.0%  77.6μs    618MiB    0.7%  33.8KiB
+ Parser                     1    2.57s    3.5%   2.57s    504MiB    0.6%   504MiB
+ Preprocessing              1    903ms    1.2%   903ms    274MiB    0.3%   274MiB
+ ────────────────────────────────────────────────────────────────────────────────
+	Command being timed: "sh /home/aarslan//jobs-running/1645322/miriel028.3/BP_3_6_pref_coldj_294"
+	User time (seconds): 133.89
+	System time (seconds): 3.76
+	Percent of CPU this job got: 98%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:19.70
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1191760
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 43
+	Minor (reclaiming a frame) page faults: 1732563
+	Voluntary context switches: 20803
+	Involuntary context switches: 94238
+	Swaps: 0
+	File system inputs: 88432
+	File system outputs: 72
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
