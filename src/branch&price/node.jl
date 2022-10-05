@@ -336,8 +336,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                         end
                     end
                     # add column to master problem model
-                    add_column_to_master(column, mastermodel, tree_node)
-                    add_column_to_master_IP(column, master_IP)
+                    @timeit timer "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                    @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
                 else
                     if bp_params.is_tabu_list
                         # make sure that the subproblem will not be solved until we need to prove optimality if it did not produce any new column
@@ -404,8 +404,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 push!(column_pool, column)
 
                 # add column to master problem model
-                add_column_to_master(column, mastermodel, tree_node)
-                add_column_to_master_IP(column, master_IP)
+                @timeit timer  "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
             end
             if chain_added
                 if verbose println("- found at least one positive column") end
