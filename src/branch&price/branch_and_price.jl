@@ -91,7 +91,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     end
     tree = Vector{TreeNode}()
 
-    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}(), nv(graph), 0))   #the branch and price tree is initialized with the root node
+    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}(), nv(graph) * ones(Int, K-1), zeros(Int, K-1), nv(graph) * ones(Int, L), zeros(Int, L) ))   #the branch and price tree is initialized with the root node
 
     # initialize the master problem
     initial_time_limit_master_IP = bp_params.time_limit_master_IP
@@ -110,10 +110,10 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
         end
 
         # activate the branching constraints of this BP node
-        activate_branching_constraints(mastermodel, current_node, bp_params)
+        activate_branching_constraints(mastermodel, current_node, bp_params, instance)
 
          # solve the node relaxation using column generation
-        column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
+        column_flow, pief_flow, nb_cycles, nb_chains = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
 
         # update branch & price information
         if bp_status.node_count == 1
@@ -135,7 +135,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
                     for i in deleted_columns[1:ncols]
                         JuMP.set_upper_bound(y[i], 0)
                     end
-                    column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
+                    column_flow, pief_flow, nb_cycles, nb_chains = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
                     for i in deleted_columns
                         JuMP.set_upper_bound(y[i], 1)
                     end
@@ -143,25 +143,16 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
             end
         else
             # deactivate the branching constraints of this BP node for future iterations
-            deactivate_branching_constraints(mastermodel, current_node, bp_params)
+            deactivate_branching_constraints(mastermodel, current_node, bp_params, instance)
         end
 
         # if the relaxation is not infeasible OR not eliminated by bound
         if (!isempty(column_flow) || !isempty(pief_flow)) && current_node.ub > bp_info.LB + ϵ
             branching_done = false
-            if (K == 2) && (L == 0)
-                total_nb_arcs = 0.0
-                for it in column_flow
-                    total_nb_arcs += it.second
-                end
-                for it in pief_flow
-                    total_nb_arcs += it.second
-                end
-                total_nb_arcs = floor(Int, total_nb_arcs+ϵ)
-                if total_nb_arcs%2 != 0
-                     branch_on_nb_cols(total_nb_arcs, tree, current_node, bp_status.node_count)
-                     branching_done = true
-                end
+            if K == 2
+                println("- nb cycles = $nb_cycles")
+                println("- nb chains = $nb_chains")
+                branching_done = branch_on_nb_cols(nb_cycles, nb_chains, tree, current_node, bp_status.node_count)
             end
             # first, search for a fractional vertex cover to branch on
             is_fractional_vertex = false
@@ -331,7 +322,7 @@ Update the branch-and-bound tree with two new nodes by branching on the given ar
 """
 function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, node_count::Int, verbose::Bool = true)
     y = master[:y]
-    slack = maxter[:slack]
+    slack = master[:slack]
     if is_cg_branching
         if verbose println("Two new nodes are created by branching on variable column_flow[$(arc_to_branch.first), $(arc_to_branch.second)]") end
 
@@ -368,18 +359,44 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
     end
 end
 
-function branch_on_nb_cols(total_nb_arcs::Int, tree::Vector{TreeNode}, current_node::TreeNode, node_count::Int, verbose::Bool = true)
-    if verbose println("Two new nodes are created by branching on the total number of arcs to get an even number") end
-
-    # add each branching node in the tree
-    node_max = TreeNode(current_node)
-    node_max.index = node_count + 1
-    node_max.nb_cols_max = (total_nb_arcs - 1)/2
-    push!(tree, node_max)
-    node_min = TreeNode(current_node)
-    node_min.index = node_count + 2
-    node_min.nb_cols_min = (total_nb_arcs + 1)/2
-    push!(tree, node_min)
+function branch_on_nb_cols(nb_cycles::Vector{Float64}, nb_chains::Vector{Float64}, tree::Vector{TreeNode}, current_node::TreeNode, node_count::Int, verbose::Bool = true)
+    for k in 1:length(nb_cycles)
+        if abs(nb_cycles[k] - round(Int, nb_cycles[k])) > ϵ
+            # add each branching node in the tree
+            node_max = TreeNode(current_node)
+            node_max.index = node_count + 1
+            node_max.nb_cycles_max[k] = floor(nb_cycles[k])
+            push!(tree, node_max)
+            node_min = TreeNode(current_node)
+            node_min.index = node_count + 2
+            node_min.nb_cycles_min[k] = ceil(nb_cycles[k])
+            push!(tree, node_min)
+            if verbose 
+                print("Two new nodes are created by branching on the number of cycles with size $(k+1)")
+                println(" (current value is $(nb_cycles[k]))")
+             end
+            return true
+        end
+    end
+    for l in 1:length(nb_chains)
+        if abs(nb_chains[l] - round(Int, nb_chains[l])) > ϵ
+            # add each branching node in the tree
+            node_max = TreeNode(current_node)
+            node_max.index = node_count + 1
+            node_max.nb_chains_max[l] = floor(nb_chains[l])
+            push!(tree, node_max)
+            node_min = TreeNode(current_node)
+            node_min.index = node_count + 2
+            node_min.nb_chains_min[l] = ceil(nb_chains[l])
+            push!(tree, node_min)
+            if verbose 
+                print("Two new nodes are created by branching on the number of chains with size $(l)") 
+                println(" (current value is $(nb_chains[l]))")
+            end
+            return true
+        end
+    end
+    return false
 end
 
 """

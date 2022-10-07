@@ -86,7 +86,7 @@ Bellman-Ford style search for one positive cost cycle
 # Return values
 * `cycle::Vector{Int}`: the positive cycle found, [] if none
 """
-function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Float64}, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d::Vector{Float64}, constant_cost::Float64)
+function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Float64}, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d::Vector{Float64})
     if K <= 1 return [] end
 
     # initialize distances
@@ -95,7 +95,7 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Flo
         d[u] = -Inf
         pred[1][u]=0
     end
-    d[source] = constant_cost + vertex_cost[source]  # we can count the return arc cost right away
+    d[source] = vertex_cost[source]  # we can count the return arc cost right away
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
@@ -205,27 +205,28 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, vertex_cost::Vector{Flo
     return []
 end
 
-function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64,2}, arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d::Vector{Float64}, constant_cost::Float64)
+function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64,2}, arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d::Vector{Float64}, nb_cycles_duals::Vector{Float64})
     if K <= 1 return [] end
     # initialize distances
     for u in 1:nv(graph)
         d[u] = -Inf
     end
     pred[1] .= zeros(Int, nv(graph))
-    d[source] = constant_cost
+    d[source] = 0.0
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
     # the dual cost of a cycle is the sum of dual costs of the vertices of the cycle
+    min_positive_cost = ϵ + nb_cycles_duals[1]
     for v in outneighbors(graph, source)
         if is_covered[v]
             continue
         end
         # always update the distance to neighbors since they are not reached yet
-        d[v] = d[source] + arc_cost_trans[v, source]
+        d[v] = arc_cost_trans[v, source]
         pred[1][v] = source
         # always try and take a return arc to the starting vertex in order to stop the algorithm prematurely (arc_cost is exactly zero only if there is no edge)
-        if arc_cost[v, source] != 0.0 && (d[v] + arc_cost[v,source] > ϵ)
+        if arc_cost[v, source] != 0.0 && (d[v] + arc_cost[v,source] > min_positive_cost)
             return [source;v]
         end
     end
@@ -235,14 +236,11 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64
     cycle = []
     tmp_d = Vector{Float64}(undef, nv(graph))
     for k in 2:K-1
+        min_positive_cost = ϵ + nb_cycles_duals[k]
         tmp_d .= d
         pred[k] .= zeros(Int, nv(graph))
         nb_edges_left = K-k+1  # the return cost to starting vertex has not been counted yet
         for u in shuffle!(findall(pred[k-1] .!= 0))
-            # the cost of an arc cannot be larger than max_cost, so we can only hope to get a nb_edges_left*max_cost extra cost with the remaining arcs of the cycle
-            if tmp_d[u] + nb_edges_left * max_cost < ϵ
-                 continue
-            end
             if k >= 3
                 cycle = traverse_preds(u, pred, k-1)
             end
@@ -261,7 +259,7 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64
                     d[v] = cost_to_v
                     pred[k][v] = u
                     # always try and take a return arc to the starting vertex when the distance to a vertex is updated in order to stop the algorithm prematurely
-                    if arc_cost[v, source] != 0.0 && (d[v] + arc_cost[v,source] > ϵ)
+                    if arc_cost[v, source] != 0.0 && (d[v] + arc_cost[v,source] > min_positive_cost)
                         # at this stage there cannot be any subcycle
                         return traverse_preds(v, pred, k)
                     end
@@ -273,7 +271,7 @@ function Bellman_Ford_cycle_search(graph::SimpleDiGraph, arc_cost::Array{Float64
 end
 
 
-function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
+function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, verbose::Bool = true)
     if L == 0   return []    end
     # initialize distances to vertices
     tmp_d = Vector{Float64}(undef, nv(graph))
@@ -281,7 +279,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = constant_cost + vertex_cost[source]  # count the dual cost of the altruist source vertex
+    d[source] = vertex_cost[source]  # count the dual cost of the altruist source vertex
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
@@ -352,7 +350,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{
     return []
 end
 
-function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
+function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, verbose::Bool = true)
     if L == 0   return [], false    end
     # initialize distances to vertices
     tmp_d = Vector{Float64}(undef, nv(graph))
@@ -360,7 +358,7 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_co
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = constant_cost + vertex_cost[source]  # count the dual cost of the altruist source vertex
+    d[source] = vertex_cost[source]  # count the dual cost of the altruist source vertex
     is_positive_cycle = false  # true if a positive cycle was found at some point
 
     # Bellman-Ford search
@@ -427,7 +425,7 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_co
     return [], is_positive_cycle
 end
 
-function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
+function Bellman_Ford_chain_search(graph::SimpleDiGraph, arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, nb_chains_duals::Vector{Float64}, verbose::Bool = true)
     if L == 0
         return []
     end
@@ -437,7 +435,9 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matr
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = constant_cost
+    d[source] = 0.0
+    min_positive_cost = ϵ + nb_chains_duals[1]
+
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
@@ -447,10 +447,10 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matr
             continue
         end
         # always update the distance to neighbors since they are not reached yet
-        d[v] = d[source] + arc_cost_trans[v,source]
+        d[v] = arc_cost_trans[v,source]
         pred[1][v] = source
         # check if the chain improves the incumbent
-        if d[v] > ϵ
+        if d[v] > min_positive_cost
             return [source;v]
         end
     end
@@ -458,14 +458,10 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matr
     # b. in the last iterations, we need to be cautious with positive subcycles
     chain_to_u = []
     for l in 2:L
-        nb_edges_left = L-l+1
+        min_positive_cost = ϵ + nb_chains_duals[l]
         pred[l] .= zeros(Int, nv(graph))
         tmp_d .= d
         for u in shuffle!(findall(pred[l-1] .!= 0))
-            # the cost of an arc cannot be larger than max_cost, so we can only hope to get a nb_edges_left*max_cost extra cost with the remaining arcs of the cycle
-            if tmp_d[u] + nb_edges_left * max_cost < ϵ
-                continue
-            end
             if l >= 3
                 chain_to_u = traverse_preds(u, pred, l-1)
             end
@@ -486,7 +482,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matr
                     pred[l][v] = u
 
                     # check if the chain improves the incumbent
-                    if d[v] > ϵ
+                    if d[v] > min_positive_cost
                         return traverse_preds(v, pred, l)
                     end
                 end
@@ -497,7 +493,7 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    arc_cost_trans::Matr
     return []
 end
 
-function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, constant_cost::Float64, verbose::Bool = true)
+function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    arc_cost_trans::Matrix{Float64}, max_cost::Float64, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, nb_chains_duals::Vector{Float64}, verbose::Bool = true)
     if L == 0
         return [], false
     end
@@ -507,35 +503,32 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    arc_cost_
         d[i] = -Inf
         pred[1][i] = 0
     end
-    d[source] = constant_cost
+    d[source] = 0.0
     is_positive_cycle = false  # true if a positive cycle was found at some point
 
     # Bellman-Ford search
     # a. treat the first iteration differently as we know it propagates the costs along arcs outgoing from the source
     # the dual cost of a cycle is the sum of dual costs of the vertices of the cycle
+    min_positive_cost = ϵ + nb_chains_duals[1]
     for v in outneighbors(graph, source)
         if is_covered[v]
             continue
         end
         # always update the distance to neighbors since they are not reached yet
-        d[v] = d[source] + arc_cost_trans[v, source]
+        d[v] = arc_cost_trans[v, source]
         pred[1][v] = source
         # check if the chain improves the incumbent
-        if d[v] > ϵ
+        if d[v] > min_positive_cost
             return [source;v], false
         end
     end
 
     # b. in the last iterations, we need to be cautious with positive subcycles
     for l in 2:L
-        nb_edges_left = L-l+1 # the return cost to starting vertex has not been counted yet
+        min_positive_cost = ϵ + nb_chains_duals[l]
         pred[l] .= zeros(Int, nv(graph))
         tmp_d .= d
         for u in findall(pred[l-1] .!= 0)  # useless to shuffle in optimality search
-            # the cost of an arc cannot be larger than max_cost, so we can only hope to get a nb_edges_left*max_cost extra cost with the remaining arcs of the cycle
-            if tmp_d[u] + nb_edges_left * max_cost < ϵ
-                continue
-            end
             for v in outneighbors(graph,u)
                 if is_covered[v]
                     continue
@@ -547,7 +540,7 @@ function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    arc_cost_
                     d[v] = cost_to_v
                     pred[l][v] = u
                     # check if the chain improves the incumbent
-                    if d[v] > ϵ
+                    if d[v] > min_positive_cost
                         # return the positive chain if does not contain any subcycle
                         if l >= K+2
                             chain_to_v = traverse_preds(v, pred, l)

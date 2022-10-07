@@ -15,6 +15,7 @@ Initialization of the restricted master problem
 function node_master(instance::Instance, column_pool::Vector{Column}, bp_params::BP_params = BP_params(), time_limit::Float64 = 10000.0)
     # Local variables
     graph = instance.graph
+    K = instance.max_cycle_length
     L = instance.max_chain_length
 
     # Initialize the JuMP model
@@ -23,6 +24,9 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
     # Decision variables
     # - column variables
     @variable(master, y[c in 1:length(column_pool)] >= 0)
+    @variable(master, nb_cycles[k in 2:K] >= 0)
+    @variable(master, nb_chains[l in 1:L] >= 0)
+
     # - artificial variable to handle infeasibility after branching
     @variable(master, slack >=0)
 
@@ -85,10 +89,13 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
         master[:branch_zero_pief] = Dict{Pair{Int64, Int64}, ConstraintRef}()
     end
 
-    # branching constraint on the total number of arcs which should be even when K=2 and L=0
-    @constraint(master, branch_nb_arcs_max, sum(y[c] for c in 1:length(column_pool)) <= nv(graph))
-    @constraint(master, branch_nb_arcs_min, sum(y[c] for c in 1:length(column_pool)) + slack >= 0)
-
+    # branching constraint on the total number of cycles and chains depending on their length
+    @constraint(master, nb_cycles_per_size[k in 2:K], sum(y[c] for c in 1:length(column_pool) if column_pool[c].is_cycle && (column_pool[c].length == k)) == nb_cycles[k])
+    @constraint(master, nb_chains_per_size[l in 1:L], sum(y[c] for c in 1:length(column_pool) if !column_pool[c].is_cycle && (column_pool[c].length == l)) == nb_chains[l])
+    @constraint(master, branch_nb_cycles_max[k in 2:K], nb_cycles[k] <= nv(graph))
+    @constraint(master, branch_nb_cycles_min[k in 2:K], nb_cycles[k] + slack >= 0)
+    @constraint(master, branch_nb_chains_max[l in 1:L], nb_chains[l] <= nv(graph))
+    @constraint(master, branch_nb_chains_min[l in 1:L], nb_chains[l] + slack >= 0)
 
     # objective
     W = instance.edge_weight
@@ -107,7 +114,10 @@ end
 
 Activate the all the branching constraints corresponding to a given node of the branch-and-price enumeration tree.
 """
-function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_params::BP_params)
+function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_params::BP_params, instance::Instance)
+    K = instance.max_cycle_length
+    L = instance.max_chain_length
+
     # - branching constraints on the arcs covered by the columns
     branch_one = master[:branch_one]
     branch_zero = master[:branch_zero]
@@ -140,9 +150,15 @@ function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_p
         end
     end
 
-    # - branching constraints on the number of arcs in the solution
-    set_normalized_rhs(master[:branch_nb_arcs_max], tree_node.nb_cols_max)
-    set_normalized_rhs(master[:branch_nb_arcs_min], tree_node.nb_cols_min)
+    # - branching constraints on the number of cycles and chains of each size
+    for k in 2:K
+        set_normalized_rhs(master[:branch_nb_cycles_max][k], tree_node.nb_cycles_max[k-1])
+        set_normalized_rhs(master[:branch_nb_cycles_min][k], tree_node.nb_cycles_min[k-1])
+    end
+    for l in 1:L
+        set_normalized_rhs(master[:branch_nb_chains_max ][l], tree_node.nb_chains_max[l])
+        set_normalized_rhs(master[:branch_nb_chains_min][l], tree_node.nb_chains_min[l])
+    end
 end
 
 """
@@ -150,7 +166,10 @@ end
 
 Deactivate the all the branching constraints corresponding to a given node of the branch-and-price enumeration tree.
 """
-function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp_params::BP_params)
+function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp_params::BP_params, instance::Instance)
+    K = instance.max_cycle_length
+    L = instance.max_chain_length
+    g = instance.graph
     # - branching constraints on the arcs covered by the columns
     branch_one = master[:branch_one]
     branch_zero = master[:branch_zero]
@@ -183,9 +202,15 @@ function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp
         end
     end
 
-    # - branching constraints on the number of arcs in the solution
-    set_normalized_rhs(master[:branch_nb_arcs_max], tree_node.nb_cols_max)
-    set_normalized_rhs(master[:branch_nb_arcs_min], tree_node.nb_cols_min)
+    # - branching constraints on the number of cycles and chains of each size
+    for k in 2:K
+        set_normalized_rhs(master[:branch_nb_cycles_max][k], nv(g))
+        set_normalized_rhs(master[:branch_nb_cycles_min][k], 0)
+    end
+    for l in 1:L
+        set_normalized_rhs(master[:branch_nb_chains_max ][l], nv(g))
+        set_normalized_rhs(master[:branch_nb_chains_min][l], 0)
+    end
 end
 
 """
@@ -205,6 +230,7 @@ Initialization of the master problem with integer columns
 function initialize_master_IP(instance::Instance, column_pool::Vector{Column}, bp_params::BP_params = BP_params(), time_limit::Float64 = 10000.0)
     # Local variables
     graph = instance.graph
+    K = instance.max_cycle_length
     L = instance.max_chain_length
 
     # Set time limit properly depending on the master model
@@ -221,6 +247,8 @@ function initialize_master_IP(instance::Instance, column_pool::Vector{Column}, b
     # Decision variables
     # - column variables
     @variable(master, y[c in 1:length(column_pool)], Bin)
+    @variable(master, nb_cycles[k in 2:K] >= 0, Int)
+    @variable(master, nb_chains[l in 1:L] >= 0, Int)
     # - in the position-indexed model, we need arc variables with position indexes for the chains
     if bp_params.is_pief
         l_min = 2*ones(nv(graph))
@@ -268,6 +296,14 @@ function initialize_master_IP(instance::Instance, column_pool::Vector{Column}, b
         @constraint(master, [u in instance.altruists], sum(chain_flow[u,v,1] for v in outneighbors(graph, u)) <= 1)
     end
 
+    # branching constraint on the total number of cycles and chains depending on their length
+    @constraint(master, nb_cycles_per_size[k in 2:K], sum(y[c] for c in 1:length(column_pool) if column_pool[c].is_cycle && (column_pool[c].length == k)) == nb_cycles[k])
+    @constraint(master, nb_chains_per_size[l in 1:L], sum(y[c] for c in 1:length(column_pool) if !column_pool[c].is_cycle && (column_pool[c].length == l)) == nb_chains[l])
+    @constraint(master, branch_nb_cycles_max[k in 2:K], nb_cycles[k] <= nv(graph))
+    @constraint(master, branch_nb_cycles_min[k in 2:K], nb_cycles[k] >= 0)
+    @constraint(master, branch_nb_chains_max[l in 1:L], nb_chains[l] <= nv(graph))
+    @constraint(master, branch_nb_chains_min[l in 1:L], nb_chains[l] >= 0)
+
     #objective
     W = instance.edge_weight
     nb_altruists = instance.nb_altruists
@@ -281,4 +317,47 @@ function initialize_master_IP(instance::Instance, column_pool::Vector{Column}, b
     end
 
     return master
+end
+
+
+
+"""
+    activate_branching_constraints
+
+Activate some branching constraints in the master IP.
+"""
+function activate_branching_constraints_IP(master_IP::Model, tree_node::TreeNode, instance::Instance)
+    K = instance.max_cycle_length
+    L = instance.max_chain_length
+
+    # - branching constraints on the number of cycles and chains of each size
+    for k in 2:K
+        set_normalized_rhs(master_IP[:branch_nb_cycles_max][k], tree_node.nb_cycles_max[k-1])
+        set_normalized_rhs(master_IP[:branch_nb_cycles_min][k], tree_node.nb_cycles_min[k-1])
+    end
+    for l in 1:L
+        set_normalized_rhs(master_IP[:branch_nb_chains_max ][l], tree_node.nb_chains_max[l])
+        set_normalized_rhs(master_IP[:branch_nb_chains_min][l], tree_node.nb_chains_min[l])
+    end
+end
+
+"""
+    deactivate_branching_constraints
+
+Deactivate some branching constraints in the master IP.
+"""
+function deactivate_branching_constraints_IP(master_IP::Model, instance::Instance)
+    K = instance.max_cycle_length
+    L = instance.max_chain_length
+    g = instance.graph
+
+    # - branching constraints on the number of cycles and chains of each size
+    for k in 2:K
+        set_normalized_rhs(master_IP[:branch_nb_cycles_max][k], nv(g))
+        set_normalized_rhs(master_IP[:branch_nb_cycles_min][k], 0)
+    end
+    for l in 1:L
+        set_normalized_rhs(master_IP[:branch_nb_chains_max ][l], nv(g))
+        set_normalized_rhs(master_IP[:branch_nb_chains_min][l], 0)
+    end
 end
