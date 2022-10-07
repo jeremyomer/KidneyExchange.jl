@@ -24,6 +24,7 @@ mutable struct Column
   vertices::Vector{Int}  # vertices of the cycle in order
   arcs:: Vector{Pair{Int,Int}}  # arcs of the cycle in order
   is_cycle::Bool  # true if the column is a cycle, false if it is a chain
+  length::Int64  # number of vertices covered by the column
 
   # use this constructor to add an artificial column
   function Column(path::Vector{Int})
@@ -31,7 +32,7 @@ mutable struct Column
     for k = 1:(length(path) - 1)
         push!(arcs, (path[k] => path[k+1]))
     end
-    return new(0, path, arcs, false)
+    return new(0, path, arcs, false, length(path))
   end
 
 
@@ -46,8 +47,9 @@ mutable struct Column
     end
     # compute the weight of the column
     _weight = sum(edge_weight[a[1], a[2]] for a in arcs)
+    _length = _is_cycle ? length(path) : length(path) - 1
 
-    return new(_weight, path, arcs, _is_cycle)
+    return new(_weight, path, arcs, _is_cycle, _length)
   end
 
   function Column(path::Vector{Int}, vertex_weight::Array{Float64}, _is_cycle::Bool = true)
@@ -61,8 +63,10 @@ mutable struct Column
     end
     # compute the weight of the column
     _weight = sum(vertex_weight[v] for v in path)
+    _length = _is_cycle ? length(path) : length(path) - 1
 
-    return new(_weight, path, arcs, _is_cycle)
+
+    return new(_weight, path, arcs, _is_cycle, _length)
   end
 end
 
