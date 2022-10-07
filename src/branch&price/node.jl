@@ -271,8 +271,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                     end
                 end
                 # add column to master problem model
-                add_column_to_master(column, mastermodel, tree_node)
-                add_column_to_master_IP(column, master_IP)
+                @timeit timer "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
             else
                 # make sure that the subproblem will not be solved until we need to prove optimality if it did not produce any new column
                 if bp_params.is_tabu_list
@@ -467,7 +467,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         end
 
         if (termination_status != OPTIMAL)
-            bp_params.time_limit_master_IP = max(bp_params.time_limit_master_IP + 10.0, 300.0)
+            bp_params.time_limit_master_IP = min(bp_params.time_limit_master_IP + 10.0, 300.0)
             set_time_limit(master_IP, bp_params.time_limit_master_IP, bp_params.optimizer)
         end
     end
