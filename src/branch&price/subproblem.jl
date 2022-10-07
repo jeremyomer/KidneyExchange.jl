@@ -609,7 +609,7 @@ function create_chain_mip(graph::SimpleDiGraph, L::Int, optimizer::String, time_
     # flow constraint at sink
     @constraint(mip, sum(is_arc[v=>sink] for v in vertices(graph)) == 1)
 
-    # maximum length of the chain
+    # maximum length of the chain: the length includes the last artificial arc to the artificial sink
     @constraint(mip, sum(is_arc[e] for e in E) <= L + 1)
 
     return mip
@@ -715,6 +715,7 @@ function MIP_chain_search(mip::Model, graph::SimpleDiGraph, source::Int, is_vert
          end
 
          if verbose println("add constraints to eliminate subtour: ", subtour) end
+         # subtour elimination is realized with generalized cut-set inequalities 
          delta_subtour = [u=>v for u in subtour for v in outneighbors(graph, u) if !is_in_subtour[v]]
          delta_subtour = [delta_subtour ; [u=>sink for u in subtour]]
          for u in subtour
