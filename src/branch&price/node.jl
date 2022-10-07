@@ -429,14 +429,13 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             if verbose println("tree lower bound is $(bp_status.bp_info.LB)") end
 
             #check whether artificial column is used
-            if !isempty(tree_node.setone)
-                # TODO: we need to add an artificial column for possible infeasibility
-                # if column_val[end] > ϵ
-                #     node_infeasible = true
-                #     if verbose printstyled("\n Node is infeasible\n" ; color = :green) end
-                #     # if the node is infeasible, return an empty vector
-                #     return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
-                # end
+            if tree_node.index >= 2
+                if JuMP.value(mastermodel[:slack]) > ϵ
+                    node_infeasible = true
+                    if verbose printstyled("\n Node is infeasible\n" ; color = :green) end
+                    # if the node is infeasible, return an empty vector
+                    return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
+                end
             end
             # if not compute the arc flows resulting from the selction of columns
             column_flow = compute_arc_flow(column_val, column_pool)

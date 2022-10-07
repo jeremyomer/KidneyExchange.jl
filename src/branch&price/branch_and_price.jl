@@ -331,6 +331,7 @@ Update the branch-and-bound tree with two new nodes by branching on the given ar
 """
 function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, node_count::Int, verbose::Bool = true)
     y = master[:y]
+    slack = maxter[:slack]
     if is_cg_branching
         if verbose println("Two new nodes are created by branching on variable column_flow[$(arc_to_branch.first), $(arc_to_branch.second)]") end
 
@@ -345,7 +346,7 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
         push!(tree, node_one)
 
         # add the corresponding constraints in the master model, but deactivate them by default: they will activated only in relevant BP nodes
-        master[:branch_one][arc_to_branch] = @constraint(master, sum(y[c] for c in 1:length(column_pool) if arc_to_branch in (column_pool[c]).arcs) >= 0, base_name = "branch_one[$arc_to_branch]")
+        master[:branch_one][arc_to_branch] = @constraint(master, sum(y[c] for c in 1:length(column_pool) if arc_to_branch in (column_pool[c]).arcs) + slack >= 0, base_name = "branch_one[$arc_to_branch]")
         master[:branch_zero][arc_to_branch] = @constraint(master, sum(y[c] for c in 1:length(column_pool) if arc_to_branch in (column_pool[c]).arcs) <= 1, base_name = "branch_zero[$arc_to_branch]")
     else
         if verbose println("Branching on an arc of the master problem: ($(arc_to_branch.first), $(arc_to_branch.second))") end
@@ -360,9 +361,9 @@ function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branc
         push!(node_one.setone_pief, arc_to_branch)
         push!(tree, node_one)
 
-        # add the corresponding constraints in the master model, but deactivate them by default: they will activated only in relevant BP nodes
+        # add the corresponding constraints in the master model, but deactivate them by default: they will be activated only in relevant BP nodes
         chain_flow = model[:chain_flow]
-        master[:branch_one_pief][arc_to_branch] = @constraint(master, sum(chain_flow[e[1],e[2],k] for k in 1:L) >= 0, base_name = "branch_one_pief[$arc_to_branch]")
+        master[:branch_one_pief][arc_to_branch] = @constraint(master, sum(chain_flow[e[1],e[2],k] for k in 1:L) + slack >= 0, base_name = "branch_one_pief[$arc_to_branch]")
         master[:branch_zero_pief][arc_to_branch] = @constraint(master, sum(chain_flow[e[1],e[2],k] for k in 1:L) <= 1, base_name = "branch_zero_pief[$arc_to_branch]")
     end
 end
