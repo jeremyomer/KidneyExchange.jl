@@ -300,6 +300,8 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{
     # b. in the next iterations, we need to be cautious with positive subcycles
     max_cost = maximum(vertex_cost)
     is_ignored = falses(nv(graph))
+    best_cost = ϵ
+    best_chain = []
     for l in 2:L
         nb_edges_left = L-l+1
         is_ignored .= is_covered
@@ -340,14 +342,19 @@ function Bellman_Ford_chain_search(graph::SimpleDiGraph,    vertex_cost::Vector{
                         pred[l][v] = u
                     end
                     # check if the chain improves the incumbent
-                    if d[v] + vertex_cost[v] > ϵ
-                        return traverse_preds(v, pred, l)
+                    if d[v] + vertex_cost[v] > best_cost
+                        if d[v] + vertex_cost[v] > 1-ϵ
+                            return traverse_preds(v, pred, l)
+                        else
+                            best_cost = d[v] + vertex_cost[v]
+                            best_chain =  traverse_preds(v, pred, l)
+                        end
                     end
                 end
             end
         end
     end
-    return []
+    return best_chain
 end
 
 function Bellman_Ford_chain_search_optimality(graph::SimpleDiGraph,    vertex_cost::Vector{Float64}, source::Int, L::Int, K::Int, is_covered::BitVector, pred::Vector{Vector{Int}}, d:: Vector{Float64}, verbose::Bool = true)
