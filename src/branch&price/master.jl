@@ -18,6 +18,36 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
     K = instance.max_cycle_length
     L = instance.max_chain_length
 
+    # enumerate all the triangles of the graph
+    triangles = Vector{Tuple{Int,Int,Int}}()
+    if K == 2
+        for u in instance.pairs
+            outlist = outneighbors(graph, u)
+            for i in eachindex(outlist) 
+                v = outlist[i]
+                for j in i+1:length(outlist)
+                    w = outlist[j]
+                    if !has_edge(graph, v, u) || !has_edge(graph, w, u) continue end
+                    if has_edge(graph, v, w) 
+                        if has_edge(graph, w, v)
+                            if u < v && u < w
+                                push!(triangles, (u,v,w))
+                            end
+                        else
+                            push!(triangles, (u,v,w))
+                        end
+                    elseif has_edge(graph, w, v) 
+                        println("not really a triangle")
+                        push!(triangles, (u,v,w))
+                    end
+                end
+            end
+        end
+    end
+    end
+    error("nb of triangles = $(length(triangles))")
+
+
     # Initialize the JuMP model
     master = create_model(time_limit, bp_params.optimizer, false, false)
 
@@ -75,6 +105,11 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
         @constraint(master, [u in instance.pairs, k in 2:L-1], sum(chain_flow[v,u,k] for v in pair_neighbors[u]) - sum(chain_flow[u,v,k+1] for v in outneighbors(graph, u)) >= 0)
         # altruists can start no more than one chain
         @constraint(master, [u in instance.altruists], sum(chain_flow[u,v,1] for v in outneighbors(graph, u)) <= 1)
+    end
+
+    # matching polytope cut: for each triangle, the number of arcs selected on the triangle is no more than two
+    if K == 2
+        # @constraint(master, matching_cuts[(u,v,w) in triangles])
     end
 
     # - branching constraints on the arcs covered by the columns
