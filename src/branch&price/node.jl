@@ -165,7 +165,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
         selected_arcs_pief = Vector{Pair{Int,Int}}()
         if bp_params.is_pief && is_integer && L >= 1
-            # Very odd behaviour of the JuMP.value function here; it takes a VERY long time to get the solution although it is done instantaneously with the corresponding IP, I can see whu, so just deactivate this opportunistic search for interger solution, which is mostly useless anyways
+            # Very odd behaviour of the JuMP.value function here; it takes a VERY long time to get the solution although it is done instantaneously with the corresponding IP, I could not find why, so just deactivated this opportunistic search for interger solution, which is mostly useless anyways
             is_integer = false
             if false
                 for u in vertices(graph)
@@ -271,8 +271,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                     end
                 end
                 # add column to master problem model
-                add_column_to_master(column, mastermodel, tree_node)
-                add_column_to_master_IP(column, master_IP)
+                @timeit timer "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
             else
                 # make sure that the subproblem will not be solved until we need to prove optimality if it did not produce any new column
                 if bp_params.is_tabu_list
@@ -336,8 +336,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                         end
                     end
                     # add column to master problem model
-                    add_column_to_master(column, mastermodel, tree_node)
-                    add_column_to_master_IP(column, master_IP)
+                    @timeit timer "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                    @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
                 else
                     if bp_params.is_tabu_list
                         # make sure that the subproblem will not be solved until we need to prove optimality if it did not produce any new column
@@ -404,8 +404,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 push!(column_pool, column)
 
                 # add column to master problem model
-                add_column_to_master(column, mastermodel, tree_node)
-                add_column_to_master_IP(column, master_IP)
+                @timeit timer  "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
             end
             if chain_added
                 if verbose println("- found at least one positive column") end
@@ -429,14 +429,13 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             if verbose println("tree lower bound is $(bp_status.bp_info.LB)") end
 
             #check whether artificial column is used
-            if !isempty(tree_node.setone)
-                # TODO: we need to add an artificial column for possible infeasibility
-                # if column_val[end] > ϵ
-                #     node_infeasible = true
-                #     if verbose printstyled("\n Node is infeasible\n" ; color = :green) end
-                #     # if the node is infeasible, return an empty vector
-                #     return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
-                # end
+            if tree_node.index >= 2
+                if JuMP.value(mastermodel[:slack]) > ϵ
+                    node_infeasible = true
+                    if verbose printstyled("\n Node is infeasible\n" ; color = :green) end
+                    # if the node is infeasible, return an empty vector
+                    return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
+                end
             end
             # if not compute the arc flows resulting from the selction of columns
             column_flow = compute_arc_flow(column_val, column_pool)
@@ -449,15 +448,25 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         (bp_status.bp_info.LB < tree_node.ub - ϵ) &&
         ( (bp_status.termination_status_last_ip != OPTIMAL) ||
             (length(column_pool) > bp_status.nb_cols_last_ip) )
-        if verbose println("\n Search for a feasible solution at node $(tree_node.index)") end
+        if verbose 
+            if length(column_pool) > bp_status.nb_cols_last_ip
+                println("\nThe number of columns increased: ")
+            elseif bp_status.termination_status_last_ip != OPTIMAL
+                println("\nLast solution of master IP did not reach optimality: ")
+            end
+            println(" search for a feasible solution at node $(tree_node.index)")
+        end
 
         @timeit timer "IP_master" solve_master_IP(master_IP, column_pool, instance, bp_status, bp_params)
         bp_status.nb_cols_last_ip = length(column_pool)
         bp_status.node_count_last_ip = bp_status.node_count
-        bp_status.termination_status_last_ip == termination_status(master_IP)
+        bp_status.termination_status_last_ip = termination_status(master_IP)
+        if verbose
+            println("Termination status : ", bp_status.termination_status_last_ip)
+        end
 
         if (termination_status != OPTIMAL)
-            bp_params.time_limit_master_IP = max(bp_params.time_limit_master_IP + 10.0, 300.0)
+            bp_params.time_limit_master_IP = min(bp_params.time_limit_master_IP + 10.0, 300.0)
             set_time_limit(master_IP, bp_params.time_limit_master_IP, bp_params.optimizer)
         end
     end

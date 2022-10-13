@@ -51,6 +51,14 @@ pkg" add https://github.com/jeremyomer/KidneyExchange.jl.git"
 using KidneyExchange
 ```
 
+If you download the code folder, another option is to navigate to the folder before opening Julia, and then:
+ ```
+using Revise
+activate .
+using KidneyExchange
+```
+Using Revise will allow to modify the code and see directly the effect of these modifications.
+
 Generate an instance with 500 pairs of incompatible donors and receivers and 25 altruist donors
 `generate_sparse_unos_instance(500, 25, 1)`
 

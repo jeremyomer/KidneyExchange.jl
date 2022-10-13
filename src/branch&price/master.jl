@@ -23,6 +23,9 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
     # Decision variables
     # - column variables
     @variable(master, y[c in 1:length(column_pool)] >= 0)
+    # - artificial variable to handle infeasibility after branching
+    @variable(master, slack >=0)
+
     # - in the position-indexed model, we need arc variables with position indexes for the chains
     if bp_params.is_pief
         l_min = 2*ones(nv(graph))
@@ -84,14 +87,16 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
 
     # branching constraint on the total number of arcs which should be even when K=2 and L=0
     @constraint(master, branch_nb_arcs_max, sum(y[c] for c in 1:length(column_pool)) <= nv(graph))
-    @constraint(master, branch_nb_arcs_min, sum(y[c] for c in 1:length(column_pool)) >= 0)
+    @constraint(master, branch_nb_arcs_min, sum(y[c] for c in 1:length(column_pool)) + slack >= 0)
 
 
     # objective
+    W = instance.edge_weight
+    max_cost = maximum(W)
     if bp_params.is_pief && L >= 1
-        @objective(master, Max, sum(column_pool[c].weight * y[c] for c in 1:length(column_pool)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,1] for  u in instance.altruists for v in outneighbors(graph, u)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,k] for u in instance.pairs for v in outneighbors(graph, u) for k  in 2:L))
+        @objective(master, Max, sum(column_pool[c].weight * y[c] for c in 1:length(column_pool)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,1] for  u in instance.altruists for v in outneighbors(graph, u)) + sum(instance.edge_weight[u,v] * chain_flow[u,v,k] for u in instance.pairs for v in outneighbors(graph, u) for k  in 2:L) - nv(graph) * max_cost * slack)
     else
-        @objective(master, Max, sum(column_pool[c].weight * y[c] for c in 1:length(column_pool)))
+        @objective(master, Max, sum(column_pool[c].weight * y[c] for c in 1:length(column_pool)) - nv(graph) * max_cost * slack)
     end
 
     return master
