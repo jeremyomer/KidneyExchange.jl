@@ -437,7 +437,7 @@ function initialize_column_pool(instance::Instance, column_pool::Vector{Column},
             for u in vtx_list
                 if nb_cols[u] >= max_nb_cols continue end
                 if u < v && has_edge(graph, v, u)
-                    if nb_cols[v] >= max_nb_cols continue end
+                    if nb_cols[u] >= max_nb_cols continue end
                     nb_cols[u] += 1
                     nb_cols[v] += 1
                     path = Vector{Int}(undef, 0)
@@ -448,7 +448,7 @@ function initialize_column_pool(instance::Instance, column_pool::Vector{Column},
                     else
                         push!(column_pool, Column(path, instance.edge_weight, true))
                     end
-                    if nb_cols[u] >= max_nb_cols continue end
+                    if nb_cols[v] >= max_nb_cols break end
                 end
             end
         end
