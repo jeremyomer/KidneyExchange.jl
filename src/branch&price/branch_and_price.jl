@@ -83,7 +83,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     nb_subgraph = subgraphs.nb_copies
     column_pool = Vector{Column}()
     if bp_params.is_pief
-        initialize_column_pool(instance, column_pool, 2)
+        initialize_column_pool(instance, column_pool, 2, 20)
         if verbose
             println("Initialize column pool with 2-cycles when using PIEF")
             println("- number of initial columns: $(length(column_pool))\n")
@@ -418,24 +418,23 @@ end
 Initialize the pool of columns for the branch-and-price by enumerating all k-cycles up to an input maximum value of k.
 
 # Input parameters
-*`graph::SimpleDiGraph`: The KEP graph
+*`instance::Instance`: The instance
 *`column_pool::Vector{Column}`: Pool of columns where initial columns will be pushed
 *`max_cycle_length::Int`: Maximum length of the cycles to be enumerated at initialization (0 if initialization is deactivated)
+* `max_nb_cols::Int` : Maximum number of columns added for each vertex, 0 if all columns are added
 
 # Output parameters
 * `column_pool::Vector{Column}` : set of columns initially added to the master problem
 """
-function initialize_column_pool(instance::Instance, column_pool::Vector{Column}, max_cycle_length::Int = 0)
+function initialize_column_pool(instance::Instance, column_pool::Vector{Column}, max_cycle_length::Int = 0, max_nb_cols::Int = 0)
     graph = instance.graph
     if max_cycle_length >= 2
-        max_nb_cols = 20
         nb_cols = zeros(nv(graph))
         for v in instance.pairs
-            col_count = 0
             vtx_list = findall(instance.edge_weight[:,v] .!= 0.0)
             shuffle!(vtx_list)
             for u in vtx_list
-                if nb_cols[u] >= max_nb_cols continue end
+                if (max_nb_cols >= 1) && (nb_cols[u] >= max_nb_cols) continue end
                 if u < v && has_edge(graph, v, u)
                     if nb_cols[u] >= max_nb_cols continue end
                     nb_cols[u] += 1
@@ -448,7 +447,7 @@ function initialize_column_pool(instance::Instance, column_pool::Vector{Column},
                     else
                         push!(column_pool, Column(path, instance.edge_weight, true))
                     end
-                    if nb_cols[v] >= max_nb_cols break end
+                    if (max_nb_cols >= 1) && (nb_cols[v] >= max_nb_cols) break end
                 end
             end
         end
