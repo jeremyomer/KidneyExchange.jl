@@ -282,7 +282,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         end
         if verbose println("- nb of cycles added = ", nb_cycle_added) end
 
-        # 2. Search for positive chain if no cycle was added unless we are solving the pief model
+        # 2. Search for positive chains
         chain_added = false
         if !bp_params.is_pief
             inds = collect(1:instance.nb_altruists)

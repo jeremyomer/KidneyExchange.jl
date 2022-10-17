@@ -27,7 +27,7 @@ Otherwise, three generators are provided with the package. One of them will gene
 
 The package was fully tested with the two commercial MIP solvers CPLEX and Gurobi. Those can both be downloaded and used under Academic licence at https://www.ibm.com/academic/home and https://www.gurobi.com.
 
-If you prefer running a fully open version of the package, it is possible by using a chosen mixture of Clp, Cbc, and GLPK. Be aware that the execution of the algorithms may be much larger than communicated in our article if you do so. In particular, for large instances, this is even true for the branch-and-price algorithms which rely on the capacity of the solver to solve the relaxed master problem with integer variables.  
+If you prefer running a fully open version of the package, it is possible by using a chosen mixture of Clp, Cbc, and GLPK. Be aware that the execution of the algorithms may take longer than communicated in our article if you do so. In particular, for large instances, this is even true for the branch-and-price algorithms which rely on the capacity of the solver to solve the relaxed master problem with integer variables. The corresponding packages are documented at https://github.com/jump-dev/Cbc.jl, https://github.com/jump-dev/Clp.jl and https://github.com/jump-dev/Glpk.jl. 
 
 To choose the solver, you need set the field `optimizer` of the `BP_params` or `MIP_params` structure with one of the following options:
 - `GLPK`: use exclusively GLPK
@@ -37,27 +37,28 @@ To choose the solver, you need set the field `optimizer` of the `BP_params` or `
 - `CPLEX`: use exclusively CPLEX (_requires a licensed installation of CPLEX_)
 - `Gurobi`: use exclusively Gurobi (_requires a licensed installation of Gurobi_)
 
-For instance, if solving the instance stored in `filename.wmd` and `filename.dat`
-
-
-***include references for the three open solvers***  
 
 ## Basic usages
 
 Load the module
 ```
-using Pkg
-pkg" add https://github.com/jeremyomer/KidneyExchange.jl.git"
-using KidneyExchange
+julia> using Pkg
+pkg> add "https://github.com/jeremyomer/KidneyExchange.jl.git"
+julia> using KidneyExchange
 ```
 
-If you download the code folder, another option is to navigate to the folder before opening Julia, and then:
+The simpler option is to download the code folder and navigate to the folder before opening Julia. The package may then be loaded as:
  ```
-using Revise
-activate .
-using KidneyExchange
+julia> using Revise
+pkg> activate .
+julia> using KidneyExchange
 ```
 Using Revise will allow to modify the code and see directly the effect of these modifications.
+
+If you wish to use a commercial integer programming solver such as Gurobi or CPLEX, you need to have an active license and import the corresponding package. For instance: 
+ ```
+julia> using Gurobi
+```
 
 Generate an instance with 500 pairs of incompatible donors and receivers and 25 altruist donors
 `generate_sparse_unos_instance(500, 25, 1)`
@@ -73,6 +74,18 @@ Solve the instance using one of its compact MIP formulations (HPIEF by default)
 
 Specify another MIP formulation (true is to keep verbosity)
 `solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KidneyExchange.EXTENDED_EDGE, true));`
+
+The parameters of branch-and-price approaches can be listed with
+ ```
+julia> ?
+help?> BP_params
+```
+And the same can be done with MIP_params for the solution of compact formulations. For instance, if Gurobi has been loaded and you wish to solve all linear and integer programs with Gurobi, this can be done with:
+ ```
+julia> bp_params = BP_params()
+julia> bp_params.optimizer = "Gurobi"
+julia> solve_with_BP("sparse/sparse_500_25_1", 3, 4, bp_params);
+```
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 [docs-dev-url]: https://jeremyomer.github.io/KidneyExchange.jl/dev/
