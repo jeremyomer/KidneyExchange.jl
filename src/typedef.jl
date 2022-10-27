@@ -71,7 +71,7 @@ end
   Mutable structure where the solving options of the compact formulation are stored
 
   # Fields
-  *` optimizer::String`: LP and IP solver that will be used to solve the master (default is Cbc for IPs and GLPK for LPs)
+  *` optimizer::String`: LP and IP solver that will be used to solve the master (default is HiGHS for IPs and LPs)
   * `verbose::Bool`: true if messages are printed during the solution (default = true)
   * `model_type::Mip_model`: type of MIP compact model that is to be solved (default = HPIEF)
   * `fvs::Bool`: true if a feedback vertex set is used to reduce the number of graph copies (default = true)
@@ -88,10 +88,10 @@ mutable struct MIP_params
   reduce_arcs::Bool
   symmetry_break::Bool
 
-  function MIP_params(_optimizer::String = "Cbc", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true)
+  function MIP_params(_optimizer::String = "HiGHS", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true)
     return new(_optimizer, _verbose, _model_type, _fvs, _reduce_vertices, _reduce_arcs, _symmetry)
   end
   function MIP_params(_model_type::Mip_model, _verbose = false)
-    return new("Cbc", _verbose, _model_type, true, true, true, true)
+    return new("HiGHS", _verbose, _model_type, true, true, true, true)
   end
 end

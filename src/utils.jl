@@ -1,4 +1,4 @@
-using Cbc
+using HiGHS
 using DelimitedFiles
 using GLPK
 using Graphs

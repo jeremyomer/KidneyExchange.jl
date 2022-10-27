@@ -1,7 +1,7 @@
 module KidneyExchange
 
 # Package dependencies
-using Cbc
+using HiGHS
 using DelimitedFiles
 using GLPK
 using Graphs
@@ -36,6 +36,7 @@ function __init__()
     @require Gurobi = "2e9cd046-0924-5485-92f1-d5272153d98b" @eval using .Gurobi
     @require CPLEX = "a076750e-1247-5638-91d2-ce28b192dca0" @eval using .CPLEX
     @require Clp = "2e9cd046-0924-5485-92f1-d5272153d98b" @eval using .Clp
+    @require Cbc = "9961bab8-2fa3-5c5a-9d89-47fab24efd76" @eval using .Cbc
 end
 
 end

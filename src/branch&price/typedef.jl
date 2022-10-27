@@ -77,7 +77,7 @@ end
   Mutable structure where the options of the branch-and-price solver are stored
 
   # Fields
-  * `optimizer::String`: LP and IP solver that will be used to solve the master (default is Cbc for IPs and GLPK for LPs)
+  * `optimizer::String`: LP and IP solver that will be used to solve the master (default is HiGHS)
   * `verbose::Bool`: true if messages are printed during the solution (default = true)
   * `is_pief::Bool`: true if the chains are considered in the master model using a position-indexed extended edge formulation (default = false)
   * `fvs::Bool`: true if a feedback vertex set is used to reduce the number of graph copies (default = true)
@@ -105,11 +105,11 @@ mutable struct BP_params
   restart_for_IP::Bool
   branch_on_vertex::Bool
 
-  function BP_params(_optimizer::String = "GLPK-Cbc", _verbose::Bool = true, _is_pief = false, _fvs = true,  _reduce_vertices = true, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 30.0,  _freq_solve_master_IP = 2, _restart_for_IP = true, _branch_on_vertex = false)
+  function BP_params(_optimizer::String = "HiGHS", _verbose::Bool = true, _is_pief = false, _fvs = true,  _reduce_vertices = true, _is_column_disjoint = true, _max_intersecting_columns = 6, _is_tabu_list = true, _solve_master_IP = true, _time_limit_IP = 30.0,  _freq_solve_master_IP = 2, _restart_for_IP = true, _branch_on_vertex = false)
     return new(_optimizer, _verbose, _is_pief, _fvs, _reduce_vertices, _is_column_disjoint, _max_intersecting_columns, _is_tabu_list, _solve_master_IP, _time_limit_IP, _freq_solve_master_IP, _restart_for_IP, _branch_on_vertex)
   end
   function BP_params(_is_pief::Bool, _verbose::Bool = false)
-    return new("GLPK-Cbc", _verbose, _is_pief, true, true, true, 6, true, true, 30.0, 2, true, false)
+    return new("HiGHS", _verbose, _is_pief, true, true, true, 6, true, true, 30.0, 2, true, false)
   end
 end
 

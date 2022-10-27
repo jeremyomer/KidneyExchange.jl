@@ -94,7 +94,9 @@ function solve_hpief_mip(model::Model, params::MIP_params, instance::Instance, Î
 
     # b. get the main characteristics of the solution
     mip_status.objective_value = floor(objective_value(model))
-    mip_status.relative_gap = round(10^4*relative_gap(model))/10^4
+    if params.optimizer != "HiGHS"
+        mip_status.relative_gap = round(10^4*relative_gap(model))/10^4
+    end
     # mip_status.node_count = node_count(model)  # the function has errors in last JuMP version
     mip_status.solve_time = solve_time(model)
 
@@ -179,11 +181,15 @@ function solve_hpief_mip(model::Model, params::MIP_params, instance::Instance, Î
         printstyled("\n----------------------------------------------------------\n The solution of the HPIEF model is complete\n" ; color = :yellow)
         if termination_status(model) == MOI.OPTIMAL
             printstyled("- the solution is optimal\n" ; color = :yellow)
-            printstyled("- best solution found: value $(mip_status.objective_value) with gap $(mip_status.relative_gap)\n" ; color = :yellow)
+            printstyled("- best solution found: value $(mip_status.objective_value)\n" ; color = :yellow)
             printstyled("----------------------------------------------------------\n\n" ; color = :yellow)
         elseif termination_status(model) == MOI.TIME_LIMIT
             printstyled("- the time limit is exceeded\n" ; color = :yellow)
-            printstyled("- best solution found: value $(mip_status.objective_value) with gap $(mip_status.relative_gap)\n" ; color = :yellow)
+            if params.optimizer != "HiGHS"
+                printstyled("- best solution found: value $(mip_status.objective_value) with gap $(mip_status.relative_gap) %\n" ; color = :yellow)
+            else
+                printstyled("- best solution found: value $(mip_status.objective_value)\n" ; color = :yellow)
+            end
             printstyled("----------------------------------------------------------\n\n" ; color = :yellow)
         end
     end

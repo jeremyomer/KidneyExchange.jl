@@ -104,7 +104,9 @@ function buid_cycle_cuts(instance::Instance, subgraphs::Graph_copies, params::MI
 
     # b. get the main characteristics of the solution
     mip_status.objective_value = floor(objective_value(model))
-    mip_status.relative_gap = mip_status.relative_gap = round(10^4*relative_gap(model))/10^4
+    if params.optimizer != "HiGHS"
+        mip_status.relative_gap = round(10^4*relative_gap(model))/10^4
+    end
     # mip_status.node_count = node_count(model)  # the function has errors in last JuMP version
     mip_status.solve_time = solve_time(model)
 

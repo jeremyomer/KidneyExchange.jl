@@ -17,6 +17,14 @@ function create_model(time_limit::Float64, optimizer::String, is_integer::Bool =
     model = Model(GLPK.Optimizer)
     set_optimizer_attribute(model, "tm_lim", round(Int, time_limit) * 1_000)
     if verbose set_optimizer_attribute(model, "msg_lev", 3) end
+  elseif optimizer=="HiGHS"
+    model = Model(HiGHS.Optimizer)
+    set_optimizer_attribute(model, "time_limit", time_limit)
+    if verbose 
+      set_optimizer_attribute(model, "output_flag", true)
+    else
+      set_optimizer_attribute(model, "output_flag", false)
+    end
   elseif optimizer=="GLPK-Cbc"
     if is_integer
       model = Model(Cbc.Optimizer)
@@ -59,14 +67,16 @@ function set_time_limit(model::Model, time_limit::Float64, optimizer::String)
     set_optimizer_attribute(model, "CPX_PARAM_TILIM", max(0.0,time_limit))
   elseif optimizer=="Gurobi"
     set_optimizer_attribute(model, "TimeLimit", max(0.0,time_limit))
+  elseif optimizer=="HiGHS"
+    set_optimizer_attribute(model, "time_limit", max(0.0, time_limit))
   elseif optimizer=="GLPK"
     set_optimizer_attribute(model, "tm_lim", round(Int, time_limit) * 1_000)
   elseif optimizer=="GLPK-Cbc"
-    set_optimizer_attribute(model, "seconds", time_limit)
+    set_optimizer_attribute(model, "seconds", max(0.0, time_limit))
   elseif optimizer=="Clp"
-      set_optimizer_attribute(model, "seconds", time_limit)
+      set_optimizer_attribute(model, "seconds", max(0.0, time_limit))
   elseif optimizer=="Cbc"
-      set_optimizer_attribute(model, "seconds", time_limit)
+      set_optimizer_attribute(model, "seconds", max(0.0, time_limit))
   else
     println(optimizer)
     error("The chosen optimizer is unknown!")
