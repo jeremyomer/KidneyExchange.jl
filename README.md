@@ -60,19 +60,24 @@ If you wish to use a commercial integer programming solver such as Gurobi or CPL
 julia> using Gurobi
 ```
 
-Generate an instance with 500 pairs of incompatible donors and receivers and 25 altruist donors
+Generate an instance with 500 pairs of incompatible donors and receivers and 25 altruist donors. The corresponding input files will be created in the "data/sparse/" folder of the package. 
+
 `generate_sparse_unos_instance(500, 25, 1)`
 
-Solve the instance with branch-and-price
+Solve the instance with branch-and-price.
+
 `solve_with_BP("sparse/sparse_500_25_1", 3, 4);`
 
 Specify another branch-and-price formulation (the second true is to keep verbosity)
+
 `solve_with_BP("sparse/sparse_500_25_1", 3, 4, BP_params(true, true));`
 
 Solve the instance using one of its compact MIP formulations (HPIEF by default)
+
 `solve_with_mip("sparse/sparse_500_25_1", 3, 4);`
 
 Specify another MIP formulation (true is to keep verbosity)
+
 `solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KidneyExchange.EXTENDED_EDGE, true));`
 
 The parameters of branch-and-price approaches can be listed with
