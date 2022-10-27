@@ -13,8 +13,8 @@ The package also comes with three generators that allow to reproduce a benchmark
 
 ## General informations
 
-* Language : `Julia v1.6`
-* Dependencies : `Cbc`, `Clp`, `CPLEX`, `DelimitedFiles`, `Distributions`, `GLPK`, `Graphs`, `Gurobi`, `JuMP`, `Random`, `TimerOutputs`
+* Language : `Julia v1.6-1.8`
+* Dependencies : `DelimitedFiles`, `Distributions`, `GLPK`, `Graphs`, `HiGHs`, `JuMP`, `Random`, `TimerOutputs`
 
 ## Input data
 
@@ -30,6 +30,7 @@ The package was fully tested with the two commercial MIP solvers CPLEX and Gurob
 If you prefer running a fully open version of the package, it is possible by using a chosen mixture of Clp, Cbc, and GLPK. Be aware that the execution of the algorithms may take longer than communicated in our article if you do so. In particular, for large instances, this is even true for the branch-and-price algorithms which rely on the capacity of the solver to solve the relaxed master problem with integer variables. The corresponding packages are documented at https://github.com/jump-dev/Cbc.jl, https://github.com/jump-dev/Clp.jl and https://github.com/jump-dev/Glpk.jl. 
 
 To choose the solver, you need set the field `optimizer` of the `BP_params` or `MIP_params` structure with one of the following options:
+- `HiGHS`: use exclusively HiGHS, i.e., both for integer programs (IPs) and linear programs (LPs)
 - `GLPK`: use exclusively GLPK
 - `Clp`: use Cbc for every integer program and solve the linear relaxations with Clp
 - `Cbc`: exactly the same as `Clp` (***default for MIP approaches***)
@@ -37,6 +38,7 @@ To choose the solver, you need set the field `optimizer` of the `BP_params` or `
 - `CPLEX`: use exclusively CPLEX (_requires a licensed installation of CPLEX_)
 - `Gurobi`: use exclusively Gurobi (_requires a licensed installation of Gurobi_)
 
+Packages Clp, Cbc, Gurobi and CPLEX are not included among the dependencies so the y must be added and loaded (with using) if you wish to use one of them. This was necessary due to some compatibility issues with Clp and Cbc, and because CPLEX and Gurobi require a licensed installation. 
 
 ## Basic usages
 
@@ -64,7 +66,7 @@ Generate an instance with 500 pairs of incompatible donors and receivers and 25 
 
 `generate_sparse_unos_instance(500, 25, 1)`
 
-Solve the instance with branch-and-price.
+Solve the instance with branch-and-price. As always with Julia, the first time the solve function is called, it takes extra time. 
 
 `solve_with_BP("sparse/sparse_500_25_1", 3, 4);`
 
