@@ -18,7 +18,7 @@ The package also comes with three instance generators that allow to reproduce a 
 
 ## Input data
 
-Before running the code, the kidney exchange data publicly shared by John Dickerson must be downloaded at https://www.preflib.org/data/MD/00001 and stored in the data/preflib folder. The data shared by John Dickerson is described in:
+Before running the code, the kidney exchange data publicly shared by John Dickerson must be downloaded at https://www.preflib.org/dataset/00036 and stored in the data/preflib folder. The data shared by John Dickerson is described in:
 *Optimizing Kidney Exchange with Transplant Chains: Theory and Reality.* John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of AAMAS; 2012
 
 Otherwise, three generators are provided with the package. One of them will generate instances similar to those of the PrefLib library.
