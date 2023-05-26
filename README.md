@@ -18,8 +18,8 @@ The package also comes with three instance generators that allow to reproduce a 
 
 ## Input data
 
-Before running the code, the kidney exchange data publicly shared by John Dickerson must be downloaded at https://www.preflib.org/dataset/00036 and stored in the data/preflib folder. The data shared by John Dickerson is described in:
-*Optimizing Kidney Exchange with Transplant Chains: Theory and Reality.* John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of AAMAS; 2012
+Before running the code, the kidney exchange data publicly shared by John P. Dickerson must be downloaded at https://www.preflib.org/dataset/00036 and stored in the data/preflib folder. The data shared by John Dickerson is described in:
+*Optimizing Kidney Exchange with Transplant Chains: Theory and Reality.* John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of AAMAS; 2012.
 
 Otherwise, three generators are provided with the package. One of them will generate instances similar to those of the PrefLib library.
 
@@ -29,7 +29,7 @@ The package was fully tested with the two commercial MIP solvers CPLEX and Gurob
 
 If you prefer running a fully open version of the package, it is possible to do so by using a chosen mixture of HiGHS, Clp, Cbc, and GLPK. Be aware that the execution of the algorithms may take longer than communicated in our article if you do so. In particular, for large instances, this is even true for the branch-and-price algorithms which rely on the capacity of the solver to solve the relaxed master problem with integer variables. The corresponding packages are documented at https://github.com/jump-dev/HiGHS.jl, https://github.com/jump-dev/Cbc.jl, https://github.com/jump-dev/Clp.jl and https://github.com/jump-dev/Glpk.jl. 
 
-To choose the solver, you need set the field `optimizer` of the `BP_params` or `MIP_params` structure with one of the following options:
+To choose the solver, you need to set the field `optimizer` of the `BP_params` or `MIP_params` structure with one of the following options:
 - `HiGHS`: use exclusively HiGHS, i.e., both for integer programs (IPs) and linear programs (LPs)
 - `GLPK`: use exclusively GLPK
 - `Clp`: use Cbc for every integer program and solve the linear relaxations with Clp
@@ -55,30 +55,32 @@ julia> using Revise
 pkg> activate .
 julia> using KidneyExchange
 ```
-Using Revise will allow to modify the code and see directly the effect of these modifications.
+Using Revise will allow to modify the code and see the effect of these modifications directly.
 
 If you wish to use a commercial integer programming solver such as Gurobi or CPLEX, you need to have an active license and import the corresponding package. For instance: 
  ```
 julia> using Gurobi
 ```
 
-Generate an instance with 500 pairs of incompatible donors and receivers and 25 altruist donors. The corresponding input files will be created in the "data/sparse/" folder of the package. 
+Generate an instance with 500 pairs of incompatible donors and receivers and 25 non-directed donors. The corresponding input files will be created in the "data/sparse/" folder of the package. 
 
 `generate_sparse_unos_instance(500, 25, 1)`
 
-Solve the instance with branch-and-price. As always with Julia, the first time the solve function is called, it takes extra time. 
+Solve the instance with branch-and-price. The basic usage of this function requires as input, the instance (below "sparse/sparse_500_25_1"), and the parameters K and L (below 3 and 4, respectively). 
 
 `solve_with_BP("sparse/sparse_500_25_1", 3, 4);`
 
-Specify another branch-and-price formulation (the second true is to keep verbosity)
+As always with Julia, the first time the solve function is called, it takes extra time. 
+
+In a more advanced use case additional parameters can be changed through the object BP_params. For instance, specify another branch-and-price formulation (the second true is to keep verbosity)
 
 `solve_with_BP("sparse/sparse_500_25_1", 3, 4, BP_params(true, true));`
 
-Solve the instance using one of its compact MIP formulations (HPIEF by default)
+Solve the instance using one of its compact MIP formulations (HPIEF by default). The basic usage of this function requires as input, the instance (below "sparse/sparse_500_25_1"), and the parameters K and L (below 3 and 4, respectively). 
 
 `solve_with_mip("sparse/sparse_500_25_1", 3, 4);`
 
-Specify another MIP formulation (true is to keep verbosity)
+In a more advanced use case additional parameters can be changed through the object MIP_params. For instance, specify another MIP formulation (true is to keep verbosity)
 
 `solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KidneyExchange.EXTENDED_EDGE, true));`
 
@@ -87,7 +89,7 @@ The parameters of branch-and-price algorithms can be listed with
 julia> ?
 help?> BP_params
 ```
-And the same can be done with MIP_params for the solution of compact formulations. For instance, if Gurobi has been loaded and you wish to solve all linear and integer programs with Gurobi, this can be done with:
+And the same can be done with MIP_params for the solution of compact formulations. For instance, if Gurobi has been loaded and you wish to run the branch-and-price algorithm with Gurobi, this can be done with:
  ```
 julia> bp_params = BP_params()
 julia> bp_params.optimizer = "Gurobi"
