@@ -89,6 +89,7 @@ end
   * `time_limit_master_IP::Float64`: time limit (seconds) at each solution of the master IP (default = 10.0)
   * `freq_solve_master_IP::Int`: number of new columns that must be added in the master IP between two solutions of this IP (default = 1)
   * `restart_for_IP::Bool`: true if the root node can be solved twice to generate more columns when the IP master could not prove optimality of the relaxation value (default = true)
+  * `nb_threads::Int`: if the LP and IP solver can be called on multiple threads, specify the maximum number of threads that will be used.
 """
 mutable struct BP_params
   optimizer::String
@@ -131,7 +132,7 @@ mutable struct BP_info
 end
 
 """
-  BP_params
+  BP_status
 
   Mutable structure where the results of the branch-and-price are stored
 
