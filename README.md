@@ -18,10 +18,11 @@ The package also comes with three instance generators that allow to reproduce a 
 
 ## Input data
 
-Before running the code, the kidney exchange data publicly shared by John P. Dickerson must be downloaded at https://www.preflib.org/dataset/00036 and stored in the data/preflib folder. The data shared by John Dickerson is described in:
-*Optimizing Kidney Exchange with Transplant Chains: Theory and Reality.* John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of AAMAS; 2012.
+The package provides a parser (function [`read_kep_file`](https://jeremyomer.github.io/KidneyExchange.jl/dev/functions/#KidneyExchange.read_kep_file-Tuple{AbstractString,%20AbstractString})) for the instances of the [PrefLib] (https://www.preflib.org/dataset/00036) publicly shared by John P. Dickerson and described in 
+*Optimizing Kidney Exchange with Transplant Chains: Theory and Reality.* John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of AAMAS; 2012. 
+Those instances must be downloaded from this [website](https://www.preflib.org/dataset/00036) and stored in the data/preflib folder before solving them with the algorithms of the package.
 
-Otherwise, three generators are provided with the package. One of them will generate instances similar to those of the PrefLib library.
+Otherwise, three generators are provided with the package (functions `generate_saidman_instance`, `generate_heterogeneous_instance` and `generate_sparse_unos_instance`). One of them (`generate_saidman_instance`) will generate instances similar to those of the PrefLib library.
 
 ## Integer programming solvers
 
