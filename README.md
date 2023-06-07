@@ -41,6 +41,8 @@ To choose the solver, you need to set the field `optimizer` of the `BP_params` o
 - `CPLEX`: use exclusively CPLEX (_requires a licensed installation of CPLEX_)
 - `Gurobi`: use exclusively Gurobi (_requires a licensed installation of Gurobi_)
 
+Some parameters of the solvers can be set when calling the constructors of the parameters used by the desired algorithm. Additional details are given in the documentation of [MIP_params](https://jeremyomer.github.io/KidneyExchange.jl/dev/types/#KidneyExchange.MIP_params) and [BP_params](https://jeremyomer.github.io/KidneyExchange.jl/dev/types/#KidneyExchange.BP_params).
+
 Packages Clp, Cbc, Gurobi and CPLEX are not included among the dependencies so they must be added and loaded (with using) if you wish to use one of them. This was necessary due to some compatibility issues with Clp and Cbc, and because CPLEX and Gurobi require a licensed installation. 
 
 ## Basic usages
