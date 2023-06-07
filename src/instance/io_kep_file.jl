@@ -1,7 +1,7 @@
 """
     read_kep_file
 
-Contruct a KEP graph from a `.wmd` and a `.dat` input files
+Contruct a KEP graph from a `.wmd` and a `.dat` input files. The format of these files can be found on the website where the PrefLib is shared, see https://www.preflib.org/dataset/00036.
 
 # Parameters
 * `wmd_file::String` : Absolute path of the `.wmd` file.
