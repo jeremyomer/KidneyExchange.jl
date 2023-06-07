@@ -1,7 +1,7 @@
-function create_model(time_limit::Float64, optimizer::String, is_integer::Bool = false, verbose::Bool = false)
+function create_model(time_limit::Float64, optimizer::String, is_integer::Bool = false, verbose::Bool = false, nb_threads::Int = 1)
   if optimizer=="CPLEX"
     model = Model(CPLEX.Optimizer)
-    set_optimizer_attribute(model, "CPX_PARAM_THREADS", 1)
+    set_optimizer_attribute(model, "CPX_PARAM_THREADS", nb_threads)
     set_optimizer_attribute(model, "CPX_PARAM_TILIM", max(0.0,time_limit))
     if verbose
       set_optimizer_attribute(model, "CPX_PARAM_MIPDISPLAY", 2)
@@ -12,7 +12,7 @@ function create_model(time_limit::Float64, optimizer::String, is_integer::Bool =
     model = Model(Gurobi.Optimizer)
     set_optimizer_attribute(model, "OutputFlag", Int(verbose))
     set_optimizer_attribute(model, "TimeLimit", max(0.0,time_limit))
-    set_optimizer_attribute(model, "Threads", 1)
+    set_optimizer_attribute(model, "Threads", nb_threads)
   elseif optimizer=="GLPK"
     model = Model(GLPK.Optimizer)
     set_optimizer_attribute(model, "tm_lim", round(Int, time_limit) * 1_000)
