@@ -79,9 +79,7 @@ end
 """
 	generate_complete_benchmark()
 
-Generate all the instances that are used in addition to the PrefLib to assess the solution methods of this package in the article describing the package.
-
-*add citation later*
+Generate all the instances that are used in addition to the PrefLib to assess the solution methods of this package in the article describing the package (Jérémy Omer, Ayse N Arslan, Fulin Yan. KidneyExchange.jl: A Julia package for solving the kidney exchange problem with branch-and-price. 2022. ⟨hal-03830810⟩).
 
 The instances are stored in the subdirectories `heterogeneous`, `sparse` and `saidman` of the `data` directory. Beware that if using the package with Pkg.add(), the `data` directory is in the directory where the package is stored.
 """
