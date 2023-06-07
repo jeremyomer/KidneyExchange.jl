@@ -570,7 +570,12 @@ end
 """
 $(SIGNATURES)
 
-Initialize the MIP model with cycle constraint generation for the optimal search of positive cost chains. Only one model is created for every copy to save a great amount of initialization time and memory. The model will then need to be modified for each graph copy to keep only the vertices of the graph and select the right source vertex
+Initialize the MIP model with cycle constraint generation for the
+optimal search of positive cost chains. Only one model is created
+for every copy to save a great amount of initialization time and
+memory. The model will then need to be modified for each graph copy
+to keep only the vertices of the graph and select the right source
+vertex
 
 # Arguments
 * `graph::SimpleDiGraph` : The directed graph with cost on each arc
@@ -578,10 +583,6 @@ Initialize the MIP model with cycle constraint generation for the optimal search
 * `optimizer::String`: Name of the MIP sover
 * `time_limit::Real`: Time limit of the solver
 * `gurobi_env`: Gurobi environment if Guroib is used (avoids many messages from the solver)
-ln("   . solution found: ", arcs, ", objective value: ", objective_value(mip))
-                println("   . cost of other vertices = ", [vertex_cost[e[2]] for e in arcs])
-                println("   . the mip search did not find any positive cost chain")
-            end
 # Return values
 * `mip::Model`: Initial JuMP model for the search of a positive chain
 """
