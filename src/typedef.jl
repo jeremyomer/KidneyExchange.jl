@@ -87,11 +87,12 @@ mutable struct MIP_params
   reduce_vertices::Bool
   reduce_arcs::Bool
   symmetry_break::Bool
+  nb_threads::Int             
 
-  function MIP_params(_optimizer::String = "HiGHS", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true)
-    return new(_optimizer, _verbose, _model_type, _fvs, _reduce_vertices, _reduce_arcs, _symmetry)
+  function MIP_params(_optimizer::String = "HiGHS", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true, _nb_threads = 1)
+    return new(_optimizer, _verbose, _model_type, _fvs, _reduce_vertices, _reduce_arcs, _symmetry, _nb_threads)
   end
   function MIP_params(_model_type::Mip_model, _verbose = false)
-    return new("HiGHS", _verbose, _model_type, true, true, true, true)
+    return new("HiGHS", _verbose, _model_type, true, true, true, true, 1)
   end
 end
