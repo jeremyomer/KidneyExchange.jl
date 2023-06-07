@@ -13,7 +13,7 @@ include("typedef.jl")
 include("createModel.jl")
 
 """
-    print_and_check_solution
+$(SIGNATURES)
 
 Function that prints the main characteristics of a solution and check that it satisfies all teh constraints
 

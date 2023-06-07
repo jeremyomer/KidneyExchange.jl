@@ -1,5 +1,5 @@
 """
-    relaxed_arc_deterministic
+$(SIGNATURES)
 
 Deterministic relaxed-arc formulation for a KEP problem. No cycle length
 limitation is imposed.

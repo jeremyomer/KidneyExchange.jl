@@ -1,5 +1,5 @@
 """
-    calculate_arc_cost
+$(SIGNATURES)
 
 Calculates in parallel the cost of arcs of the original graph
 
@@ -46,7 +46,7 @@ function calculate_arc_cost(instance::Instance, arc_cost::Matrix{Float64}, λ::V
 end
 
 """
-    traverse_preds
+$(SIGNATURES)
 
 Inner function for Bellman_Ford_cycle_search to return path of exactly (n-1) of length ending at v from the table of predecessor
 
@@ -58,7 +58,6 @@ Inner function for Bellman_Ford_cycle_search to return path of exactly (n-1) of 
 # Return values
 * `c=Array{Int,1}`: path of exactly (n-1) of length ending at v
 """
-
 function traverse_preds(v::Int, pred::Vector{Vector{Int}}, n::Int)
     c = Vector{Int}()
     push!(c, v)
@@ -72,7 +71,7 @@ function traverse_preds(v::Int, pred::Vector{Vector{Int}}, n::Int)
 end
 
 """
-    Bellman_Ford_cycle_search
+$(SIGNATURES)
 
 Bellman-Ford style search for one positive cost cycle
 
@@ -569,7 +568,7 @@ end
 
 
 """
-    create_chain_mip
+$(SIGNATURES)
 
 Initialize the MIP model with cycle constraint generation for the optimal search of positive cost chains. Only one model is created for every copy to save a great amount of initialization time and memory. The model will then need to be modified for each graph copy to keep only the vertices of the graph and select the right source vertex
 
@@ -616,7 +615,7 @@ function create_chain_mip(graph::SimpleDiGraph, L::Int, optimizer::String, time_
 end
 
 """
-    MIP_chain_search
+$(SIGNATURES)
 
 IP model with subtour elimination constraints. The constraints are the  generalized cutset inequalities (GCS) and they are added dynamically in a row generation algorithm.
 Refer for instance to the following reference for a presentation of the GCS: [Taccari2016](@cite).

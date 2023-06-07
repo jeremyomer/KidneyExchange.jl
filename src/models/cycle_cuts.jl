@@ -1,5 +1,5 @@
 """
-    create_chain_mip
+$(SIGNATURES)
 
 Initialize the MIP model with cycle constraint generation for the optimal search of positive cost chains. Only one model is created for every copy to save a great amount of initialization time and memory. The model will then need to be modified for each graph copy to keep only the vertices of the graph and select the right source vertex
 

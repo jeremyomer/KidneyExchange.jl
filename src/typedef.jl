@@ -1,3 +1,6 @@
+"""
+$(TYPEDEF)
+"""
 mutable struct Graph_info
   nb_vertices:: Int # number of vertices in the original graph
   nb_pairs::Int  # number of pair vertices
@@ -13,6 +16,9 @@ mutable struct Graph_info
   end
 end
 
+"""
+$(TYPEDEF)
+"""
 mutable struct Subgraph_info
   nb_copies:: Int  # number of copies
   nb_vertices_per_copy:: Float64  # average number of vertices per copy
@@ -38,6 +44,9 @@ mutable struct Subgraph_info
   end
 end
 
+"""
+$(TYPEDEF)
+"""
 mutable struct Solution_status
   status::String  # status of OPTIMAL or TIME_LIMIT
   objective_value::Float64  # objective value of the best solution found
@@ -66,7 +75,7 @@ end
 @enum Mip_model HPIEF EXTENDED_EDGE CYCLE_CUT RELAXED_ARC
 
 """
-  MIP_params
+$(TYPEDEF)
 
   Mutable structure where the solving options of the compact formulation are stored
 

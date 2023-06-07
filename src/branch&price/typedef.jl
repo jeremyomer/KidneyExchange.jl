@@ -72,7 +72,7 @@ end
 
 
 """
-  BP_params
+$(TYPEDEF)
 
   Mutable structure where the options of the branch-and-price solver are stored
 
@@ -116,7 +116,7 @@ mutable struct BP_params
 end
 
 """
-  BP_info
+$(TYPEDEF)
 
   Mutable structure where extra information about the branch-and-price execution is stored
 
@@ -132,7 +132,7 @@ mutable struct BP_info
 end
 
 """
-  BP_status
+$(TYPEDEF)
 
   Mutable structure where the results of the branch-and-price are stored
 

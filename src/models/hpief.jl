@@ -1,5 +1,5 @@
 """
-    build_hpief_mip(instance, subgraphs, params; maxtime = 600)
+$(SIGNATURES)
 
 A compact MIP formulation originally proposed by [Dickerson2016](@cite). The hybrid position indexed edge formulation (HPIEF) handles cycles and chains in the same formulation.
 """

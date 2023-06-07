@@ -1,4 +1,8 @@
-# Can a person with blood type  donorBT give a kidney to a patient with blood type patientBT?
+"""
+$(SIGNATURES)
+
+Can a person with blood type  donorBT give a kidney to a patient with blood type patientBT?
+"""
 function canGiveTo(donorBT::Blood_type, patientBT::Blood_type)
 	if (donorBT == O) || (patientBT == AB)
 		# O can donate to {O,A,B,AB}, AB can receive from {O,A,B,AB}
@@ -15,14 +19,20 @@ function canGiveTo(donorBT::Blood_type, patientBT::Blood_type)
 	end
 end
 
-# Can a person with blood type  patientBT receive a kidney of donorBT?
+"""
+$(SIGNATURES)
+
+Can a person with blood type  patientBT receive a kidney of donorBT?
+"""
 function canGetFrom(patientBT::Blood_type, donorBT::Blood_type)
 	return canGiveTo(donorBT, patientBT)
 end
 
-abstract type Vertex
-end
+abstract type Vertex end
 
+"""
+$(TYPEDEF)
+"""
 struct VertexAltruist <: Vertex
 	# Int identifier of the pair
 	id::Int
@@ -35,6 +45,9 @@ struct VertexAltruist <: Vertex
 	end
 end
 
+"""
+$(TYPEDEF)
+"""
 struct VertexPair <: Vertex
 	# Int identifier of the pair
 	id::Int

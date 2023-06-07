@@ -9,6 +9,7 @@ using JuMP
 using Random
 using Requires
 using TimerOutputs
+using DocStringExtensions
 
 export print_and_check_solution
 include("utils.jl")

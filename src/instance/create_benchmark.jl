@@ -3,7 +3,7 @@ include("saidman_pool_generator.jl")
 include("heterogeneous_pool_generator.jl")
 
 """
-    generate_saidman_instance
+$(SIGNATURES)
 
 Generate a KEP dataset and write in two text files with extensions .dat and .wmd. This generator is usually refererred to as the "Saidman Generator".
 
@@ -25,7 +25,7 @@ function generate_saidman_instance(nb_pairs::Int, nb_altruists::Int, index::Int)
 end
 
 """
-    generate_sparse_unos_instance
+$(SIGNATURES)
 
 Generate a KEP dataset and write in two text files with extensions .dat and .wmd. This generator is obtained by applying the Saidman generator with small modifications in the probabilities of compatibility to roughtly mimic the UNOS pool as of April 15, 2013.  The corresponding data was taken from the KPD Work
 Group Data Analysis - CMR - June 2013 report.
@@ -44,7 +44,7 @@ function generate_sparse_unos_instance(nb_pairs::Int, nb_altruists::Int, index::
 end
 
 """
-    generate_heterogeneous_instance(nb_pairs, nb_altruists, index)
+$(SIGNATURES)
 
 Generate a KEP dataset and write in two text files with extensions .dat and .wmd; the graph generator is based on the following article: Kidney Exchange in Dynamic Sparse Heterogeneous Pools: [Ashlagi2013](@cite).
 
@@ -61,7 +61,7 @@ function generate_heterogeneous_instance(nb_pairs::Int, nb_altruists::Int, index
 end
 
 """
-	generate_abraham_benchmark()
+$(SIGNATURES)
 
 Generate a benchmark using the same method as that used in [Abraham2007](@cite)
 
@@ -77,7 +77,7 @@ function generate_abraham_benchmark()
 end
 
 """
-	generate_complete_benchmark()
+$(SIGNATURES)
 
 Generate all the instances that are used in addition to the PrefLib to assess the solution methods of this package in the article describing the package (Jérémy Omer, Ayse N Arslan, Fulin Yan. KidneyExchange.jl: A Julia package for solving the kidney exchange problem with branch-and-price. 2022. ⟨hal-03830810⟩).
 

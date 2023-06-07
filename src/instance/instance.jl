@@ -1,7 +1,7 @@
 @enum Blood_type A B AB O
 
 """
-  Instance
+$(TYPEDEF)
 
   Non-mutable structure describing the instance that is solved
 
@@ -74,7 +74,7 @@ struct Instance
 end
 
 """
-  Graph_copies
+$(TYPEDEF)
 
   Mutable structure describing the copies of the graph: one copy per vertex or one copy per vertex of a feedback vertex set if the option is set.
   It is important to note that the copies related to altruist donors always appear first in the list of copies

@@ -1,3 +1,6 @@
+"""
+$(SIGNATURES)
+"""
 function create_model(time_limit::Float64, optimizer::String, is_integer::Bool = false, verbose::Bool = false, nb_threads::Int = 1)
   if optimizer=="CPLEX"
     model = Model(CPLEX.Optimizer)
@@ -62,6 +65,9 @@ function create_model(time_limit::Float64, optimizer::String, is_integer::Bool =
   return model
 end
 
+"""
+$(SIGNATURES)
+"""
 function set_time_limit(model::Model, time_limit::Float64, optimizer::String)
   if optimizer=="CPLEX"
     set_optimizer_attribute(model, "CPX_PARAM_TILIM", max(0.0,time_limit))

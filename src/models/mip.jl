@@ -7,7 +7,7 @@ function solve(filename::String, K::Int, L::Int, params::MIP_params, timer::Time
 end
 
 """
-    solve_with_mip
+$(SIGNATURES)
 
 This is the main function to call to solve the input instance with given bounds on the length of covering cycles and chains and given options
 
