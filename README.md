@@ -42,7 +42,9 @@ Packages Clp, Cbc, Gurobi and CPLEX are not included among the dependencies so t
 
 ## Basic usages
 
-Load the module
+Below, we give some examples for basic usages of the package. All the functions that are called below and the other callable functions are also described in the [documentation](https://jeremyomer.github.io/KidneyExchange.jl/dev/) of the package. This documentation includes the description of the inputs and outputs of each function.
+
+To use the package, first load the module
 ```
 julia> using Pkg
 pkg> add "https://github.com/jeremyomer/KidneyExchange.jl.git"
