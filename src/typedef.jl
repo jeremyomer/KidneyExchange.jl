@@ -78,6 +78,7 @@ end
   * `reduce_vertices::Bool`: true if we try deleting useless arcs in graph copies (default = true)
   * `reduce_arcs::Bool`: true if we try deleting useless arcs in graph copies (default = true)
   * `symmetry_break::Bool`: true if the MIP model is modified to reduce the number of optimal solutions (default = true)
+  * `nb_threads::Int`: if the LP and IP solver can be called on multiple threads, specify the maximum number of threads that will be used.
 """
 mutable struct MIP_params
   optimizer::String
