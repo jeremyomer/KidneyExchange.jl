@@ -1,8 +1,12 @@
+export read_kep_file
+
 """
 $(SIGNATURES)
 
 Contruct a KEP graph from a `.wmd` and a `.dat` input files. The format of these files can be found on the website where the PrefLib is shared, see https://www.preflib.org/dataset/00036.
-The .dat file provides individual information on the patient and donor of each pair such as blood type. The .wmd file describes the edges of the KEP graph. For example, in the first instance of the benchmark, the .dat looks like this :
+The `.dat` file provides individual information on the patient and donor of each pair such as blood type. The .wmd file describes the edges of the KEP graph. For example, in the first instance of the benchmark, the .dat looks like this :
+
+```
 	Pair,Patient,Donor,Wife-P?,%Pra,Out-Deg,Altruist
 	1,A,B,0,0.05,2,0
 	2,O,A,0,0.05,4,0
@@ -20,8 +24,11 @@ The .dat file provides individual information on the patient and donor of each p
 	14,O,A,0,0.45,4,0
 	15,O,A,0,0.05,3,0
 	16,O,B,1,0.2875,3,0
+```
 
 And a preview of the .wmd file (including only a subset of the arcs) looks like this: 
+
+```
 	# FILE NAME: 00036-00000001.wmd
 	# TITLE: Kidney Matching - 16 with 0
 	# DESCRIPTION:
@@ -49,6 +56,7 @@ And a preview of the .wmd file (including only a subset of the arcs) looks like 
 	4, 1, 1.0
 	4, 3, 1.0
 	...
+```
 
 # Parameters
 

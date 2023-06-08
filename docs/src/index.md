@@ -15,7 +15,7 @@ report.
 
 ## Input data
 
-The package provides a parser (function `read_kep_file`) for the
+The package provides a parser (function [`read_kep_file`](@ref)) for the
 instances of the [PrefLib](https://www.preflib.org/dataset/00036)
 publicly shared by John P. Dickerson and described in *Optimizing
 Kidney Exchange with Transplant Chains: Theory and Reality.* John
@@ -37,8 +37,8 @@ them as .wmd file and read them with [`read_kep_file`](@ref).
 
 The package was fully tested with the two commercial MIP solvers
 CPLEX and Gurobi. Those can both be downloaded and used under an
-Academic licence at https://www.ibm.com/academic/home and
-https://www.gurobi.com.
+Academic licence at <https://www.ibm.com/academic/home> and
+<https://www.gurobi.com>.
 
 If you prefer running a fully open version of the package, it is
 possible to do so by using a chosen mixture of HiGHS, Clp, Cbc, and
@@ -47,9 +47,9 @@ than communicated in our article if you do so. In particular, for
 large instances, this is even true for the branch-and-price algorithms
 which rely on the capacity of the solver to solve the relaxed master
 problem with integer variables. The corresponding packages are
-documented at https://github.com/jump-dev/HiGHS.jl,
-https://github.com/jump-dev/Cbc.jl, https://github.com/jump-dev/Clp.jl
-and https://github.com/jump-dev/Glpk.jl.
+documented at <https://github.com/jump-dev/HiGHS.jl>,
+<https://github.com/jump-dev/Cbc.jl>, <https://github.com/jump-dev/Clp.jl>
+and <https://github.com/jump-dev/Glpk.jl>.
 
 To choose the solver, you need to set the field `optimizer` of the [`BP_params`](@ref) or [`MIP_params`](@ref) structure with one of the following options:
 - `HiGHS`: use exclusively HiGHS, i.e., both for integer programs (IPs) and linear programs (LPs)
@@ -77,12 +77,16 @@ licensed installation.
 using KidneyExchange
 ```
 
-Generate an instance with 500 pairs of incompatible donors and receivers and 25 non-directed donors. The corresponding input files will be created in the "data/sparse/" folder of the package. 
+Generate an instance with 500 pairs of incompatible donors and
+receivers and 25 non-directed donors. The corresponding input files
+will be created in the "data/sparse/" folder of the package.
 
 ```@example 1
 generate_sparse_unos_instance(500, 25, 1)
 ```
-Solve the instance with branch-and-price. The basic usage of this function requires as input, the instance (below "sparse/sparse_500_25_1"), and the parameters K and L (below 3 and 4, respectively). 
+Solve the instance with branch-and-price. The basic usage of this
+function requires as input, the instance (below "sparse/sparse_500_25_1"),
+and the parameters K and L (below 3 and 4, respectively).
 
 ```@example 1
 solve_with_BP("sparse/sparse_500_25_1", 3, 4)
@@ -90,7 +94,9 @@ solve_with_BP("sparse/sparse_500_25_1", 3, 4)
 
 As always with Julia, the first time the solve function is called, it takes extra time. 
 
-In a more advanced use case additional parameters can be changed through the object BP_params. For instance, specify another branch-and-price formulation (the second true is to keep verbosity)
+In a more advanced use case additional parameters can be changed
+through the object [`BP_params`](@ref). For instance, specify another
+branch-and-price formulation (the second true is to keep verbosity)
 
 ```@example 1
 solve_with_BP("sparse/sparse_500_25_1", 3, 4, BP_params(true, true))
@@ -111,21 +117,6 @@ formulation (true is to keep verbosity)
 
 ```@example 1
 solve_with_mip("sparse/sparse_500_25_1", 3, 4, MIP_params(KidneyExchange.EXTENDED_EDGE, true))
-```
-
-```@example 1
-@doc BP_params
-```
-
-And the same can be done with MIP_params for the solution of compact
-formulations. For instance, if Gurobi has been loaded and you wish
-to run the branch-and-price algorithm with Gurobi, this can be done
-with:
-
-```julia
-bp_params = BP_params() 
-bp_params.optimizer = "Gurobi"
-solve_with_BP("sparse/sparse_500_25_1", 3, 4, bp_params);
 ```
 
 ## Index
