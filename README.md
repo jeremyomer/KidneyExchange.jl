@@ -18,7 +18,7 @@ The package also comes with three instance generators that allow to reproduce a 
 
 ## Input data
 
-The package provides a parser (function `read_kep_file`) for the instances of the [PrefLib](https://www.preflib.org/dataset/00036) publicly shared by John P. Dickerson and described in the article 
+The package provides a parser (function `read_kep_file`) for the instances of the [PrefLib](https://www.preflib.org/dataset/00036) library publicly shared by John P. Dickerson and described in the article 
 *Optimizing Kidney Exchange with Transplant Chains: Theory and Reality.* John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of AAMAS; 2012. 
 These instances must be downloaded from the PrefLib [website](https://www.preflib.org/dataset/00036) and stored in the data/preflib folder before solving them with various algorithms of the package.
 
@@ -47,7 +47,7 @@ Packages Clp, Cbc, Gurobi and CPLEX are not included among the dependencies so t
 
 ## Basic usage
 
-Below, we give some examples of basic usage of the package. All the functions that are called below and the other callable functions are also described in the [documentation](https://jeremyomer.github.io/KidneyExchange.jl/dev/) of the package. This documentation includes the description of the input and output parameters of each function.
+Below, we give some examples of the basic usage of the package. All the functions that are called below and the other callable functions are also described in the [documentation](https://jeremyomer.github.io/KidneyExchange.jl/dev/) of the package. This documentation includes the description of the input and output parameters of each function.
 
 To use the package, first load the module
 ```
