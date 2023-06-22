@@ -3,7 +3,7 @@ export read_kep_file
 """
 $(SIGNATURES)
 
-Contruct a KEP graph from a `.wmd` and a `.dat` input files. The format of these files can be found on the website where the PrefLib is shared, see https://www.preflib.org/dataset/00036.
+Contruct a KEP graph from a `.wmd` and a `.dat` input files. The format of these files can be found on the PrefLib website see https://www.preflib.org/dataset/00036.
 The `.dat` file provides individual information on the patient and donor of each pair such as blood type. The .wmd file describes the edges of the KEP graph. For example, in the first instance of the benchmark, the .dat looks like this :
 
 ```
