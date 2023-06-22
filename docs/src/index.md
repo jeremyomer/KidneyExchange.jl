@@ -4,8 +4,8 @@ This a Julia package to solve the deterministic kidney exchange
 problem. It provides five different solution methods, two of which
 are based on a branch-and-price algorithm. The other three methods
 consist in solving compact integer programming formulations. These
-methods are described in the following article: Jérémy Omer, Ayse
-N Arslan, Fulin Yan. KidneyExchange.jl: A Julia package for solving
+methods are described in the following article: Ayse
+N Arslan, Jérémy Omer, Fulin Yan. KidneyExchange.jl: A Julia package for solving
 the kidney exchange problem with branch-and-price. 2022.
 [⟨hal-03830810⟩](https://hal.inria.fr/hal-03830810)
 
@@ -16,11 +16,11 @@ report.
 ## Input data
 
 The package provides a parser (function [`read_kep_file`](@ref)) for the
-instances of the [PrefLib](https://www.preflib.org/dataset/00036)
+instances of the [PrefLib](https://www.preflib.org/dataset/00036) library
 publicly shared by John P. Dickerson and described in *Optimizing
 Kidney Exchange with Transplant Chains: Theory and Reality.* John
 P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of
-AAMAS; 2012.  Those instances must be downloaded from this
+AAMAS; 2012.  Those instances must be downloaded from the PrefLib
 [website](https://www.preflib.org/dataset/00036) and stored in the
 data/preflib folder before solving them with the algorithms of the
 package.
