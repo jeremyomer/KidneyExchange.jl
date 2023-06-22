@@ -4,7 +4,7 @@ The generator code in this file is a translation of the corresponding Java funct
 """
 
 """
-    PoolGenerator
+$(TYPEDEF)
 
 Compatibility graph generator based on the following paper:
 Increasing the Opportunity of Live Kidney Donation by Matching for Two and Three Way Exchanges. S. L. Saidman, Alvin Roth, Tayfun Sonmez, Utku Unver, Frank Delmonico. Transplantation, Volume 81, Number 5, March 15, 2006.
@@ -44,7 +44,7 @@ end
 
 
 """
-    SparseUNOSSaidmanPoolGenerator(id)
+$(SIGNATURES)
 
 A tweak to the published Saidman generator; distributions VERY ROUGHLY
 mimic the UNOS pool as of April 15, 2013.  Data taken from the KPD Work
@@ -56,7 +56,7 @@ function SparseUNOSSaidmanPoolGenerator(id::Int)
 end
 
 """
-    drawPatientBlood_type(pool_gen)
+$(SIGNATURES)
 
 * Draws a random patient's blood type from the US distribution
 * return Blood_type.{O,A,B,AB}
@@ -76,7 +76,7 @@ function drawPatientBlood_type(pool_gen::PoolGenerator)
 end
 
 """
-    drawDonorBlood_type(pool_gen)
+$(SIGNATURES)
 
 - Draws a random donor's blood type from the US distribution
 - return Blood_type.{O,A,B,AB}
@@ -96,7 +96,7 @@ function drawDonorBlood_type(pool_gen::PoolGenerator)
 end
 
 """
-    isPatientFemale(pool_gen)
+$(SIGNATURES)
 
 - Draws a random gender from the US waitlist distribution
 - return true if patient is female, false otherwise
@@ -107,7 +107,7 @@ function isPatientFemale(pool_gen::PoolGenerator)
 end
 
 """
-    isDonorSpouse(pool_gen)
+$(SIGNATURES)
 
 - Draws a random spousal relationship between donor and patient
 - return true if willing donor is patient's spouse, false otherwise
@@ -118,7 +118,7 @@ end
 
 
 """
-    isPositiveCrossmatch(pr_PraIncompatibility::Float64)
+$(SIGNATURES)
 
 Random roll to see if a patient and donor are crossmatch compatible
 - `pr_PraIncompatibility`: probability of a PRA-based incompatibility
@@ -129,7 +129,7 @@ function isPositiveCrossmatch(pr_PraIncompatibility::Float64)
 end
 
 """
-    generatePraIncompatibility(pool_gen, isWifePatient)
+$(SIGNATURES)
 
 Randomly generates CPRA (Calculated Panel Reactive Antibody) for a
 patient-donor pair, using the Saidman method.  If the patient is the
@@ -163,7 +163,7 @@ function isCompatible(blood_type_donor::Blood_type, blood_type_patient::Blood_ty
 end
 
 """
-    generatePair(pool_gen)
+$(SIGNATURES)
 
 Randomly rolls a patient-donor pair (possibly compatible or incompatible)
 - `ID` unique identifier for the vertex
@@ -184,7 +184,7 @@ function generatePair(pool_gen::PoolGenerator)
 end
 
 """
-    generateAltruist(pool_gen)
+$(SIGNATURES)
 
 Random rolls an altruistic donor (donor with no attached patient)
 - `ID` unique identifier for the vertex
@@ -197,6 +197,9 @@ function generateAltruist(pool_gen::PoolGenerator)
 	return bloodTypeAltruist
 end
 
+"""
+$(SIGNATURES)
+"""
 function generate_kep_graph(pool_gen::PoolGenerator, nb_pairs::Int, nb_altruists::Int)
 	nb_vertices = nb_pairs + nb_altruists
 	donorBT = Vector{Blood_type}(undef, nb_vertices)
@@ -273,11 +276,17 @@ function generate_kep_graph(pool_gen::PoolGenerator, nb_pairs::Int, nb_altruists
 	return SimpleDiGraph(ne, out_list, in_list), weights, donorBT, patientBT, wifep, patientPRA, is_altruist
 end
 
+"""
+$(SIGNATURES)
+"""
 function generate_saidman_kep_graph(nb_pairs::Int, nb_altruists::Int)
 	pool_gen = SaidmanPoolGenerator(1)
 	return generate_kep_graph(pool_gen, nb_pairs, nb_altruists)
 end
 
+"""
+$(SIGNATURES)
+"""
 function generate_sparse_unos_kep_graph(nb_pairs::Int, nb_altruists::Int)
 	pool_gen = SparseUNOSSaidmanPoolGenerator(1)
 	return generate_kep_graph(pool_gen, nb_pairs, nb_altruists)

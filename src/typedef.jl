@@ -1,3 +1,6 @@
+"""
+$(TYPEDEF)
+"""
 mutable struct Graph_info
   nb_vertices:: Int # number of vertices in the original graph
   nb_pairs::Int  # number of pair vertices
@@ -13,6 +16,9 @@ mutable struct Graph_info
   end
 end
 
+"""
+$(TYPEDEF)
+"""
 mutable struct Subgraph_info
   nb_copies:: Int  # number of copies
   nb_vertices_per_copy:: Float64  # average number of vertices per copy
@@ -38,6 +44,9 @@ mutable struct Subgraph_info
   end
 end
 
+"""
+$(TYPEDEF)
+"""
 mutable struct Solution_status
   status::String  # status of OPTIMAL or TIME_LIMIT
   objective_value::Float64  # objective value of the best solution found
@@ -66,18 +75,19 @@ end
 @enum Mip_model HPIEF EXTENDED_EDGE CYCLE_CUT RELAXED_ARC
 
 """
-  MIP_params
+$(TYPEDEF)
 
   Mutable structure where the solving options of the compact formulation are stored
 
   # Fields
-  *` optimizer::String`: LP and IP solver that will be used to solve the master (default is Cbc for IPs and GLPK for LPs)
+  *` optimizer::String`: LP and IP solver that will be used to solve the master (default is HiGHS for IPs and LPs)
   * `verbose::Bool`: true if messages are printed during the solution (default = true)
   * `model_type::Mip_model`: type of MIP compact model that is to be solved (default = HPIEF)
   * `fvs::Bool`: true if a feedback vertex set is used to reduce the number of graph copies (default = true)
   * `reduce_vertices::Bool`: true if we try deleting useless arcs in graph copies (default = true)
   * `reduce_arcs::Bool`: true if we try deleting useless arcs in graph copies (default = true)
   * `symmetry_break::Bool`: true if the MIP model is modified to reduce the number of optimal solutions (default = true)
+  * `nb_threads::Int`: if the LP and IP solver can be called on multiple threads, specify the maximum number of threads that will be used.
 """
 mutable struct MIP_params
   optimizer::String
@@ -87,11 +97,12 @@ mutable struct MIP_params
   reduce_vertices::Bool
   reduce_arcs::Bool
   symmetry_break::Bool
+  nb_threads::Int             
 
-  function MIP_params(_optimizer::String = "Cbc", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true)
-    return new(_optimizer, _verbose, _model_type, _fvs, _reduce_vertices, _reduce_arcs, _symmetry)
+  function MIP_params(_optimizer::String = "HiGHS", _verbose::Bool = true, _model_type = HPIEF, _fvs = true, _reduce_vertices = true, _reduce_arcs = true, _symmetry = true, _nb_threads = 1)
+    return new(_optimizer, _verbose, _model_type, _fvs, _reduce_vertices, _reduce_arcs, _symmetry, _nb_threads)
   end
   function MIP_params(_model_type::Mip_model, _verbose = false)
-    return new("Cbc", _verbose, _model_type, true, true, true, true)
+    return new("HiGHS", _verbose, _model_type, true, true, true, true, 1)
   end
 end

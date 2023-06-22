@@ -1,5 +1,5 @@
 """
-    process_node
+$(SIGNATURES)
 
 Columns generation of the node
 
@@ -282,7 +282,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         end
         if verbose println("- nb of cycles added = ", nb_cycle_added) end
 
-        # 2. Search for positive chain if no cycle was added unless we are solving the pief model
+        # 2. Search for positive chains
         chain_added = false
         if !bp_params.is_pief
             inds = collect(1:instance.nb_altruists)
@@ -476,7 +476,7 @@ end
 
 
 """
-    get_feasible_solution
+$(SIGNATURES)
 
 Extract a integer feasible solution from the fractional solution by conserving a set of vertex-disjoint cycles or chains
 
@@ -527,7 +527,7 @@ function get_feasible_solution(fractional_solution::Vector{Float64}, node_column
 end
 
 """
-    check_used_vertices
+$(SIGNATURES)
 
 Gives a set of indices of cycle in cycles who have common vertices with cycle
 
@@ -556,7 +556,7 @@ function check_used_vertices(cycle::Vector{Int}, cycles::Vector{Vector{Int}})
 end
 
 """
-add_column_to_master
+$(SIGNATURES)
 
 # Arguments
 * `column::Column`: Column to add to the master model
@@ -564,7 +564,6 @@ add_column_to_master
 * `treenode::TreeNode`: Information on current tree node
 # Return values: None
 """
-
 function add_column_to_master(column::Column, mastermodel::Model, tree_node::TreeNode)
     # add the new variable
     y = mastermodel[:y]
@@ -622,7 +621,7 @@ function add_column_to_master_IP(column::Column, master_IP::Model)
 end
 
 """
-    compute_arc_flow
+$(SIGNATURES)
 
 Calculates the relaxed value of the decision variable x_(i,j) of arc (i->j) in A.
 x_(i,j) whose value >0 is stored in x::Dict{Pair{Int,Int}, Float64}

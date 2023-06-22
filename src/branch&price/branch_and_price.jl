@@ -8,7 +8,7 @@ function solve(filename::AbstractString, K::Int, L::Int, bp_params::BP_params, t
 end
 
 """
-    solve_with_BP
+$(SIGNATURES)
 
 This is the main function to call for an execution of the branch-and-price algorithm on input file with given bounds on the length of covering cycles and chains and given options
 
@@ -58,7 +58,7 @@ end
 
 
 """
-    branch_and_price
+$(SIGNATURES)
 
 Core function of the KEP solution with branch-and-price. It requires a parsed instance and the description of the graph copies. The column generation model is that of Riazcos-Alvarez et al (2020), but the many improvements have been added, in particular in the solution of the subproblem.
 
@@ -232,7 +232,8 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
 end
 
 """
-    get_branching_arc
+$(SIGNATURES)
+
 Find a fractional arc to branch. The fractional arc closest to 0.5 will be
 selected to branch, if there is no fractional arc in the solution
 
@@ -277,7 +278,8 @@ function get_branching_arc(column_flow::Dict{Pair{Int,Int}, Float64}, pief_flow:
 end
 
 """
-    get_branching_vertex
+$(SIGNATURES)
+
 Find a fractional vertex cover to branch. The fractional vertex closest to 0.5 will be selected to branch
 
 # Input parameters
@@ -317,7 +319,8 @@ end
 
 
 """
-    branch_on_arc
+$(SIGNATURES)
+
 Update the branch-and-bound tree with two new nodes by branching on the given arc with the specified branching (only on master problem or both in master and in subproblem)
 
 # Input parameters
@@ -331,7 +334,7 @@ Update the branch-and-bound tree with two new nodes by branching on the given ar
 """
 function branch_on_arc(arc_to_branch::Pair{Int,Int}, master::Model,  is_cg_branching::Bool, tree::Vector{TreeNode}, current_node::TreeNode, column_pool::Vector{Column}, node_count::Int, verbose::Bool = true)
     y = master[:y]
-    slack = maxter[:slack]
+    slack = master[:slack]
     if is_cg_branching
         if verbose println("Two new nodes are created by branching on variable column_flow[$(arc_to_branch.first), $(arc_to_branch.second)]") end
 
@@ -383,7 +386,8 @@ function branch_on_nb_cols(total_nb_arcs::Int, tree::Vector{TreeNode}, current_n
 end
 
 """
-    branch_on_vertex
+$(SIGNATURES)
+
 Update the branch-and-bound tree with two new nodes by branching on the given vertex.
 
 # Input parameters
@@ -414,7 +418,8 @@ function branch_on_vertex(vertex_to_branch::Int, master::Model,  tree::Vector{Tr
 end
 
 """
-    initialize_column_pool
+$(SIGNATURES)
+
 Initialize the pool of columns for the branch-and-price by enumerating all k-cycles up to an input maximum value of k.
 
 # Input parameters

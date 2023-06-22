@@ -1,5 +1,6 @@
 """
-    preprocess_graph_copies
+$(SIGNATURES)
+
 Get the data of each graph copy used in the subproblems of the column generation. The graph copies are charaterized by a source vertex and the set of vertices (optionally set of arcs) kept in the copy.
 Each altruist donor is the source of one graph copy. Preprocessing the vertices that can be reached with a given maximum number of arcs does not bring any improvement to the subproblem solution, so we do nothing at this stage.
 
@@ -190,7 +191,8 @@ function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, re
 end
 
 """
-    bfs_reverse
+$(SIGNATURES)
+
 Breadth-first search in the graph where arcs are reversed
 # Input parameters
 * `g::AbstractGraph{T}` : The graph
@@ -238,7 +240,8 @@ function bfs_reverse(g::SimpleDiGraph, source::Int, K::Int, vertex_in_subgraph::
 end
 
 """
-    bfs
+$(SIGNATURES)
+
 Breadth-first search to calculate the shortest path in terms of number of arcs
 from source to other vertices of graph g. The search stops when it is at level K
 even if there is vertex to be visited. Because we are trying to find cycles of

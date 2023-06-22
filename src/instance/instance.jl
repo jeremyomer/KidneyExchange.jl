@@ -1,7 +1,7 @@
 @enum Blood_type A B AB O
 
 """
-  Instance
+$(TYPEDEF)
 
   Non-mutable structure describing the instance that is solved
 
@@ -44,7 +44,7 @@ struct Instance
     # Parse instance from file
     function Instance(filename::String, K::Int, L::Int = 0)
         inst = string(filename)
-		data_folder = "data" # joinpath(pkgdir(KidneyExchange), "data")
+        data_folder = joinpath(@__DIR__, "..", "..", "data")
         wmd_file = joinpath(data_folder, join([inst, ".wmd"]))
         dat_file = joinpath(data_folder, join([inst, ".dat"]))
 
@@ -74,7 +74,7 @@ struct Instance
 end
 
 """
-  Graph_copies
+$(TYPEDEF)
 
   Mutable structure describing the copies of the graph: one copy per vertex or one copy per vertex of a feedback vertex set if the option is set.
   It is important to note that the copies related to altruist donors always appear first in the list of copies

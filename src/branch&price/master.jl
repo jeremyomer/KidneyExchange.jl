@@ -1,5 +1,5 @@
 """
-    node_master
+$(SIGNATURES)
 
 Initialization of the restricted master problem
 
@@ -103,7 +103,7 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
 end
 
 """
-    activate_branching_constraints
+$(SIGNATURES)
 
 Activate the all the branching constraints corresponding to a given node of the branch-and-price enumeration tree.
 """
@@ -146,7 +146,7 @@ function activate_branching_constraints(master::Model, tree_node::TreeNode, bp_p
 end
 
 """
-    deactivate_branching_constraints
+$(SIGNATURES)
 
 Deactivate the all the branching constraints corresponding to a given node of the branch-and-price enumeration tree.
 """
@@ -189,7 +189,7 @@ function deactivate_branching_constraints(master::Model, tree_node::TreeNode, bp
 end
 
 """
-    initialize_master_IP
+$(SIGNATURES)
 
 Initialization of the master problem with integer columns
 

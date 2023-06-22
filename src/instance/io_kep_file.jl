@@ -1,17 +1,69 @@
-"""
-    read_kep_file
+export read_kep_file
 
-Contruct a KEP graph from a `.wmd` and a `.dat` input files
+"""
+$(SIGNATURES)
+
+Contruct a KEP graph from a `.wmd` and a `.dat` input files. The format of these files can be found on the PrefLib website see [here](https://www.preflib.org/dataset/00036).
+The `.dat` file provides individual information on the patient and donor of each pair such as blood type. The .wmd file describes the edges of the KEP graph. For example, in the first instance of the benchmark, the .dat looks like this :
+
+```
+	Pair,Patient,Donor,Wife-P?,%Pra,Out-Deg,Altruist
+	1,A,B,0,0.05,2,0
+	2,O,A,0,0.05,4,0
+	3,A,B,0,0.05,2,0
+	4,O,A,1,0.5875,3,0
+	5,B,AB,0,0.05,0,0
+	6,B,A,0,0.45,3,0
+	7,O,A,0,0.45,4,0
+	8,B,A,0,0.45,3,0
+	9,O,A,0,0.45,4,0
+	10,O,O,1,0.2875,11,0
+	11,A,AB,0,0.05,0,0
+	12,A,A,1,0.5875,3,0
+	13,O,O,1,0.925,10,0
+	14,O,A,0,0.45,4,0
+	15,O,A,0,0.05,3,0
+	16,O,B,1,0.2875,3,0
+```
+
+And a preview of the .wmd file (including only a subset of the arcs) looks like this: 
+
+```
+	# FILE NAME: 00036-00000001.wmd
+	# TITLE: Kidney Matching - 16 with 0
+	# DESCRIPTION:
+	# DATA TYPE: wmd
+	# MODIFICATION TYPE: synthetic
+	# RELATES TO:
+	# RELATED FILES: 00036-00000001.dat
+	# PUBLICATION DATE: 2013-08-17
+	# MODIFICATION DATE: 2022-09-16
+	# NUMBER ALTERNATIVES: 16
+	# NUMBER EDGES: 59
+	# ALTERNATIVE NAME 1: Pair 1
+	# ALTERNATIVE NAME 2: Pair 2
+	# ALTERNATIVE NAME 3: Pair 3
+	# ALTERNATIVE NAME 4: Pair 4
+	...
+	1, 5, 1.0
+	1, 6, 1.0
+	2, 1, 1.0
+	2, 3, 1.0
+	2, 11, 1.0
+	2, 12, 1.0
+	3, 5, 1.0
+	3, 8, 1.0
+	4, 1, 1.0
+	4, 3, 1.0
+	...
+```
 
 # Parameters
+
 * `wmd_file::String` : Absolute path of the `.wmd` file.
 * `dat_file::String` : Absolute path of the `.dat` file.
 """
 function read_kep_file(wmd_file::AbstractString, dat_file::AbstractString)
-
-    #wmd_file_name = split(split(wmd_file, '/')[end], '.')[1]
-    #dat_file_name = split(split(dat_file, '/')[end], '.')[1]
-	
 	wmd_file_name = first(splitext(last(splitpath(wmd_file))))
 	dat_file_name = first(splitext(last(splitpath(dat_file))))
 
@@ -75,7 +127,7 @@ function read_kep_file(wmd_file::AbstractString, dat_file::AbstractString)
 end
 
 """
-    write_kep_file
+$(SIGNATURES)
 
 Write a `.wmd` and a `.dat` files to store the input KEP graph in the same form as in Preflib. Store the files in ./data directory.
 

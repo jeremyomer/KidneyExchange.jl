@@ -1,4 +1,6 @@
 """
+$(SIGNATURES)
+
 Compatibility graph generator based on the following paper:
 Kidney Exchange in Dynamic Sparse Heterogeneous Pools. Itai Ashlagi, Patrick Jaillet, Vahideh H. Manshadi. EC-2013.  (Extended abstract.)
  @author John P. Dickerson
