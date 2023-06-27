@@ -108,12 +108,30 @@ after having imported the Gurobi package in your environment.
 
 The package can be used without adding it to the Julia environment and resorting to the Julia REPL. To do so, download the code folder and make sure that all dependencies of the package are present in your Julia environment. 
 
-A set of example script files are provided in the code folder under the name KEPTestxxx.jl for each method tested in our manuscript. These files require an instance, and parameters K and L as input. They then solve the provided instance with the chosen algorithm, using default parameter settings (with Gurobi as the MIP solver), and write the output to a dedicated .csv file. 
+A set of example script files are provided in the code folder under the name KEPTestxxx.jl for each method tested in our manuscript. 
+
+These files require an instance, and parameters K and L as input. They then solve the provided instance with the chosen algorithm, using default parameter settings (with Gurobi as the MIP solver), and write the output to a dedicated .csv file. 
 As an example, the KEPTestBP.jl can be run with:
 
 `julia KEPTestBP.jl preflib/MD-00001-00000287 3 6`
 
-provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)). Interested users can then embed this execution into a shell script in order to test a number of instances. One can additionally set all the desired attributes of BP_params and MIP_params directly inside KEPTestxxx.jl files. We remark that our KEPTestxxx.jl files use the Gurobi solver as the MIP solver, as such their execution requires the package Gurobi.jl to be added to the Julia environment with a licensed installation of the Gurobi solver.   
+provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)). 
+
+Interested users can then embed this execution into a shell script in order to test a number of instances and tabulate the results. 
+
+One can additionally set all the desired attributes of BP_params and MIP_params directly inside KEPTestxxx.jl files. For instance, by adding the lines  
+
+bp_params = BP_params()
+bp_params.optimizer = "Gurobi"
+
+or 
+
+mip_params = MIP_params()
+mip_params.optimizer = "Gurobi"
+
+the default solver is changed to Gurobi.
+
+We remark that our KEPTestxxx.jl files use the Gurobi solver as the MIP solver, as such their execution requires the package Gurobi.jl to be added to the Julia environment with a licensed installation of the Gurobi solver.    
 
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
