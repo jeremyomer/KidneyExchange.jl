@@ -123,7 +123,6 @@ One can additionally set all the desired attributes of BP_params and MIP_params 
 ```
  bp_params = BP_params()
  bp_params.optimizer = "Gurobi"
-
  ```
 or 
 ```
