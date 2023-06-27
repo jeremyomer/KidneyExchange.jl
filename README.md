@@ -121,13 +121,13 @@ Interested users can then embed this execution into a shell script in order to t
 
 One can additionally set all the desired attributes of BP_params and MIP_params directly inside KEPTestxxx.jl files. For instance, by adding the lines  
 
-bp_params = BP_params()
-bp_params.optimizer = "Gurobi"
+`bp_params = BP_params()`
+`bp_params.optimizer = "Gurobi"`
 
 or 
 
-mip_params = MIP_params()
-mip_params.optimizer = "Gurobi"
+`mip_params = MIP_params()`
+`mip_params.optimizer = "Gurobi"`
 
 the default solver is changed to Gurobi.
 
