@@ -32,8 +32,6 @@ mip_params.model_type = EXTENDED_EDGE
 timer = TimerOutput()
 max_time = 600.0
 
-solve_with_mip("heterogeneous/heterogeneous_128_0_1", 3, 4, mip_params, timer, max_time)
-
 status, graph_info, subgraph_info = solve_with_mip(filename, cycle_limit, chain_limit, mip_params, timer, max_time);
 
 

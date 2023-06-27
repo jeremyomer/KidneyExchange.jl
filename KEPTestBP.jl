@@ -30,8 +30,6 @@ bp_params.optimizer = "Gurobi"
 timer = TimerOutput()
 max_time = 7200.0
 
-solve_with_BP("heterogeneous/heterogeneous_128_0_1", 3, 4, bp_params, timer, max_time)
-
 bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
 
 t_total =  TimerOutputs.time(timer["Parser"]) + TimerOutputs.time(timer["Preprocessing"]) + TimerOutputs.time(timer["B&P"])
