@@ -117,6 +117,8 @@ As an example, the KEPTestBP.jl can be run with:
 
 provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)) and the PrefLib instances are stored in the corresponding data folder. 
 
+We additionally remark that our KEPTestxxx.jl files use the Gurobi solver as the MIP solver, as such their execution requires the package Gurobi.jl to be added to the Julia environment with a licensed installation of the Gurobi solver.    
+
 Interested users can then embed this execution into a shell script in order to test a number of instances and tabulate the results. For instance, on a Unix system 
 
 ```
@@ -138,9 +140,6 @@ mip_params = MIP_params()
 mip_params.optimizer = "Gurobi"
 ```
 the default solver is changed to Gurobi.
-
-We remark that our KEPTestxxx.jl files use the Gurobi solver as the MIP solver, as such their execution requires the package Gurobi.jl to be added to the Julia environment with a licensed installation of the Gurobi solver.    
-
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 [docs-dev-url]: https://jeremyomer.github.io/KidneyExchange.jl/dev/
