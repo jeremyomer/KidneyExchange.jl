@@ -13,7 +13,7 @@ function relaxed_arc(instance::Instance, params::MIP_params, maxtime::Float64 = 
     graph = instance.graph
     E = [(e.src=>e.dst) for e in edges(graph)]
 
-    model = create_model(maxtime, params.optimizer, true, params.verbose)
+    model = create_model(maxtime, params.optimizer, true, params.verbose, params.nb_threads)
 
     # Variables :
     #   x_e = 1 if the transplant e is carried out

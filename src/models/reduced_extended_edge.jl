@@ -48,7 +48,7 @@ function build_reduced_extended_edge_mip(instance::Instance, subgraphs::Graph_co
         end
     end
 
-    model = create_model(maxtime, params.optimizer, true, params.verbose)
+    model = create_model(maxtime, params.optimizer, true, params.verbose, params.nb_threads)
 
     # create variables x^l_(i,j)
     @variable(model, x[l in pair_graph_inds, (u,v) in subgraph_edges[l]], Bin)

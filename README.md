@@ -9,12 +9,12 @@
 This a Julia package to solve the deterministic kidney exchange problem. It provides five different solution methods, two of which are based on a branch-and-price algorithm. The other three methods consist in solving compact integer programming formulations. These methods are described in the following article:
 Ayse N Arslan, Jérémy Omer, Fulin Yan. KidneyExchange.jl: A Julia package for solving the kidney exchange problem with branch-and-price. 2022. [⟨hal-03830810⟩](https://hal.inria.fr/hal-03830810)
 
-The package also comes with three instance generators that allow to reproduce a benchmark similar to that used in the aforementionned article.  
+The package also comes with three instance generators that allow to reproduce a benchmark similar to that used in the aforementioned article.  
 
 ## General informations
 
 * Language : `Julia v1.6-1.8`
-* Dependencies : `DelimitedFiles`, `Distributions`, `GLPK`, `Graphs`, `HiGHs`, `JuMP`, `Random`, `TimerOutputs`
+* Dependencies : `DelimitedFiles`, `GLPK`, `Graphs`, `HiGHs`, `JuMP`, `Random`, `Requires`, `TimerOutputs`, `DocStringExtensions`
 
 ## Input data
 
@@ -41,11 +41,11 @@ To choose the solver, you need to set the field `optimizer` of the `BP_params` o
 - `CPLEX`: use exclusively CPLEX (_requires a licensed installation of CPLEX_)
 - `Gurobi`: use exclusively Gurobi (_requires a licensed installation of Gurobi_)
 
-Some parameters of the solvers (e.g. the number of threads used by the solver) can be set when calling the constructors of the parameters used by the desired algorithm. Additional details are given in the documentation of [MIP_params](https://jeremyomer.github.io/KidneyExchange.jl/dev/types/#KidneyExchange.MIP_params) and [BP_params](https://jeremyomer.github.io/KidneyExchange.jl/dev/types/#KidneyExchange.BP_params).
+Some parameters of the solvers (e.g. the number of threads used by the solver) can be set when calling the constructors of the parameters used by the desired algorithm. Additional details are given in the documentation of [MIP_params](https://jeremyomer.github.io/KidneyExchange.jl/dev/types/#KidneyExchange.MIP_params) for MIP approaches and [BP_params](https://jeremyomer.github.io/KidneyExchange.jl/dev/types/#KidneyExchange.BP_params) for branch-and-price algorithms.
 
 Packages Clp, Cbc, Gurobi and CPLEX are not included among the dependencies so they must be added and loaded (with using) if you wish to use one of them. This was necessary due to some compatibility issues with Clp and Cbc, and because CPLEX and Gurobi require a licensed installation. 
 
-## Basic usage
+## Basic usage (with Julia REPL)
 
 Below, we give some examples of the basic usage of the package. All the functions that are called below and the other callable functions are also described in the [documentation](https://jeremyomer.github.io/KidneyExchange.jl/dev/) of the package. This documentation includes the description of the input and output parameters of each function.
 
@@ -62,7 +62,7 @@ julia> using Revise
 pkg> activate .
 julia> using KidneyExchange
 ```
-Using Revise will allow to modify the code and see the effect of these modifications directly.
+Using Revise will allow the user to modify the code and see the effect of these modifications directly.
 
 If you wish to use a commercial integer programming solver such as Gurobi or CPLEX, you need to have an active license and import the corresponding package. For instance: 
  ```
@@ -102,6 +102,19 @@ julia> bp_params = BP_params()
 julia> bp_params.optimizer = "Gurobi"
 julia> solve_with_BP("sparse/sparse_500_25_1", 3, 4, bp_params);
 ```
+after having imported the Gurobi package in your environment. 
+
+## Advanced usage and running tests 
+
+The package can be used without adding it to the Julia environment and resorting to the Julia REPL. To do so, download the code folder and make sure that all dependencies of the package are present in your Julia environment. 
+
+A set of example script files are provided in the code folder under the name KEPTestxxx.jl for each method tested in our manuscript. These files require an instance, and parameters K and L as input. They then solve the provided instance with the chosen algorithm, using default parameter settings (with Gurobi as the MIP solver), and write the output to a dedicated .csv file. 
+As an example, the KEPTestBP.jl can be run with:
+
+`julia KEPTestBP.jl preflib/MD-00001-00000287 3 6`
+
+provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)). Interested users can then embed this execution into a shell script in order to test a number of instances. One can additionally set all the desired attributes of BP_params and MIP_params directly inside KEPTestxxx.jl files. We remark that our KEPTestxxx.jl files use the Gurobi solver as the MIP solver, as such their execution requires the package Gurobi.jl to be added to the Julia environment with a licensed installation of the Gurobi solver.   
+
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 [docs-dev-url]: https://jeremyomer.github.io/KidneyExchange.jl/dev/

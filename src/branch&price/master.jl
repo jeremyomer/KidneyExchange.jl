@@ -18,7 +18,7 @@ function node_master(instance::Instance, column_pool::Vector{Column}, bp_params:
     L = instance.max_chain_length
 
     # Initialize the JuMP model
-    master = create_model(time_limit, bp_params.optimizer, false, false)
+    master = create_model(time_limit, bp_params.optimizer, false, false, bp_params.nb_threads)
 
     # Decision variables
     # - column variables
@@ -216,7 +216,7 @@ function initialize_master_IP(instance::Instance, column_pool::Vector{Column}, b
     end
 
     # Initialize the JuMP model
-    master = create_model(bp_params.time_limit_master_IP, bp_params.optimizer, true, bp_params.verbose)
+    master = create_model(bp_params.time_limit_master_IP, bp_params.optimizer, true, bp_params.verbose, bp_params.nb_threads)
 
     # Decision variables
     # - column variables

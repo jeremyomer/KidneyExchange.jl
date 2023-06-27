@@ -582,11 +582,11 @@ vertex
 * `L::Int`: The maximal length of chains
 * `optimizer::String`: Name of the MIP sover
 * `time_limit::Real`: Time limit of the solver
-* `gurobi_env`: Gurobi environment if Guroib is used (avoids many messages from the solver)
+* `gurobi_env`: Gurobi environment if Gurobi is used (avoids many messages from the solver)
 # Return values
 * `mip::Model`: Initial JuMP model for the search of a positive chain
 """
-function create_chain_mip(graph::SimpleDiGraph, L::Int, optimizer::String, time_limit::Float64)
+function create_chain_mip(graph::SimpleDiGraph, L::Int, optimizer::String, time_limit::Float64, nb_threads::Int = 1)
     # set of arcs of the graph copy represented as pairs of vertices
     E = [e.src=>e.dst for e in edges(graph)]
 
@@ -597,7 +597,7 @@ function create_chain_mip(graph::SimpleDiGraph, L::Int, optimizer::String, time_
     end
 
     # create the JuMP model and add one variable per arc
-    mip = create_model(time_limit, optimizer, true, false)
+    mip = create_model(time_limit, optimizer, true, false, nb_threads)
     @variable(mip, is_arc[e in E], Bin)
 
     # add the flow constraints at each vertex

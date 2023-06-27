@@ -34,7 +34,7 @@ function build_hpief_mip(instance::Instance, subgraphs::Graph_copies, params::MI
     end
 
     # initialize the model
-    model = create_model(maxtime, params.optimizer, true, params.verbose)
+    model = create_model(maxtime, params.optimizer, true, params.verbose, params.nb_threads)
 
     # create flow variables and conservation constraints for altruist subgraphs
     @variable(model, y[u in vertices(graph), v in outneighbors(graph, u), k in 1:L], Bin)

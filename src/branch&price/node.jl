@@ -378,7 +378,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             # initialize the mip for chain search if not already done
             if num_variables(subgraphs.chain_mip) == 0
                 # initialize the MIP for chain search if L >= K+2
-                @timeit timer "create_chain_mip" subgraphs.chain_mip = create_chain_mip(graph,  L, bp_params.optimizer, time_limit)
+                @timeit timer "create_chain_mip" subgraphs.chain_mip = create_chain_mip(graph,  L, bp_params.optimizer, time_limit, bp_params.nb_threads)
             end
 
             # compute are reduced costs
