@@ -117,7 +117,7 @@ As an example, the KEPTestBP.jl can be run with:
 
 provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)). 
 
-Interested users can then embed this execution into a shell script in order to test a number of instances and tabulate the results. For instance, 
+Interested users can then embed this execution into a shell script in order to test a number of instances and tabulate the results. For instance, on a Unix system 
 
 ```
 for K in {3..4}
