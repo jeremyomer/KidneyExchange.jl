@@ -117,7 +117,15 @@ As an example, the KEPTestBP.jl can be run with:
 
 provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)). 
 
-Interested users can then embed this execution into a shell script in order to test a number of instances and tabulate the results. 
+Interested users can then embed this execution into a shell script in order to test a number of instances and tabulate the results. For instance, 
+
+```
+for K in {3..4}
+do
+    julia KEPTestBP.jl preflib/MD-00001-00000287 $K 6
+done
+```
+will solve the provided PrefLib instance for K=3,4 and create two .csv files as output. 
 
 One can additionally set all the desired attributes of BP_params and MIP_params directly inside KEPTestxxx.jl files. For instance, by adding the lines  
 ```
