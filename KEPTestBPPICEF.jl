@@ -3,7 +3,6 @@ using Main.KidneyExchange
 using ArgParse
 using Gurobi
 using TimerOutputs
-#using CPLEX
 
 argparse_settings = ArgParseSettings()
 @add_arg_table! argparse_settings begin

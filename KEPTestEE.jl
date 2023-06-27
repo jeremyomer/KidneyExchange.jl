@@ -1,6 +1,5 @@
 include("src/KidneyExchange.jl")
-using Main.KEP
-using CPLEX
+using Main.KidneyExchange
 using Gurobi
 using ArgParse
 using TimerOutputs
