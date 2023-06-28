@@ -49,6 +49,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
     end
 
     # start by solving the relaxed master problem
+    start_time = time()
+    set_time_limit(mastermodel, time_limit, bp_params.optimizer)
     @timeit timer "opt_master" optimize!(mastermodel)
 
     # initialize local variables specific to the algorithm
@@ -82,8 +84,11 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # ==============================================================
         if JuMP.termination_status(mastermodel) != MOI.OPTIMAL
             # println(mastermodel)
+            if JuMP.termination_status(mastermodel) == TIME_LIMIT
+                printstyled("\nThe linear relaxation of the master has not been solved within the time limit:\n")
+            end
             return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
-            error("The master problem relaxation has not been solved to optimality")
+            error("The linear relaxation of the master is not feasible")
         end
         master_value = JuMP.objective_value(mastermodel)
         if verbose println("- current master value: ", master_value) end
@@ -378,6 +383,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             # initialize the mip for chain search if not already done
             if num_variables(subgraphs.chain_mip) == 0
                 # initialize the MIP for chain search if L >= K+2
+                time_limit = max(0.0, time_limit - (time() - start_time))
+                start_time = time()
                 @timeit timer "create_chain_mip" subgraphs.chain_mip = create_chain_mip(graph,  L, bp_params.optimizer, time_limit, bp_params.nb_threads)
             end
 
@@ -466,7 +473,9 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         end
 
         if (termination_status != OPTIMAL)
-            bp_params.time_limit_master_IP = min(bp_params.time_limit_master_IP + 10.0, 300.0)
+            time_limit = max(0.0, time_limit - (time() - start_time))
+            start_time = time()
+            bp_params.time_limit_master_IP = min(time_limit, min(bp_params.time_limit_master_IP + 10.0, 300.0))
             set_time_limit(master_IP, bp_params.time_limit_master_IP, bp_params.optimizer)
         end
     end

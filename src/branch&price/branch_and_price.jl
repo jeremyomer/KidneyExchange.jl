@@ -91,8 +91,6 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     end
     tree = Vector{TreeNode}()
 
-    push!(tree, TreeNode(1, Inf,Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}(), nv(graph), 0))   #the branch and price tree is initialized with the root node
-
     # initialize the master problem
     initial_time_limit_master_IP = bp_params.time_limit_master_IP
     mastermodel = node_master(instance, column_pool, bp_params, time_limit)
@@ -100,8 +98,12 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     bp_params.time_limit_master_IP = initial_time_limit_master_IP
 
     # initialise branch & price information
-    bp_info = BP_info(-Inf,Inf,0)  # LB=-Inf, UB=Inf, nb_col_root=0
-    bp_status = BP_status(bp_info, "ON_GOING", -Inf, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 1, 0.0, 0, 0, TerminationStatusCode(12))
+    W = instance.edge_weight
+    max_weight = maximum(W)
+    bp_info = BP_info(0, max_weight * nb_vertices, 0)  # LB=0, UB=max_weight*nb_vertices, nb_col_root=0
+    bp_status = BP_status(bp_info, "ON_GOING", 0, Inf, Vector{Vector{Int}}(), Vector{Vector{Int}}(), 1, 0.0, 0, 0, TerminationStatusCode(12))
+
+    push!(tree, TreeNode(1, max_weight * nb_vertices, Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(),Vector{Pair{Int,Int}}(), Vector{Pair{Int,Int}}(), Vector{Int}(), Vector{Int}(), nv(graph), 0))   #the branch and price tree is initialized with the root node
 
     while length(tree) >= 1
         current_node = pop!(tree)
@@ -115,6 +117,14 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
          # solve the node relaxation using column generation
         column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
 
+        # Update the global upper bound as the maximum of upper bounds of all open nodes
+        bp_info.UB = current_node.ub
+        for node in tree
+            if node.ub > bp_info.UB
+                bp_info.UB = node.ub
+            end
+        end
+
         # update branch & price information
         if bp_status.node_count == 1
             # specific treatment for root node
@@ -122,6 +132,13 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
             if verbose println("After processing root node: LB = $(bp_info.LB), UB = $(current_node.ub)") end
 
             if bp_info.LB < current_node.ub - ϵ
+                # Stop if the time limit is exceeded
+                if time() - start_time >= time_limit
+                    if verbose println("\e[35m The time limit is exceeded \e[00m") end
+                    bp_status.status="TIME_LIMIT"
+                    break
+                end
+
                 if verbose printstyled("- the problem was not solved at root node\n", color=:red) end
                 if verbose println("    . deactivate column-disjoint CG and tabu list") end
                 # bp_params.is_column_disjoint = false
@@ -135,7 +152,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
                     for i in deleted_columns[1:ncols]
                         JuMP.set_upper_bound(y[i], 0)
                     end
-                    column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, time_limit - (time() - start_time))
+                    column_flow, pief_flow = @timeit timer "Process_Node" process_node(current_node, instance, mastermodel, subgraphs, bp_status, column_pool, bp_params, master_IP, timer, max(0.0, time_limit - (time() - start_time)))
                     for i in deleted_columns
                         JuMP.set_upper_bound(y[i], 1)
                     end
@@ -210,7 +227,7 @@ function branch_and_price(instance::Instance, subgraphs::Graph_copies, bp_params
     end
 
     # Update solution status and gap
-    if length(tree) == 0
+    if (length(tree) == 0) && (bp_info.UB < bp_info.LB + ϵ)
         bp_status.status = "OPTIMAL"
     end
     if verbose
