@@ -142,7 +142,7 @@ or
 mip_params = MIP_params()
 mip_params.optimizer = "Gurobi"
 ```
-the default solver is changed to Gurobi.
+the default solver is changed to Gurobi. Users who do not wish to use the Gurobi solver can start with modifying this line to replace Gurobi with a solver of their choice. 
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 [docs-dev-url]: https://jeremyomer.github.io/KidneyExchange.jl/dev/
