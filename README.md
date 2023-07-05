@@ -109,7 +109,7 @@ after having imported the Gurobi package in your environment.
 
 ## Advanced usage and running tests 
 
-The package can be used without adding it to the Julia environment and resorting to the Julia REPL. To do so, download the code folder and make sure that all dependencies of the package are present in your Julia environment. 
+The package can also be used without adding it to the Julia environment and resorting to the Julia REPL. To do so, download the code folder and make sure that all dependencies of the package are present in your Julia environment. 
 
 A set of example script files are provided in the code folder under the name KEPTestxxx.jl for each method tested in our manuscript. 
 
