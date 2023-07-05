@@ -7,6 +7,7 @@
 
 
 This a Julia package to solve the deterministic kidney exchange problem. It provides five different solution methods, two of which are based on a branch-and-price algorithm. The other three methods consist in solving compact integer programming formulations. These methods are described in the following article:
+
 Ayse N Arslan, Jérémy Omer, Fulin Yan. KidneyExchange.jl: A Julia package for solving the kidney exchange problem with branch-and-price. 2022. [⟨hal-03830810⟩](https://hal.inria.fr/hal-03830810)
 
 The package also comes with three instance generators that allow to reproduce a benchmark similar to that used in the aforementioned article.  
