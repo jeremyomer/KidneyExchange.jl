@@ -38,8 +38,12 @@ t_parser = 100*TimerOutputs.time(timer["Parser"])/t_total
 t_preprocess = 100*TimerOutputs.time(timer["Preprocessing"])/t_total
 t_node_master = 100*TimerOutputs.time(timer["B&P"]["Process_Node"]["opt_master"]) / t_total
 n_call_node_master = TimerOutputs.ncalls(timer["B&P"]["Process_Node"]["opt_master"])
-t_bellman = 100*TimerOutputs.time(timer["B&P"]["Process_Node"]["Bellman-Ford"])/t_total
-ncall_bellman = TimerOutputs.ncalls(timer["B&P"]["Process_Node"]["Bellman-Ford"])
+
+if haskey(timer["B&P"]["Process_Node"], "Bellman-Ford")
+    t_bellman = 100*TimerOutputs.time(timer["B&P"]["Process_Node"]["Bellman-Ford"])/t_total
+    ncall_bellman = TimerOutputs.ncalls(timer["B&P"]["Process_Node"]["Bellman-Ford"])
+end
+
 if haskey(timer["B&P"]["Process_Node"], "Bellman-Ford-chain")
     t_bellman += 100*TimerOutputs.time(timer["B&P"]["Process_Node"]["Bellman-Ford-chain"])/t_total
     ncall_bellman += TimerOutputs.ncalls(timer["B&P"]["Process_Node"]["Bellman-Ford-chain"])
@@ -62,7 +66,7 @@ bp_log = open(string(dirname(@__FILE__),bp_log_file_name), "a")
 
 println(graph_log, "$filename; $(graph_info.nb_pairs); $(graph_info.nb_altruists); $(round(100*graph_info.density)/100); $(subgraph_info.nb_copies); $(round(Int, subgraph_info.nb_vertices_per_copy))")
 
-println(bp_log, "$filename; $(graph_info.nb_pairs); $(graph_info.nb_altruists); $cycle_limit; $chain_limit; BP; $(bp_status.objective_value); $(round(t_total/10^8)/10); $(100*bp_status.relative_gap); $(bp_status.bp_info.nb_col_root); $(bp_status.node_count); $(round(10*t_node_master)/10); $n_call_node_master; $(round(10*t_bellman)/10); $ncall_bellman; $(round(10*t_mip_master)/10) %; $ncall_mip_master; $(round(10*t_parser)/10) %; $(round(10*t_preprocess)/10) %")
+println(bp_log, "$filename; $(graph_info.nb_pairs); $(graph_info.nb_altruists); $cycle_limit; $chain_limit; BP; $(bp_status.objective_value); $(round(t_total/10^8)/10); $(100*bp_status.relative_gap); $(bp_status.bp_info.nb_col_root); $(bp_status.node_count); $(round(10*t_node_master)/10) %; $n_call_node_master; $(round(10*t_bellman)/10) %; $ncall_bellman; $(round(10*t_mip_master)/10) %; $ncall_mip_master; $(round(10*t_parser)/10) %; $(round(10*t_preprocess)/10) %")
 
 close(graph_log)
 close(bp_log)
