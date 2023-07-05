@@ -19,7 +19,9 @@ The package also comes with three instance generators that allow to reproduce a 
 ## Input data
 
 The package provides a parser (function `read_kep_file`) for the instances of the [PrefLib](https://www.preflib.org/) library publicly shared by John P. Dickerson and described in the article 
+
 *Optimizing Kidney Exchange with Transplant Chains: Theory and Reality.* John P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of AAMAS; 2012. 
+
 These instances must be downloaded through this [link](https://plmbox.math.cnrs.fr/d/4c2ac128352b489aafb5/) and stored in the data/preflib folder before solving them with various algorithms of the package.
 
 Otherwise, three generators are provided with the package (functions `generate_saidman_instance`, `generate_heterogeneous_instance` and `generate_sparse_unos_instance`). One of them (`generate_saidman_instance`) will generate instances similar to those of the PrefLib library.
