@@ -2,7 +2,7 @@ using Documenter
 using KidneyExchange
 using DocumenterCitations
 
-bib = CitationBibliography(joinpath(@__DIR__, "references.bib"), sorting = :nyt)
+bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 
 makedocs(
     bib,
