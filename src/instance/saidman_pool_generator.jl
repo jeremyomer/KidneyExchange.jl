@@ -6,8 +6,7 @@ The generator code in this file is a translation of the corresponding Java funct
 """
 $(TYPEDEF)
 
-Compatibility graph generator based on the following paper:
-Increasing the Opportunity of Live Kidney Donation by Matching for Two and Three Way Exchanges. S. L. Saidman, Alvin Roth, Tayfun Sonmez, Utku Unver, Frank Delmonico. Transplantation, Volume 81, Number 5, March 15, 2006.
+Compatibility graph generator based on [saidmanIncreasingOpportunityLive2006a](@Citet)
 
 This is known colloquially as the "Saidman Generator".
 """
@@ -37,7 +36,11 @@ mutable struct PoolGenerator
 	currentVertexID::Int
 end
 
-# Numbers taken from Saidman et al.'s 2006 paper "Increasing the Opportunity of Live Kidney Donation..."
+"""
+$(SIGNATURES)
+
+Numbers taken from [saidmanIncreasingOpportunityLive2006a](@Citet)
+"""
 function SaidmanPoolGenerator(id::Int)
 	return PoolGenerator(0.4090, 0.4897,  0.7019, 0.2, 0.05, 0.45, 0.90, 0.75, 0.4814, 0.3373, 0.1428, 0.4814, 0.3373, 0.1428, id)
 end
@@ -48,8 +51,7 @@ $(SIGNATURES)
 
 A tweak to the published Saidman generator; distributions VERY ROUGHLY
 mimic the UNOS pool as of April 15, 2013.  Data taken from the KPD Work
-Group Data Analysis - CMR - June 2013 report.
-author John P. Dickerson
+Group Data Analysis - CMR - June 2013 report [Dickerson2016](@Citet).
 """
 function SparseUNOSSaidmanPoolGenerator(id::Int)
 	return PoolGenerator(0.4090, 0.4897, 0.216, 0.16, 0.50, 0.80, 0.98, 0.75, 0.651, 0.200, 0.124, 0.345, 0.459, 0.197, id)

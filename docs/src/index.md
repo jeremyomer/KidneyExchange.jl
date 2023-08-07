@@ -4,10 +4,7 @@ This a Julia package to solve the deterministic kidney exchange
 problem. It provides five different solution methods, two of which
 are based on a branch-and-price algorithm. The other three methods
 consist in solving compact integer programming formulations. These
-methods are described in the following article: Ayse
-N Arslan, Jérémy Omer, Fulin Yan. KidneyExchange.jl: A Julia package for solving
-the kidney exchange problem with branch-and-price. 2022.
-[⟨hal-03830810⟩](https://hal.inria.fr/hal-03830810)
+methods are described in [omer:hal-03830810](@Citet).
 
 The package also comes with three instance generators that allow
 to reproduce a benchmark similar to that used in the aforementionned
@@ -17,12 +14,10 @@ report.
 
 The package provides a parser (function [`read_kep_file`](@ref)) for the
 instances of the [PrefLib](https://www.preflib.org/dataset/00036) library
-publicly shared by John P. Dickerson and described in *Optimizing
-Kidney Exchange with Transplant Chains: Theory and Reality.* John
-P. Dickerson, Ariel D. Procaccia, Tuomas Sandholm; Proceedings of
-AAMAS; 2012.  Those instances must be downloaded from the PrefLib
+publicly shared by John P. Dickerson and described in [dickersonOptimizingKidneyExchange2012](@Citet).
+Those instances must be downloaded from the PrefLib
 [website](https://www.preflib.org/dataset/00036) and stored in the
-data/preflib folder before solving them with the algorithms of the
+`data/preflib` folder before solving them with the algorithms of the
 package.
 
 Otherwise, three generators are provided with the package (functions
@@ -47,9 +42,9 @@ than communicated in our article if you do so. In particular, for
 large instances, this is even true for the branch-and-price algorithms
 which rely on the capacity of the solver to solve the relaxed master
 problem with integer variables. The corresponding packages are
-documented at <https://github.com/jump-dev/HiGHS.jl>,
-<https://github.com/jump-dev/Cbc.jl>, <https://github.com/jump-dev/Clp.jl>
-and <https://github.com/jump-dev/Glpk.jl>.
+documented at [HiGHS.jl](https://github.com/jump-dev/HiGHS.jl), 
+[Cbc.jl](https://github.com/jump-dev/Cbc.jl), [Clp.jl](https://github.com/jump-dev/Clp.jl)
+and [Glpk.jl](https://github.com/jump-dev/Glpk.jl).
 
 To choose the solver, you need to set the field `optimizer` of the [`BP_params`](@ref) or [`MIP_params`](@ref) structure with one of the following options:
 - `HiGHS`: use exclusively HiGHS, i.e., both for integer programs (IPs) and linear programs (LPs)

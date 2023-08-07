@@ -18,12 +18,15 @@ $(SIGNATURES)
 Function that prints the main characteristics of a solution and check that it satisfies all teh constraints
 
 # Input parameters
+
 * `cycles::Vector{Vector{Int}}`: list of cycles in the solution to display
 * `chains::Vector{Vector{Int}}`: list of chains in the solution to display
 * `instance::Instance`: KEP instance whose solution it is
 * `verbose::Bool`: true if the characteristics of the solution are printed, false if only the verification need be done
 
-# Output parameters: None
+# Output parameters
+
+None
 """
 function print_and_check_solution(cycles::Vector{Vector{Int}}, chains::Vector{Vector{Int}}, instance::Instance, verbose::Bool = true)
     cycles_lengths = [length(c) for c in cycles]

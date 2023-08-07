@@ -1,3 +1,15 @@
+@unpublished{omer:hal-03830810,
+  TITLE = {KidneyExchange.jl: A Julia package for solving the kidney exchange problem with branch-and-price},
+  AUTHOR = {Omer, J{\'e}r{\'e}my and Arslan, Ayse N and Yan, Fulin},
+  URL = {https://inria.hal.science/hal-03830810},
+  NOTE = {preprint},
+  YEAR = {2022},
+  MONTH = {Oct},
+  PDF = {https://inria.hal.science/hal-03830810/file/2022_KEP_BP_Julia.pdf},
+  HAL_ID = {hal-03830810},
+  HAL_VERSION = {v1},
+}
+
 @TechReport{Saidman2014,
   author={Saidman, Susan L. and Roth, Alvin E. and Sonmez, Tayfun and Unver, M. Utku and Delmonico, Francis L.},
   title={Increasing the Opportunity of Live Kidney Donation by Matching for Two and Three Way Exchanges},
@@ -554,7 +566,19 @@ abstract = {Given a directed graph G=(V,A) with arbitrary arc costs, the Element
 
 
 
-@inproceedings{Dickerson2016, author = {Dickerson, John P. and Manlove, David F. and Plaut, Benjamin and Sandholm, Tuomas and Trimble, James}, title = {Position-Indexed Formulations for Kidney Exchange}, year = {2016}, isbn = {9781450339360}, publisher = {Association for Computing Machinery}, address = {New York, NY, USA}, url = {https://doi.org/10.1145/2940716.2940759}, doi = {10.1145/2940716.2940759}, abstract = {A kidney exchange is an organized barter market where patients in need of a kidney swap willing but incompatible donors. Determining an optimal set of exchanges is theoretically and empirically hard. Traditionally, exchanges took place in cycles, with each participating patient-donor pair both giving and receiving a kidney. The recent introduction of chains, where a donor without a paired patient triggers a sequence of donations without requiring a kidney in return, increased the efficacy of fielded kidney exchanges---while also dramatically raising the empirical computational hardness of clearing the market in practice. While chains can be quite long, unbounded-length chains are not desirable: planned donations can fail before transplant for a variety of reasons, and the failure of a single donation causes the rest of that chain to fail, so parallel shorter chains are better in practice.In this paper, we address the tractable clearing of kidney exchanges with short cycles and chains that are long but bounded. This corresponds to the practice at most modern fielded kidney exchanges. We introduce three new integer programming formulations, two of which are compact. Furthermore, one of these models has a linear programming relaxation that is exactly as tight as the previous tightest formulation (which was not compact) for instances in which each donor has a paired patient. On real data from the UNOS nationwide exchange in the United States and the NLDKSS nationwide exchange in the United Kingdom, as well as on generated realistic large-scale data, we show that our new models are competitive with all existing solvers---in many cases outperforming all other solvers by orders of magnitude.Finally, we note that our position-indexed chain-edge formulation can be modified in a straightforward way to take post-match edge failure into account, under the restriction that edges have equal probabilities of failure. Post-match edge failure is a primary source of inefficiency in presently-fielded kidney exchanges. We show how to implement such failure-aware matching in our model, and also extend the state-of-the-art general branch-and-price-based non-compact formulation for the failure-aware problem to run its pricing problem in polynomial time.}, booktitle = {Proceedings of the 2016 ACM Conference on Economics and Computation}, pages = {25–42}, numpages = {18}, keywords = {stochastic matching, integer programming, kidney exchange, matching markets, branch and price}, location = {Maastricht, The Netherlands}, series = {EC '16} }
+@inproceedings{Dickerson2016, 
+	author = {Dickerson, John P. and Manlove, David F. and Plaut, Benjamin and Sandholm, Tuomas and Trimble, James}, 
+	title = {Position-Indexed Formulations for Kidney Exchange}, 
+	year = {2016}, isbn = {9781450339360}, 
+	publisher = {Association for Computing Machinery}, 
+	address = {New York, NY, USA}, url = {https://doi.org/10.1145/2940716.2940759}, 
+		doi = {10.1145/2940716.2940759}, 
+	abstract = {A kidney exchange is an organized barter market where patients in need of a kidney swap willing but incompatible donors. Determining an optimal set of exchanges is theoretically and empirically hard. Traditionally, exchanges took place in cycles, with each participating patient-donor pair both giving and receiving a kidney. The recent introduction of chains, where a donor without a paired patient triggers a sequence of donations without requiring a kidney in return, increased the efficacy of fielded kidney exchanges---while also dramatically raising the empirical computational hardness of clearing the market in practice. While chains can be quite long, unbounded-length chains are not desirable: planned donations can fail before transplant for a variety of reasons, and the failure of a single donation causes the rest of that chain to fail, so parallel shorter chains are better in practice.In this paper, we address the tractable clearing of kidney exchanges with short cycles and chains that are long but bounded. This corresponds to the practice at most modern fielded kidney exchanges. We introduce three new integer programming formulations, two of which are compact. Furthermore, one of these models has a linear programming relaxation that is exactly as tight as the previous tightest formulation (which was not compact) for instances in which each donor has a paired patient. On real data from the UNOS nationwide exchange in the United States and the NLDKSS nationwide exchange in the United Kingdom, as well as on generated realistic large-scale data, we show that our new models are competitive with all existing solvers---in many cases outperforming all other solvers by orders of magnitude.Finally, we note that our position-indexed chain-edge formulation can be modified in a straightforward way to take post-match edge failure into account, under the restriction that edges have equal probabilities of failure. Post-match edge failure is a primary source of inefficiency in presently-fielded kidney exchanges. We show how to implement such failure-aware matching in our model, and also extend the state-of-the-art general branch-and-price-based non-compact formulation for the failure-aware problem to run its pricing problem in polynomial time.}, 
+	booktitle = {Proceedings of the 2016 ACM Conference on Economics and Computation}, 
+	pages = {25–42}, numpages = {18}, 
+	keywords = {stochastic matching, integer programming, kidney exchange, matching markets, branch and price}, 
+	location = {Maastricht, The Netherlands}, 
+	series = {EC '16} }
 
 @article{Constantino2013,
 title = {New insights on integer-programming models for the kidney exchange problem},
