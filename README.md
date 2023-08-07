@@ -14,7 +14,7 @@ The package also comes with three instance generators that allow to reproduce a 
 
 ## General informations
 
-* Language : `Julia v1.6-1.8`
+* Language : `Julia >= 1.6`
 * Dependencies : `DelimitedFiles`, `GLPK`, `Graphs`, `HiGHs`, `JuMP`, `Random`, `Requires`, `TimerOutputs`, `DocStringExtensions`
 
 ## Input data
