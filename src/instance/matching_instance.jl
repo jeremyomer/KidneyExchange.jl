@@ -170,4 +170,3 @@ function read_wmd_file(filepath)
 
 end
 
-read_wmd_file(joinpath("00036-00000001.wmd"))
