@@ -19,6 +19,7 @@ export generate_saidman_instance
 export generate_sparse_unos_instance
 export generate_heterogeneous_instance
 export generate_complete_benchmark
+include("instance/matching_instance.jl")
 include("instance/create_benchmark.jl")
 
 export Mip_model, HPIEF, EXTENDED_EDGE, RELAXED_ARC
