@@ -119,19 +119,19 @@ nodes(self :: WeightedDiGraph) = keys(self.node_mapping)
 
 struct MatchingInstance
 
-     instance :: PrefLibInstance
+     preflib_instance :: PrefLibInstance
      graph :: WeightedDiGraph
 
      function MatchingInstance( filepath )
 
-         instance = PrefLibInstance(filepath)
+         preflib_instance = PrefLibInstance(filepath)
          node_mapping = Dict()
          weights = Dict()
          graph = WeightedDiGraph(node_mapping, weights)
          num_edges = 0
 
          i = 0
-         for line in strip.(instance.lines)
+         for line in strip.(preflib_instance.lines)
              if startswith(line, "#")
                  if startswith(line, "# NUMBER EDGES")
                      @show num_edges = parse( Int, last(split(line, ":")))
@@ -142,23 +142,26 @@ struct MatchingInstance
              end
          end
 
-         num_voters = instance.num_alternatives
+         num_voters = preflib_instance.num_alternatives
 
-         for line in strip.(instance.lines[i+1:end])
+         for line in strip.(preflib_instance.lines[i+1:end])
              vertex1, vertex2, weight = split(line, ",")
              add_edge!(graph, parse(Int, vertex1), parse(Int, vertex2), parse(Float64, weight))
          end
 
          num_edges = sum(length(edge_set) for edge_set in values(graph.node_mapping))
 
-         new(instance, graph)
+         new(preflib_instance, graph)
 
      end
 
 end
 
+export read_wmd_file
+
 function read_wmd_file(filepath)
 
+	@assert last(splitext(filepath)) == ".wmd"  "not a wmd file"
     instance = MatchingInstance(filepath)
     graph = SimpleDiGraph(edges(instance.graph))
 
@@ -168,7 +171,13 @@ function read_wmd_file(filepath)
         edge_weights[n1, n2] = w
     end
 
-    return graph, edge_weights 
+    related_files = instance.preflib_instance.related_files
+    if isfile(related_files)
+        lines, header = readdlm(related_files, '\n'; header = true)
+	    is_altruist = parse.(Bool, last.(lines)) |> vec
+    end
+
+    return graph, edge_weights, is_altruist
 
 end
 
