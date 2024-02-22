@@ -114,9 +114,9 @@ The package can also be used without adding it to the Julia environment and reso
 A set of example script files are provided in the code folder under the name KEPTestxxx.jl for each method tested in our manuscript. 
 
 These files require an instance, and parameters K and L as input. They then solve the provided instance with the chosen algorithm, using default parameter settings (with Gurobi as the MIP solver), and write the output to a dedicated .csv file. 
-As an example, the KEPTestBP.jl can be run with:
+Aos an example, the KEPTestBP.jl can be run with:
 
-`julia KEPTestBP.jl preflib/MD-00001-00000011 3 6`
+`julia --project KEPTestBP.jl data/preflib/MD-00001-00000011 3 6`
 
 provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)) and the PrefLib instances are stored in the corresponding data folder. 
 
@@ -127,7 +127,7 @@ Interested users can then embed this execution into a shell script in order to t
 ```
 for K in {3..4}
 do
-    julia KEPTestBP.jl preflib/MD-00001-00000011 $K 6
+    julia --project KEPTestBP.jl data/preflib/MD-00001-00000011 $K 6
 done
 ```
 will solve the provided PrefLib instance for K=3,4 and create two .csv files as output. 

@@ -1,5 +1,4 @@
-include("src/KidneyExchange.jl")
-using Main.KidneyExchange
+using KidneyExchange
 using ArgParse
 using Gurobi
 using TimerOutputs
