@@ -100,6 +100,8 @@ function add_edge!(self :: WeightedDiGraph, node1, node2, weight)
     self.weights[(node1, node2)] = weight
 end
 
+import Graphs: edges
+
 function edges(graph :: WeightedDiGraph)
 
     s = Edge{Int64}[]
