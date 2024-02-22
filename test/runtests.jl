@@ -1,6 +1,8 @@
 using KidneyExchange
 using Test
 
+include("test_matching_instance.jl")
+
 const KEP = KidneyExchange
 
 @testset "KidneyExchange.jl" begin
