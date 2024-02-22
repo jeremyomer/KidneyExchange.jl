@@ -46,8 +46,18 @@ struct Instance
     function Instance(filename::String, K::Int, L::Int = 0)
 
         wmd_file = filename * ".wmd"
+        dat_file = filename * ".dat"
 
-        g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+        if isfile(wmd_file) && startswith(readline(wmd_file), "#")
+            g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+        else
+            inst = string(filename)
+            data_folder = joinpath(@__DIR__, "..", "..", "data")
+            wmd_file = joinpath(data_folder, join([inst, ".wmd"]))
+            dat_file = joinpath(data_folder, join([inst, ".dat"]))
+            g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
+        end
+
         P = [v for v in vertices(g) if !is_altruist[v]]
         A = [v for v in vertices(g) if is_altruist[v]]
         vertex_weight = zeros(nv(g))

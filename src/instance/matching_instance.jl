@@ -34,7 +34,7 @@ struct PrefLibInstance
         num_alternatives = 0
         alternatives_name = Dict()
         num_voters = 0
-        lines = readlines(filepath)
+        lines = strip.(readlines(filepath))
 
         for line in lines
 
@@ -98,7 +98,7 @@ struct MatchingInstance
         preflib_instance = PrefLibInstance(filepath)
 
         i = 0
-        for line in strip.(preflib_instance.lines)
+        for line in preflib_instance.lines
             if startswith(line, "#")
                 if startswith(line, "# NUMBER EDGES")
                     num_edges = parse(Int, last(split(line, ":")))
@@ -109,13 +109,11 @@ struct MatchingInstance
             end
         end
 
-        num_voters = preflib_instance.num_alternatives
-
         sources = Int[]
         destinations = Int[]
         weights = Float64[]
 
-        for line in strip.(preflib_instance.lines[i+1:end])
+        for line in preflib_instance.lines[i+1:end]
             vertex1, vertex2, weight = split(line, ",")
             push!(sources, parse(Int, vertex1))
             push!(destinations, parse(Int, vertex2))

@@ -40,7 +40,7 @@ t_solve_MIP = TimerOutputs.time(timer["Solve MIP"])/10^9
 t_total = TimerOutputs.time(timer["Parser"]) + TimerOutputs.time(timer["Preprocessing"]) + TimerOutputs.time(timer["Solve MIP"]) + TimerOutputs.time(timer["Build MIP"])
 
 stockfilename = "$(filename)_$(cycle_limit)_$(chain_limit)"
-mip_log_file_name = string("/BP_profiling/mip_info_", stockfilename, ".csv")
-mip_log = open(string(dirname(@__FILE__),mip_log_file_name), "a")
+mip_log_file_name = joinpath("BP_profiling", "mip_info_" * stockfilename * ".csv")
+mip_log = open(joinpath(dirname(@__FILE__), mip_log_file_name), "a")
 println(mip_log, "$filename; $(graph_info.nb_pairs);  $(graph_info.nb_altruists); $(cycle_limit); $(chain_limit); $(mip_params.model_type); $(status.objective_value); $(round(t_total/10^8)/10); $(status.relative_gap); $(round(10*t_solve_MIP)/10); $(status.node_count); $(round(10*t_build_MIP)/10);")
 close(mip_log)

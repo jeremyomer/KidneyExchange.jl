@@ -116,7 +116,7 @@ A set of example script files are provided in the code folder under the name KEP
 These files require an instance, and parameters K and L as input. They then solve the provided instance with the chosen algorithm, using default parameter settings (with Gurobi as the MIP solver), and write the output to a dedicated .csv file. 
 Aos an example, the KEPTestBP.jl can be run with:
 
-`julia --project KEPTestBP.jl data/preflib/MD-00001-00000011 3 6`
+`julia --project KEPTestBP.jl preflib/MD-00001-00000016 3 6`
 
 provided that the path to the Julia executable is correctly configured in your environment (see [here](https://julialang.org/downloads/platform/)) and the PrefLib instances are stored in the corresponding data folder. 
 
@@ -124,21 +124,21 @@ We additionally remark that our KEPTestxxx.jl files use the Gurobi solver as the
 
 Interested users can then embed this execution into a shell script in order to test a number of instances and tabulate the results. For instance, on a Unix system 
 
-```
+```bash
 for K in {3..4}
 do
-    julia --project KEPTestBP.jl data/preflib/MD-00001-00000011 $K 6
+    julia --project KEPTestBP.jl preflib/MD-00001-00000016 $K 6
 done
 ```
 will solve the provided PrefLib instance for K=3,4 and create two .csv files as output. 
 
 One can additionally set all the desired attributes of BP_params and MIP_params directly inside KEPTestxxx.jl files. For instance, by adding the lines  
-```
+```julia
 bp_params = BP_params()
 bp_params.optimizer = "Gurobi"
  ```
 or 
-```
+```julia
 mip_params = MIP_params()
 mip_params.optimizer = "Gurobi"
 ```
