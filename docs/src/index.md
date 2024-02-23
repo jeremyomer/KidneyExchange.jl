@@ -20,13 +20,17 @@ Those instances must be downloaded from the PrefLib
 `data/preflib` folder before solving them with the algorithms of the
 package.
 
-Otherwise, three generators are provided with the package (functions
-[`generate_saidman_instance`](@ref), [`generate_heterogeneous_instance`](@ref) and
-[`generate_sparse_unos_instance`](@ref)). One of them ([`generate_saidman_instance`](@ref))
-will generate instances similar to those of the PrefLib library.
+Otherwise, three generators functions are provided with the package :
+
+- [`generate_saidman_instance`](@ref)
+- [`generate_heterogeneous_instance`](@ref)
+- [`generate_sparse_unos_instance`](@ref)). 
+
+!!! note 
+   [`generate_saidman_instance`](@ref)) will generate instances similar to those of the [PrefLib library](https://www.preflib.org/dataset/00036).
 
 Users who wish to run our code on other existing instances may input
-them as .wmd file and read them with [`read_kep_file`](@ref).
+them as `.wmd` file and read them with [`read_wmd_file`](@ref).
 
 ## Integer programming solvers
 
