@@ -1,3 +1,4 @@
+import Dates
 using Graphs, SimpleWeightedGraphs
 
 struct PrefLibInstance
@@ -120,7 +121,7 @@ struct MatchingInstance
             push!(weights, parse(Float64, weight))
         end
 
-        graph = SimpleWeightedDiGraph( sources, destinations, weights)
+        graph = SimpleWeightedDiGraph(sources, destinations, weights)
 
         new(preflib_instance, graph)
 
@@ -145,5 +146,74 @@ function read_wmd_file(filepath)
     end
 
     return graph, weights, is_altruist
+
+end
+
+"""
+$(SIGNATURES)
+
+Write a `.wmd` and a `.dat` files to store the input KEP graph in the same form as in Preflib.
+
+"""
+function write_preflib_file(
+    kep_graph::SimpleDiGraph,
+    edge_weight::Matrix{Float64},
+    donorBT::Vector{Blood_type},
+    patientBT::Vector{Blood_type},
+    wifeP::BitArray,
+    patientPRA::Vector{Float64},
+    is_altruist::BitArray,
+    file_name::String
+)
+
+    dat_filename = file_name * ".dat"
+    wmd_filename = file_name * ".wmd"
+    io_wmd = open(wmd_filename, "w")
+
+    num_vertices = nv(kep_graph)
+    num_edges = ne(kep_graph)
+
+    title = "KEP"
+    description = "KEP"
+    num_alternatives = length(is_altruist)
+
+    println(io_wmd, "# FILE NAME: $wmd_filename")
+    println(io_wmd, "# TITLE: $title")
+    println(io_wmd, "# DESCRIPTION:$description")
+    println(io_wmd, "# DATA TYPE: wmd")
+    println(io_wmd, "# MODIFICATION TYPE: synthetic")
+    println(io_wmd, "# RELATES TO:")
+    println(io_wmd, "# RELATED FILES: $dat_filename")
+    println(io_wmd, "# PUBLICATION DATE: $(Dates.today())")
+    println(io_wmd, "# MODIFICATION DATE: $(Dates.today())")
+    println(io_wmd, "# NUMBER ALTERNATIVES: $(num_alternatives)")
+    println(io_wmd, "# NUMBER EDGES: $num_edges")
+
+    P = findall(is_altruist .== false)
+    A = findall(is_altruist .== true)
+
+    for (i,v) in enumerate(P)
+        println(io_wmd, "# ALTERNATIVE NAME $v : Pair $v")
+    end
+    for v in A
+        println(io_wmd, "# ALTERNATIVE NAME $v : Altruist $v")
+    end
+
+    for e in edges(kep_graph)
+        println(io_wmd, "$(e.src),$(e.dst), $(edge_weight[e.src,e.dst])")
+    end
+
+    close(io_wmd)
+
+    io_dat = open(dat_filename, "w")
+    println(io_dat, "Pair,Patient,Donor,Wife-P?,%Pra,Out-Deg,Altruist")
+
+    for v in P
+        println(io_dat, "$v,$(patientBT[v]),$(donorBT[v]),$(Int(wifeP[v])),$(patientPRA[v]),$(outdegree(kep_graph,v)),0")
+    end
+    for v in A
+     	println(io_dat, "$v,O,$(donorBT[v]),0,0.0,$(outdegree(kep_graph,v)),1")
+    end
+    close(io_dat)
 
 end

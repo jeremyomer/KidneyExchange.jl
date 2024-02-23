@@ -19,4 +19,12 @@ using Printf
     @test bp_status.best_cycles ≈ [[3, 8], [1, 6]]
     @test bp_status.objective_value ≈ 4.0
 
+    nb_pairs = 500
+    nb_altruists = 25
+
+    kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = KidneyExchange.generate_sparse_unos_kep_graph(nb_pairs, nb_altruists)
+
+    filepath = @sprintf "sparse%05d%08d" nb_pairs nb_altruists
+    KidneyExchange.write_preflib_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, filepath)
+
 end
