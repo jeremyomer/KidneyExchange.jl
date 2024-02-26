@@ -25,6 +25,7 @@ using Printf
     kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = KidneyExchange.generate_sparse_unos_kep_graph(nb_pairs, nb_altruists)
 
     filepath = @sprintf "sparse%05d%08d" nb_pairs nb_altruists
-    KidneyExchange.write_preflib_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, filepath)
+    KidneyExchange.write_wmd_file(kep_graph, edge_weights, is_altruist, filepath)
+    KidneyExchange.write_dat_file(kep_graph, donorBT, patientBT, wifeP, patientPRA, is_altruist, filepath)
 
 end

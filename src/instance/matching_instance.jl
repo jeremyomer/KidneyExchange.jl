@@ -1,5 +1,7 @@
 import Dates
-using Graphs, SimpleWeightedGraphs
+using Graphs
+import Printf
+using SimpleWeightedGraphs
 
 struct PrefLibInstance
 
@@ -21,7 +23,7 @@ struct PrefLibInstance
     function PrefLibInstance(filepath)
 
         file_path = filepath
-        file_name = splitdir(filepath)[1]
+        file_name = basename(filepath)
         data_type = splitext(filepath)[2]
 
 
@@ -222,9 +224,60 @@ $(SIGNATURES)
 Write a `.wmd` and a `.dat` files to store the input KEP graph in the same form as in Preflib.
 
 """
-function write_preflib_file(
-    kep_graph::SimpleDiGraph,
-    edge_weight::Matrix{Float64},
+function write_wmd_file(
+    graph::SimpleDiGraph,
+    weights::Matrix{Float64},
+    is_altruist::BitArray,
+    file_name::String
+)
+
+    wmd_filename = file_name * ".wmd"
+    dat_filename = file_name * ".dat"
+
+    num_vertices = nv(graph)
+    num_edges = ne(graph)
+
+    title = "KEP"
+    description = "KEP"
+    num_alternatives = length(is_altruist)
+
+    lines = String[]
+    push!(lines, "# FILE NAME: $wmd_filename")
+    push!(lines, "# TITLE: $title")
+    push!(lines, "# DESCRIPTION:$description")
+    push!(lines, "# DATA TYPE: wmd")
+    push!(lines, "# MODIFICATION TYPE: synthetic")
+    push!(lines, "# RELATES TO:")
+    push!(lines, "# RELATED FILES: $dat_filename")
+    push!(lines, "# PUBLICATION DATE: $(Dates.today())")
+    push!(lines, "# MODIFICATION DATE: $(Dates.today())")
+    push!(lines, "# NUMBER ALTERNATIVES: $(num_alternatives)")
+    push!(lines, "# NUMBER EDGES: $num_edges")
+
+    P = findall(is_altruist .== false)
+    A = findall(is_altruist .== true)
+
+    for (i,v) in enumerate(P)
+        push!(lines, "# ALTERNATIVE NAME $v : Pair $v")
+    end
+    for v in A
+        push!(lines, "# ALTERNATIVE NAME $v : Altruist $v")
+    end
+
+    for e in edges(graph)
+        push!(lines, "$(e.src), $(e.dst), $(weights[e.src,e.dst])")
+    end
+
+    io_wmd = open(wmd_filename, "w")
+    for line in lines
+        println(io_wmd, line)
+    end
+    close(io_wmd)
+
+end
+
+function write_dat_file(
+    graph::SimpleDiGraph,
     donorBT::Vector{Blood_type},
     patientBT::Vector{Blood_type},
     wifeP::BitArray,
@@ -234,53 +287,52 @@ function write_preflib_file(
 )
 
     dat_filename = file_name * ".dat"
-    wmd_filename = file_name * ".wmd"
-    io_wmd = open(wmd_filename, "w")
-
-    num_vertices = nv(kep_graph)
-    num_edges = ne(kep_graph)
-
-    title = "KEP"
-    description = "KEP"
-    num_alternatives = length(is_altruist)
-
-    println(io_wmd, "# FILE NAME: $wmd_filename")
-    println(io_wmd, "# TITLE: $title")
-    println(io_wmd, "# DESCRIPTION:$description")
-    println(io_wmd, "# DATA TYPE: wmd")
-    println(io_wmd, "# MODIFICATION TYPE: synthetic")
-    println(io_wmd, "# RELATES TO:")
-    println(io_wmd, "# RELATED FILES: $dat_filename")
-    println(io_wmd, "# PUBLICATION DATE: $(Dates.today())")
-    println(io_wmd, "# MODIFICATION DATE: $(Dates.today())")
-    println(io_wmd, "# NUMBER ALTERNATIVES: $(num_alternatives)")
-    println(io_wmd, "# NUMBER EDGES: $num_edges")
-
-    P = findall(is_altruist .== false)
-    A = findall(is_altruist .== true)
-
-    for (i,v) in enumerate(P)
-        println(io_wmd, "# ALTERNATIVE NAME $v : Pair $v")
-    end
-    for v in A
-        println(io_wmd, "# ALTERNATIVE NAME $v : Altruist $v")
-    end
-
-    for e in edges(kep_graph)
-        println(io_wmd, "$(e.src),$(e.dst), $(edge_weight[e.src,e.dst])")
-    end
-
-    close(io_wmd)
+    patients = findall(is_altruist .== false)
+    donors = findall(is_altruist .== true)
 
     io_dat = open(dat_filename, "w")
+
     println(io_dat, "Pair,Patient,Donor,Wife-P?,%Pra,Out-Deg,Altruist")
 
-    for v in P
-        println(io_dat, "$v,$(patientBT[v]),$(donorBT[v]),$(Int(wifeP[v])),$(patientPRA[v]),$(outdegree(kep_graph,v)),0")
+    for v in patients
+        println(io_dat, "$v,$(patientBT[v]),$(donorBT[v]),$(Int(wifeP[v])),$(patientPRA[v]),$(outdegree(graph,v)),0")
     end
-    for v in A
-     	println(io_dat, "$v,O,$(donorBT[v]),0,0.0,$(outdegree(kep_graph,v)),1")
+
+    for v in donors
+     	println(io_dat, "$v,O,$(donorBT[v]),0,0.0,$(outdegree(graph,v)),1")
     end
+
     close(io_dat)
+
+end
+
+"""
+$(SIGNATURES)
+
+Compatibility graph generator based on the following paper
+
+[Ashlagi2013](@cite)
+
+"""
+function generate_heterogeneous_instance(nb_pairs::Int, nb_altruists::Int; index = 1, path = pwd())
+
+    graph, weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = generate_heterogeneous_kep_graph(nb_pairs, nb_altruists)
+
+
+    file_name = Printf.@sprintf "heterogeneous%05d%08d%05d" nb_pairs nb_altruists index
+    file_path = joinpath( path, filename)
+    data_type = "wmd"
+    modification_type = "synthetic"
+    relates_to = ""
+    related_files = splitext(filename)[1] * ".dat"
+    title = "heterogeneous with $nb_pair pairs and $nb_altruits"
+    description = "Heterogeneous instance "
+    publication_date = Dates.today()
+    modification_date = Dates.today()
+    num_alternatives = nb_altruist
+    alternatives_name = Dict{Int,String}()
+    num_voters = 0
+    lines = String[]
+
 
 end
