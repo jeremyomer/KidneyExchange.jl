@@ -1,5 +1,7 @@
 import Downloads
+using KidneyExchange
 using Printf
+using Test
 
 @testset "Read and write preflib files" begin
 
@@ -25,7 +27,12 @@ using Printf
     kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = KidneyExchange.generate_sparse_unos_kep_graph(nb_pairs, nb_altruists)
 
     filepath = @sprintf "sparse%05d%08d" nb_pairs nb_altruists
-    KidneyExchange.write_wmd_file(kep_graph, edge_weights, is_altruist, filepath)
+    title = "Sparse unos graph with $nb_pairs pairs and $nb_altruists altruists"
+    description = "Saidman generator with small modifications in the probabilities of compatibility to roughtly mimic the UNOS pool"
+    KidneyExchange.write_wmd_file(kep_graph, edge_weights, is_altruist, filepath, title, description)
     KidneyExchange.write_dat_file(kep_graph, donorBT, patientBT, wifeP, patientPRA, is_altruist, filepath)
+
+    instance = generate_heterogeneous_instance(nb_pairs, nb_altruists, index = 1)
+
 
 end
