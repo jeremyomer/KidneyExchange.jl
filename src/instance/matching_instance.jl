@@ -194,11 +194,11 @@ function write_wmd_file(
     alternatives_name = Dict()
 
     for (i,v) in enumerate(pairs)
-        println(io_wmd, "# ALTERNATIVE NAME $v : Pair $v")
+        println(io_wmd, "# ALTERNATIVE NAME ",v,": Pair ",v)
         alternatives_name[i] = "Pair"
     end
     for (i,v) in enumerate(altruists)
-        println(io_wmd, "# ALTERNATIVE NAME $v : Alturist $v")
+        println(io_wmd, "# ALTERNATIVE NAME ",v,": Alturist ", v)
         alternatives_name[i] = "Alturist"
     end
 
@@ -260,6 +260,6 @@ function generate_heterogeneous_instance(nb_pairs::Int, nb_altruists::Int; index
     write_wmd_file( graph, weights, is_altruist, file_name, title, description)
     write_dat_file( graph, donorBT, patientBT, wifeP, patientPRA, is_altruist, file_name)
 
-    return file_name
+    return abspath(file_name)
 
 end

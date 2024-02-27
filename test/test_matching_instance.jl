@@ -32,7 +32,8 @@ using Test
     KidneyExchange.write_wmd_file(kep_graph, edge_weights, is_altruist, filepath, title, description)
     KidneyExchange.write_dat_file(kep_graph, donorBT, patientBT, wifeP, patientPRA, is_altruist, filepath)
 
-    instance = generate_heterogeneous_instance(nb_pairs, nb_altruists, index = 1)
+    new_dataset = generate_heterogeneous_instance(nb_pairs, nb_altruists, index = 1)
 
+    bp_status, graph_info = solve_with_BP( new_dataset, 3, 3 )
 
 end
