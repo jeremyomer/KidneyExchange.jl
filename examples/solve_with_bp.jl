@@ -42,11 +42,31 @@ Downloads.download("https://www.preflib.org/static/data/kidney/" * wmd_file, wmd
 cycle_limit, chain_limit =  3, 2
 
 @time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time);
+# -
+
+bp_status
 
 # +
 bp_params.is_pief = true
 
 @time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time);
+# +
+mip_params = MIP_params()
+mip_params.optimizer = "Gurobi"
+mip_params.model_type = EXTENDED_EDGE
+timer = TimerOutput()
+max_time = 600.0
+mip_params.verbose = false
+
+status, graph_info, subgraph_info = solve_with_mip(filename, cycle_limit, chain_limit, mip_params, timer, max_time);
 # -
+
+
+status
+
+mip_params.model_type = HPIEF
+status, graph_info, subgraph_info = solve_with_mip(filename, cycle_limit, chain_limit, mip_params, timer, max_time);
+
+status
 
 
