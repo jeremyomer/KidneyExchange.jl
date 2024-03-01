@@ -76,6 +76,7 @@ function read_wmd_file(filepath)
 
     @assert last(splitext(filepath)) == ".wmd" "not a wmd file"
     file_path = filepath
+    dir_name = dirname(filepath)
     file_name = basename(filepath)
     data_type = splitext(filepath)[2]
 
@@ -112,6 +113,7 @@ function read_wmd_file(filepath)
             relates_to = split(line, ":") |> last |> strip
         elseif startswith(line, "# RELATED FILES")
             related_files = split(line, ":") |> last |> strip
+            related_files = joinpath(dir_name, related_files)
             @assert isfile(related_files) "$related_files is not present in the path"
             extra_lines, header = readdlm(related_files, '\n'; header = true)
             for l in extra_lines

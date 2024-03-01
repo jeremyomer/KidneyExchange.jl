@@ -48,14 +48,24 @@ struct Instance
         wmd_file = filename * ".wmd"
         dat_file = filename * ".dat"
 
-        if isfile(wmd_file) && startswith(readline(wmd_file), "#")
-            g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+        if isfile(wmd_file)
+            wmd_file_first_line = readline(wmd_file)
+            if startswith( wmd_file_first_line, "#")
+                g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+            end
         else
             inst = string(filename)
             data_folder = joinpath(@__DIR__, "..", "..", "data")
             wmd_file = joinpath(data_folder, join([inst, ".wmd"]))
             dat_file = joinpath(data_folder, join([inst, ".dat"]))
-            g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
+            if isfile(wmd_file) 
+                wmd_file_first_line = readline(wmd_file)
+                if startswith( wmd_file_first_line, "#")
+                    g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+                else
+                    g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
+                end
+            end
         end
 
         P = [v for v in vertices(g) if !is_altruist[v]]
