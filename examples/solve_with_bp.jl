@@ -27,6 +27,7 @@ using Gurobi
 bp_params = BP_params()
 bp_params.optimizer = "Gurobi"
 timer = TimerOutput()
+bp_params.verbose = false
 max_time = 7200.0
 
 dataset = @sprintf "%08d" 2  #  (1 - 310) instance index of synthetic kidney donor pools
