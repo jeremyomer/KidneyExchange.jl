@@ -11,6 +11,7 @@ makedocs(;
     modules = [KidneyExchange],
     pages = [
         "Home" => "index.md",
+        "Sysimage" => "sys_image.md",
         "Types" => "types.md",
         "Functions" => "functions.md",
         "References" => "references.md",
