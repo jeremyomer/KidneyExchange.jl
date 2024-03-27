@@ -64,12 +64,14 @@ And a preview of the .wmd file (including only a subset of the arcs) looks like 
 * `dat_file::String` : Absolute path of the `.dat` file.
 """
 function read_kep_file(wmd_file::AbstractString, dat_file::AbstractString)
-	wmd_file_name = first(splitext(last(splitpath(wmd_file))))
-	dat_file_name = first(splitext(last(splitpath(dat_file))))
 
-    wmd_file_name == dat_file_name || throw(ArgumentError(".wmd and .dat files do not correspond to the same dataset."))
-	isfile(abspath(wmd_file)) || throw(ArgumentError("$(abspath(wmd_file)): file not found."))
-	isfile(abspath(dat_file)) || throw(ArgumentError(".dat file not found."))
+    wmd_file_name = first(splitext(basename(wmd_file)))
+    dat_file_name = first(splitext(basename(dat_file)))
+
+    @assert wmd_file_name == dat_file_name ".wmd and .dat files do not correspond to the same dataset."
+
+	@assert isfile(abspath(wmd_file)) "$(abspath(wmd_file)): file not found."
+	@assert isfile(abspath(dat_file)) ".dat file not found."
 
 	# Get the number of vertices and edges from the first line of wmd file
     wmd_io = open(wmd_file, "r")

@@ -44,12 +44,34 @@ struct Instance
 
     # Parse instance from file
     function Instance(filename::String, K::Int, L::Int = 0)
-        inst = string(filename)
-        data_folder = joinpath(@__DIR__, "..", "..", "data")
-        wmd_file = joinpath(data_folder, join([inst, ".wmd"]))
-        dat_file = joinpath(data_folder, join([inst, ".dat"]))
 
-        g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
+        wmd_file = filename * ".wmd"
+        dat_file = filename * ".dat"
+
+        if isfile(wmd_file)
+            wmd_file_first_line = readline(wmd_file)
+            if startswith( wmd_file_first_line, "#")
+                g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+            else
+                g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
+            end
+        else
+            inst = string(filename)
+            data_folder = joinpath(@__DIR__, "..", "..", "data")
+            wmd_file = joinpath(data_folder, join([inst, ".wmd"]))
+            dat_file = joinpath(data_folder, join([inst, ".dat"]))
+            if isfile(wmd_file) 
+                wmd_file_first_line = readline(wmd_file)
+                if startswith( wmd_file_first_line, "#")
+                    g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+                else
+                    g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
+                end
+            else
+                @error "$wmd_file is not present"
+            end
+        end
+
         P = [v for v in vertices(g) if !is_altruist[v]]
         A = [v for v in vertices(g) if is_altruist[v]]
         vertex_weight = zeros(nv(g))

@@ -1,5 +1,4 @@
-include("src/KidneyExchange.jl")
-using Main.KidneyExchange
+using KidneyExchange
 using ArgParse
 using Gurobi
 using TimerOutputs
@@ -61,11 +60,11 @@ end
 
 # store collected data
 stockfilename = "$(filename)_$(cycle_limit)_$(chain_limit)"
-graph_log_file_name = string("/BP_profiling/graph_info_", stockfilename, ".csv")
-graph_log = open(string(dirname(@__FILE__),graph_log_file_name), "a")
+graph_log_file_name = joinpath("BP_profiling", "graph_info_" * stockfilename * ".csv")
+graph_log = open(joinpath(dirname(@__FILE__),graph_log_file_name), "a")
 
-bp_log_file_name = string("/BP_profiling/bp_info_", stockfilename, ".csv")
-bp_log = open(string(dirname(@__FILE__),bp_log_file_name), "a")
+bp_log_file_name = joinpath("BP_profiling", "bp_info_" * stockfilename * ".csv")
+bp_log = open(joinpath(dirname(@__FILE__),bp_log_file_name), "a")
 
 println(graph_log, "$filename; $(graph_info.nb_pairs); $(graph_info.nb_altruists); $(round(100*graph_info.density)/100); $(subgraph_info.nb_copies); $(round(Int, subgraph_info.nb_vertices_per_copy))")
 
