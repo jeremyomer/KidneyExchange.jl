@@ -134,15 +134,22 @@ function read_wmd_file(filepath)
             alternatives_name[alt] = alt_name
         else
             vertex1, vertex2, weight = split(line, ",")
-            push!(sources, parse(Int, vertex1))
-            push!(destinations, parse(Int, vertex2))
-            push!(weights, parse(Float64, weight))
+
+            src =  parse(Int, vertex1)
+            dst =  parse(Int, vertex2)
+            wgt =  parse(Float64, weight)
+
+            if !is_altruist[dst] && wgt > 0.0
+                push!(sources, src)
+                push!(destinations, dst)
+                push!(weights, wgt)
+            end
         end
     end
 
     weighted_graph = SimpleWeightedDiGraph(sources, destinations, weights)
     graph = SimpleDiGraph([Edge(e.src, e.dst) for e in edges(weighted_graph)])
-    weights = collect(weighted_graph.weights)
+    weights = collect(weighted_graph.weights')
 
     return graph, weights, is_altruist
 

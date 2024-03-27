@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -8,7 +9,7 @@
 #       format_version: '1.5'
 #       jupytext_version: 1.16.1
 #   kernelspec:
-#     display_name: Julia 1.10.1
+#     display_name: Julia 1.10.2
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -22,10 +23,10 @@
 using KidneyExchange
 using Printf
 using Downloads
-using Gurobi
+using HiGHS
 
 bp_params = BP_params()
-bp_params.optimizer = "Gurobi"
+bp_params.optimizer = "HiGHS"
 timer = TimerOutput()
 bp_params.verbose = false
 max_time = 7200.0
@@ -39,34 +40,20 @@ wmd_file = filename * ".wmd"
 Downloads.download("https://www.preflib.org/static/data/kidney/" * dat_file, dat_file)
 Downloads.download("https://www.preflib.org/static/data/kidney/" * wmd_file, wmd_file)
 
+new_graph, new_weights, new_is_altruist = read_wmd_file(wmd_file)
+# -
+
 cycle_limit, chain_limit =  3, 2
+@time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
 
-@time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time);
-# -
-
-bp_status
-
-# +
-bp_params.is_pief = true
-
-@time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time);
-# +
-mip_params = MIP_params()
-mip_params.optimizer = "Gurobi"
-mip_params.model_type = EXTENDED_EDGE
-timer = TimerOutput()
-max_time = 600.0
-mip_params.verbose = false
-
-status, graph_info, subgraph_info = solve_with_mip(filename, cycle_limit, chain_limit, mip_params, timer, max_time);
-# -
+filename = "MD-00001-00000002"
+wmd_file = "MD-00001-00000002" * ".wmd"
+dat_file = "MD-00001-00000002" * ".dat"
+old_graph, old_weights, old_is_altruist = read_kep_file(wmd_file, dat_file)
 
 
-status
+@time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
 
-mip_params.model_type = HPIEF
-status, graph_info, subgraph_info = solve_with_mip(filename, cycle_limit, chain_limit, mip_params, timer, max_time);
-
-status
+new_weights ≈ old_weights
 
 

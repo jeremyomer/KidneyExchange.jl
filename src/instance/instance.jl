@@ -52,6 +52,8 @@ struct Instance
             wmd_file_first_line = readline(wmd_file)
             if startswith( wmd_file_first_line, "#")
                 g, edge_weight, is_altruist = read_wmd_file(wmd_file)
+            else
+                g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
             end
         else
             inst = string(filename)
@@ -65,6 +67,8 @@ struct Instance
                 else
                     g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
                 end
+            else
+                @error "$wmd_file is not present"
             end
         end
 
