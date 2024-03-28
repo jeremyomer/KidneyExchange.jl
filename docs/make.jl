@@ -4,14 +4,14 @@ using DocumenterCitations
 
 bib = CitationBibliography(joinpath(@__DIR__, "references.bib"), style = :authoryear)
 
-makedocs(
-    bib,
+makedocs(;
+    plugins = [bib],
     sitename = "KidneyExchange.jl",
-    strict = true,
     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
     modules = [KidneyExchange],
     pages = [
         "Home" => "index.md",
+        "Sysimage" => "sys_image.md",
         "Types" => "types.md",
         "Functions" => "functions.md",
         "References" => "references.md",
