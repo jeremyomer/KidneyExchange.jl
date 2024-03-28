@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Sysimage · KidneyExchange.jl</title><meta name="title" content="Sysimage · KidneyExchange.jl"/><meta property="og:title" content="Sysimage · KidneyExchange.jl"/><meta property="twitter:title" content="Sysimage · KidneyExchange.jl"/><meta name="description" content="Documentation for KidneyExchange.jl."/><meta property="og:description" content="Documentation for KidneyExchange.jl."/><meta property="twitter:description" content="Documentation for KidneyExchange.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.png" alt="KidneyExchange.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">KidneyExchange.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li class="is-active"><a class="tocitem" href>Sysimage</a><ul class="internal"><li><a class="tocitem" href="#Create-a-new-julia-environment-to-create-your-image"><span>Create a new julia environment to create your image</span></a></li><li><a class="tocitem" href="#Install-the-package-KidneyExchange.jl"><span>Install the package KidneyExchange.jl</span></a></li><li><a class="tocitem" href="#Create-a-an-example-to-precompile-the-package-in-your-image"><span>Create a an example to precompile the package in your image</span></a></li><li><a class="tocitem" href="#Install-your-solver"><span>Install your solver</span></a></li><li><a class="tocitem" href="#Create-your-image"><span>Create your image</span></a></li><li><a class="tocitem" href="#Use-it"><span>Use it</span></a></li></ul></li><li><a class="tocitem" href="../types/">Types</a></li><li><a class="tocitem" href="../functions/">Functions</a></li><li><a class="tocitem" href="../references/">References</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Sysimage</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Sysimage</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/jeremyomer/KidneyExchange.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/jeremyomer/KidneyExchange.jl/blob/master/docs/src/sys_image.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Creating-a-sysimage-using-PackageCompiler"><a class="docs-heading-anchor" href="#Creating-a-sysimage-using-PackageCompiler">Creating a sysimage using PackageCompiler</a><a id="Creating-a-sysimage-using-PackageCompiler-1"></a><a class="docs-heading-anchor-permalink" href="#Creating-a-sysimage-using-PackageCompiler" title="Permalink"></a></h1><h2 id="Create-a-new-julia-environment-to-create-your-image"><a class="docs-heading-anchor" href="#Create-a-new-julia-environment-to-create-your-image">Create a new julia environment to create your image</a><a id="Create-a-new-julia-environment-to-create-your-image-1"></a><a class="docs-heading-anchor-permalink" href="#Create-a-new-julia-environment-to-create-your-image" title="Permalink"></a></h2><pre><code class="nohighlight hljs">$ mkdir KidneyExchangeImage
+$ cd KidneyExchangeImage/
+$ julia -q
+julia&gt; using PackageCompiler
+ │ Package PackageCompiler not found, but a package named PackageCompiler is available from a
+ │ registry.
+ │ Install package?
+ │   (@v1.10) pkg&gt; add PackageCompiler
+ └ (y/n/o) [y]:
+   Resolving package versions...
+   Installed PackageCompiler ─ v2.1.17
+    Updating `~/.julia/environments/v1.10/Project.toml`
+  [9b87118b] + PackageCompiler v2.1.17
+    Updating `~/.julia/environments/v1.10/Manifest.toml`
+  [9b87118b] + PackageCompiler v2.1.17
+  [4af54fe1] + LazyArtifacts
+(@v1.10) pkg&gt; activate .
+  Activating new project at `~/JuliaProjects/KidneyExchangeImage`</code></pre><h2 id="Install-the-package-KidneyExchange.jl"><a class="docs-heading-anchor" href="#Install-the-package-KidneyExchange.jl">Install the package KidneyExchange.jl</a><a id="Install-the-package-KidneyExchange.jl-1"></a><a class="docs-heading-anchor-permalink" href="#Install-the-package-KidneyExchange.jl" title="Permalink"></a></h2><pre><code class="nohighlight hljs">(KidneyExchangeImage) pkg&gt; add https://github.com/jeremyomer/KidneyExchange.jl.git
+     Cloning git-repo `https://github.com/jeremyomer/KidneyExchange.jl.git`
+    Updating git-repo `https://github.com/jeremyomer/KidneyExchange.jl.git`
+   Resolving package versions...
+    Updating `~/JuliaProjects/KidneyExchangeImage/Project.toml`
+  [1df6b590] + KidneyExchange v0.1.0 `https://github.com/jeremyomer/KidneyExchange.jl.git#master`
+    Updating `~/JuliaProjects/KidneyExchangeImage/Manifest.toml`
+⌅ [ec485272] + ArnoldiMethod v0.2.0
+  [6e4b80f9] + BenchmarkTools v1.5.0
+  [523fee87] + CodecBzip2 v0.8.2
+  [944b1d66] + CodecZlib v0.7.4
+  ...
+  ...
+  [8e850ede] + nghttp2_jll v1.52.0+1
+  [3f19e933] + p7zip_jll v17.4.0+2
+        Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Precompiling project...
+  1 dependency successfully precompiled in 7 seconds. 132 already precompiled.</code></pre><h2 id="Create-a-an-example-to-precompile-the-package-in-your-image"><a class="docs-heading-anchor" href="#Create-a-an-example-to-precompile-the-package-in-your-image">Create a an example to precompile the package in your image</a><a id="Create-a-an-example-to-precompile-the-package-in-your-image-1"></a><a class="docs-heading-anchor-permalink" href="#Create-a-an-example-to-precompile-the-package-in-your-image" title="Permalink"></a></h2><pre><code class="nohighlight hljs">shell&gt; cat precompile.jl
+
+using KidneyExchange
+using Printf
+using Downloads
+using HiGHS
+
+bp_params = BP_params()
+bp_params.optimizer = &quot;HiGHS&quot;
+timer = TimerOutput()
+bp_params.verbose = false
+max_time = 7200.0
+
+dataset = @sprintf &quot;%08d&quot; 2  #  (1 - 310) instance index of synthetic kidney donor pools
+
+filename = &quot;00036-&quot; * dataset
+dat_file = filename * &quot;.dat&quot;
+wmd_file = filename * &quot;.wmd&quot;
+
+Downloads.download(&quot;https://www.preflib.org/static/data/kidney/&quot; * dat_file, dat_file)
+Downloads.download(&quot;https://www.preflib.org/static/data/kidney/&quot; * wmd_file, wmd_file)
+
+cycle_limit, chain_limit =  3, 2
+bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)</code></pre><h2 id="Install-your-solver"><a class="docs-heading-anchor" href="#Install-your-solver">Install your solver</a><a id="Install-your-solver-1"></a><a class="docs-heading-anchor-permalink" href="#Install-your-solver" title="Permalink"></a></h2><pre><code class="nohighlight hljs">(KidneyExchangeImage) pkg&gt; add HiGHS
+   Resolving package versions...
+    Updating `~/JuliaProjects/KidneyExchangeImage/Project.toml`
+  [87dc4568] + HiGHS v1.9.0
+  No Changes to `~/JuliaProjects/KidneyExchangeImage/Manifest.toml`</code></pre><h2 id="Create-your-image"><a class="docs-heading-anchor" href="#Create-your-image">Create your image</a><a id="Create-your-image-1"></a><a class="docs-heading-anchor-permalink" href="#Create-your-image" title="Permalink"></a></h2><pre><code class="nohighlight hljs">julia&gt; create_sysimage([&quot;KidneyExchange&quot;]; sysimage_path=&quot;KidneyExchangeSysimage.so&quot;, precompile_execution_file=&quot;precompile.jl&quot;)
+Precompiling project...
+  123 dependencies successfully precompiled in 82 seconds. 10 already precompiled.
+✔ [02m:41s] PackageCompiler: compiling incremental system image
+</code></pre><h2 id="Use-it"><a class="docs-heading-anchor" href="#Use-it">Use it</a><a id="Use-it-1"></a><a class="docs-heading-anchor-permalink" href="#Use-it" title="Permalink"></a></h2><pre><code class="nohighlight hljs">$ ls
+00036-00000002.wmd		Project.toml
+KidneyExchangeSysimage.so	precompile.jl
+00036-00000002.dat		Manifest.toml
+
+$ julia -q -JKidneyExchangeSysimage.so my_example.jl</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Home</a><a class="docs-footer-nextpage" href="../types/">Types »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Thursday 28 March 2024 13:49">Thursday 28 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
