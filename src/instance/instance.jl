@@ -36,7 +36,7 @@ struct Instance
         A = [v for v in vertices(g) if vertex_weight[v] == 0.0]
         edge_weight = zeros(nv(g), nv(g))
         for e in edges(g)
-            edge_weight[e.src,e.dst] = vertex_weight[e.dst]
+            edge_weight[e.src, e.dst] = vertex_weight[e.dst]
         end
 
         return new(g, vertex_weight, edge_weight, P, A, length(P), length(A), K, L, true)
@@ -50,7 +50,7 @@ struct Instance
 
         if isfile(wmd_file)
             wmd_file_first_line = readline(wmd_file)
-            if startswith( wmd_file_first_line, "#")
+            if startswith(wmd_file_first_line, "#")
                 g, edge_weight, is_altruist = read_wmd_file(wmd_file)
             else
                 g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
@@ -60,9 +60,9 @@ struct Instance
             data_folder = joinpath(@__DIR__, "..", "..", "data")
             wmd_file = joinpath(data_folder, join([inst, ".wmd"]))
             dat_file = joinpath(data_folder, join([inst, ".dat"]))
-            if isfile(wmd_file) 
+            if isfile(wmd_file)
                 wmd_file_first_line = readline(wmd_file)
-                if startswith( wmd_file_first_line, "#")
+                if startswith(wmd_file_first_line, "#")
                     g, edge_weight, is_altruist = read_wmd_file(wmd_file)
                 else
                     g, edge_weight, is_altruist = read_kep_file(wmd_file, dat_file)
@@ -79,20 +79,33 @@ struct Instance
         for v in P
             vertex_weight[v] = 1.0
             if indegree(g, v) >= 1
-                vertex_weight[v] = edge_weight[inneighbors(g,v)[1],v]
-                for u in inneighbors(g,v)
-                    if edge_weight[u,v] != vertex_weight[v]
+                vertex_weight[v] = edge_weight[inneighbors(g, v)[1], v]
+                for u in inneighbors(g, v)
+                    if edge_weight[u, v] != vertex_weight[v]
                         is_vertex_weighted = false
                         break
                     end
                 end
-                if !is_vertex_weighted  break   end
+                if !is_vertex_weighted
+                    break
+                end
             end
         end
         if !is_vertex_weighted
             println("the instance is not vertex weighted!")
         end
-        return new(g, vertex_weight, edge_weight, P, A, length(P), length(A), K, L, is_vertex_weighted)
+        return new(
+            g,
+            vertex_weight,
+            edge_weight,
+            P,
+            A,
+            length(P),
+            length(A),
+            K,
+            L,
+            is_vertex_weighted,
+        )
     end
 end
 
@@ -121,7 +134,22 @@ mutable struct Graph_copies
     is_arc_list::Vector{BitVector}
     chain_mip::Model
 
-    function Graph_copies(_sources, _isvertex_list, _d_to::Vector{Vector{Int}} = Vector{Vector{Int}}(undef, 0), _d_from::Vector{Vector{Int}} = Vector{Vector{Int}}(undef, 0), _chain_mip = Model(), _isarc_list::Vector{BitVector}=Vector{BitVector}(undef,0))
-        return new(_sources, _isvertex_list, _d_to, _d_from, length(_sources), _isarc_list, _chain_mip)
+    function Graph_copies(
+        _sources,
+        _isvertex_list,
+        _d_to::Vector{Vector{Int}} = Vector{Vector{Int}}(undef, 0),
+        _d_from::Vector{Vector{Int}} = Vector{Vector{Int}}(undef, 0),
+        _chain_mip = Model(),
+        _isarc_list::Vector{BitVector} = Vector{BitVector}(undef, 0),
+    )
+        return new(
+            _sources,
+            _isvertex_list,
+            _d_to,
+            _d_from,
+            length(_sources),
+            _isarc_list,
+            _chain_mip,
+        )
     end
 end

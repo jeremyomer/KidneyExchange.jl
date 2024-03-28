@@ -43,8 +43,9 @@ Downloads.download("https://www.preflib.org/static/data/kidney/" * wmd_file, wmd
 new_graph, new_weights, new_is_altruist = read_wmd_file(wmd_file)
 # -
 
-cycle_limit, chain_limit =  3, 2
-@time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
+cycle_limit, chain_limit = 3, 2
+@time bp_status, graph_info, subgraph_info =
+    solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
 
 filename = "MD-00001-00000002"
 wmd_file = "MD-00001-00000002" * ".wmd"
@@ -52,8 +53,7 @@ dat_file = "MD-00001-00000002" * ".dat"
 old_graph, old_weights, old_is_altruist = read_kep_file(wmd_file, dat_file)
 
 
-@time bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
+@time bp_status, graph_info, subgraph_info =
+    solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
 
 new_weights ≈ old_weights
-
-

@@ -9,7 +9,18 @@ Columns generation of the node
 # Output parameter
 - `column_flow::Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)`
 """
-function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Model, subgraphs::Graph_copies, bp_status::BP_status, column_pool::Vector{Column},  bp_params::BP_params, master_IP::Model, timer::TimerOutput, time_limit::Float64)
+function process_node(
+    tree_node::TreeNode,
+    instance::Instance,
+    mastermodel::Model,
+    subgraphs::Graph_copies,
+    bp_status::BP_status,
+    column_pool::Vector{Column},
+    bp_params::BP_params,
+    master_IP::Model,
+    timer::TimerOutput,
+    time_limit::Float64,
+)
     # local variables
     graph = instance.graph
     K = instance.max_cycle_length
@@ -19,7 +30,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
     # verbose outputs
     if verbose
-        printstyled("Processing node $(tree_node.index)\n\n" ; color = :yellow)
+        printstyled("Processing node $(tree_node.index)\n\n"; color = :yellow)
         if !isempty(tree_node.setzero_vertex)
             println("- the vertices set to zero are:", tree_node.setzero_vertex)
         end
@@ -62,12 +73,12 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         to_optimality = false
     end
     subproblems_for_mip = Vector{Int}()  # list of subproblems that need to be solved optimally if no chain nor cycle was found
-    column_flow = Dict{Pair{Int,Int}, Float64}()  # flow on arcs due to the selection of columns (cycles or chains)
-    pief_flow = Dict{Pair{Int,Int}, Float64}()  # flow on arcs from the chain flow variables of the pief master model
+    column_flow = Dict{Pair{Int,Int},Float64}()  # flow on arcs due to the selection of columns (cycles or chains)
+    pief_flow = Dict{Pair{Int,Int},Float64}()  # flow on arcs from the chain flow variables of the pief master model
 
     # preallocated vectors for Bellman speedup
-    pred_for_bellman = Vector{Vector{Int}}(undef, max(K,L))
-    for k = 1:(max(K,L))
+    pred_for_bellman = Vector{Vector{Int}}(undef, max(K, L))
+    for k = 1:(max(K, L))
         pred_for_bellman[k] = zeros(Int, nv(graph))
     end
     d_for_bellman = Vector{Float64}(undef, nv(graph))
@@ -76,22 +87,28 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
     # execute the column generation
     nb_iter = 0
     while true
-        node_infeasible=false
+        node_infeasible = false
         nb_iter += 1
-        if verbose printstyled("\nIteration $nb_iter:\n") end
+        if verbose
+            printstyled("\nIteration $nb_iter:\n")
+        end
         # ==============================================================
         #  Collect values from the solution of the restricted master problem
         # ==============================================================
         if JuMP.termination_status(mastermodel) != MOI.OPTIMAL
             # println(mastermodel)
             if JuMP.termination_status(mastermodel) == TIME_LIMIT
-                printstyled("\nThe linear relaxation of the master has not been solved within the time limit:\n")
+                printstyled(
+                    "\nThe linear relaxation of the master has not been solved within the time limit:\n",
+                )
             end
-            return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
+            return Dict{Pair{Int,Int},Float64}(), Dict{Pair{Int,Int},Float64}()
             error("The linear relaxation of the master is not feasible")
         end
         master_value = JuMP.objective_value(mastermodel)
-        if verbose println("- current master value: ", master_value) end
+        if verbose
+            println("- current master value: ", master_value)
+        end
 
         # dual values of the vertex-disjoint constraints
         if !JuMP.has_duals(mastermodel)
@@ -101,8 +118,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         λ = JuMP.shadow_price.(mastermodel[:capacity])
 
         # get the dual values of the arc branching constraints
-        δ_one = Dict{Pair{Int64, Int64}, Float64}()
-        δ_zero = Dict{Pair{Int64, Int64}, Float64}()
+        δ_one = Dict{Pair{Int64,Int64},Float64}()
+        δ_zero = Dict{Pair{Int64,Int64},Float64}()
         for arc in keys(mastermodel[:branch_one])
             δ_one[arc] = -shadow_price(mastermodel[:branch_one][arc])
             # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
@@ -119,8 +136,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         end
 
         # get the dual values of the vertex branching constraints
-        δ_one_vertex = Dict{Int, Float64}()
-        δ_zero_vertex = Dict{Int, Float64}()
+        δ_one_vertex = Dict{Int,Float64}()
+        δ_zero_vertex = Dict{Int,Float64}()
         for v in keys(mastermodel[:branch_one_vertex])
             δ_one_vertex[v] = -shadow_price(mastermodel[:branch_one_vertex][v])
             # JuMP has weird definitions of its shadow_price and dual function, pay attention to potential errors
@@ -155,7 +172,7 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         column_val = JuMP.value.(mastermodel[:y])
         selected_cycles = Vector{Vector{Int}}()
         selected_chains = Vector{Vector{Int}}()
-        for c in 1:length(column_pool)
+        for c = 1:length(column_pool)
             if column_val[c] > 1 - ϵ
                 if column_pool[c].is_cycle
                     push!(selected_cycles, (column_pool[c]).vertices)
@@ -175,9 +192,10 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             if false
                 for u in vertices(graph)
                     for v in outneighbors(graph, u)
-                        pief_flow[u=>v] = sum(value(mastermodel[:chain_flow][u,v,k]) for k in 1:L)
-                        if pief_flow[u=>v] > 1-ϵ
-                            push!(selected_arcs_pief, u=>v)
+                        pief_flow[u=>v] =
+                            sum(value(mastermodel[:chain_flow][u, v, k]) for k = 1:L)
+                        if pief_flow[u=>v] > 1 - ϵ
+                            push!(selected_arcs_pief, u => v)
                         elseif pief_flow[u=>v] > ϵ
                             is_integer = false
                             break
@@ -195,11 +213,15 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # ===============================================================
         #  Update BP information if a new incumbent has been found
         # ===============================================================
-        if is_integer &&  (master_value > bp_status.bp_info.LB + ϵ)
+        if is_integer && (master_value > bp_status.bp_info.LB + ϵ)
             bp_status.bp_info.LB = master_value
             bp_status.best_cycles = selected_cycles
             bp_status.best_chains = selected_chains
-            if verbose println("\e[32m New incumbent with value $master_value found during the solution of the restricted master \e[00m") end
+            if verbose
+                println(
+                    "\e[32m New incumbent with value $master_value found during the solution of the restricted master \e[00m",
+                )
+            end
         end
 
 
@@ -208,8 +230,18 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         # ===============================================================
         # arc costs need to be updated only if not at root node
         max_cost = 0.0
-        if !instance.is_vertex_weighted || !isempty(tree_node.setone) || !isempty(tree_node.setzero)
-            max_cost = calculate_arc_cost(instance, arc_cost, λ, δ_one, δ_zero, δ_one_vertex, δ_zero_vertex)
+        if !instance.is_vertex_weighted ||
+           !isempty(tree_node.setone) ||
+           !isempty(tree_node.setzero)
+            max_cost = calculate_arc_cost(
+                instance,
+                arc_cost,
+                λ,
+                δ_one,
+                δ_zero,
+                δ_one_vertex,
+                δ_zero_vertex,
+            )
             arc_cost_trans = permutedims(arc_cost)
         else
             vertex_cost .= instance.vertex_weight
@@ -247,13 +279,35 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             end
 
             # initialize the list of vertices of the copy
-            is_not_vertex = is_covered  .| .!subgraphs.is_vertex_list[l]
+            is_not_vertex = is_covered .| .!subgraphs.is_vertex_list[l]
 
             # in the presence of branching constraints on the arcs covered by columns, there are dual variables on arcs, so a different cycle search must be called
-            if !instance.is_vertex_weighted || !isempty(tree_node.setzero) || !isempty(tree_node.setone)
-                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, arc_cost, arc_cost_trans, max_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
+            if !instance.is_vertex_weighted ||
+               !isempty(tree_node.setzero) ||
+               !isempty(tree_node.setone)
+                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(
+                    graph,
+                    arc_cost,
+                    arc_cost_trans,
+                    max_cost,
+                    vstar,
+                    K,
+                    is_not_vertex,
+                    pred_for_bellman,
+                    d_for_bellman,
+                    -δ_nb_arcs,
+                )
             else
-                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(graph, vertex_cost, vstar, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
+                path = @timeit timer "Bellman-Ford" Bellman_Ford_cycle_search(
+                    graph,
+                    vertex_cost,
+                    vstar,
+                    K,
+                    is_not_vertex,
+                    pred_for_bellman,
+                    d_for_bellman,
+                    -δ_nb_arcs,
+                )
             end
 
             # add one column for each positive cycle we just found
@@ -276,7 +330,11 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                     end
                 end
                 # add column to master problem model
-                @timeit timer "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                @timeit timer "opt_master" add_column_to_master(
+                    column,
+                    mastermodel,
+                    tree_node,
+                )
                 @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
             else
                 # make sure that the subproblem will not be solved until we need to prove optimality if it did not produce any new column
@@ -285,7 +343,9 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 end
             end
         end
-        if verbose println("- nb of cycles added = ", nb_cycle_added) end
+        if verbose
+            println("- nb of cycles added = ", nb_cycle_added)
+        end
 
         # 2. Search for positive chains
         chain_added = false
@@ -304,20 +364,68 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 if vstar in tabu_list
                     continue
                 end
-                is_not_vertex = is_covered  .| .!subgraphs.is_vertex_list[l]
+                is_not_vertex = is_covered .| .!subgraphs.is_vertex_list[l]
 
                 # in the presence of branching constraints on the arcs covered by columns, there are dual variables on arcs, so a different chain search must be called
-                if !instance.is_vertex_weighted || !isempty(tree_node.setone) || !isempty(tree_node.setzero)
+                if !instance.is_vertex_weighted ||
+                   !isempty(tree_node.setone) ||
+                   !isempty(tree_node.setzero)
                     if to_optimality && !cycle_added
-                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
+                        positive_path, is_positive_cycle =
+                            @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(
+                                graph,
+                                arc_cost_trans,
+                                max_cost,
+                                vstar,
+                                L,
+                                K,
+                                is_not_vertex,
+                                pred_for_bellman,
+                                d_for_bellman,
+                                -δ_nb_arcs,
+                            )
                     else
-                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, arc_cost_trans, max_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
+                        positive_path =
+                            @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(
+                                graph,
+                                arc_cost_trans,
+                                max_cost,
+                                vstar,
+                                L,
+                                K,
+                                is_not_vertex,
+                                pred_for_bellman,
+                                d_for_bellman,
+                                -δ_nb_arcs,
+                            )
                     end
                 else
                     if to_optimality && !cycle_added
-                        positive_path, is_positive_cycle = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
+                        positive_path, is_positive_cycle =
+                            @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search_optimality(
+                                graph,
+                                vertex_cost,
+                                vstar,
+                                L,
+                                K,
+                                is_not_vertex,
+                                pred_for_bellman,
+                                d_for_bellman,
+                                -δ_nb_arcs,
+                            )
                     else
-                        positive_path = @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(graph, vertex_cost, vstar, L, K, is_not_vertex, pred_for_bellman, d_for_bellman, -δ_nb_arcs)
+                        positive_path =
+                            @timeit timer "Bellman-Ford-chain" Bellman_Ford_chain_search(
+                                graph,
+                                vertex_cost,
+                                vstar,
+                                L,
+                                K,
+                                is_not_vertex,
+                                pred_for_bellman,
+                                d_for_bellman,
+                                -δ_nb_arcs,
+                            )
                     end
                 end
 
@@ -341,7 +449,11 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                         end
                     end
                     # add column to master problem model
-                    @timeit timer "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                    @timeit timer "opt_master" add_column_to_master(
+                        column,
+                        mastermodel,
+                        tree_node,
+                    )
                     @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
                 else
                     if bp_params.is_tabu_list
@@ -354,7 +466,9 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                     end
                 end
             end
-            if verbose println("nb of chains added = $(nb_chains_added)") end
+            if verbose
+                println("nb of chains added = $(nb_chains_added)")
+            end
         end
 
         # 3. if chains or cycles were added, solve the master and step to next iteration
@@ -368,7 +482,9 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
         # 4. if no column was added, but some subproblems were ignored, solve every subproblem from now on (every subproblem is solved at first iteration if no column is generated)
         if !to_optimality && nb_iter >= 2
-            if verbose println("- no positive column was added, switch to optimality search") end
+            if verbose
+                println("- no positive column was added, switch to optimality search")
+            end
             to_optimality = true
             if !isempty(tabu_list)
                 empty!(tabu_list)
@@ -378,14 +494,25 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
         # 5. if every subproblem was solved, but no column added, we may not have reached optimality if L >= K+2 and some positive cycles were found while looking for chains
         if !bp_params.is_pief && (L >= K + 2) && !isempty(subproblems_for_mip)
-            if verbose printstyled("- solve $(length(subproblems_for_mip)) subproblems to optimality as MIPs\n" ; color = :red) end
+            if verbose
+                printstyled(
+                    "- solve $(length(subproblems_for_mip)) subproblems to optimality as MIPs\n";
+                    color = :red,
+                )
+            end
             positive_paths = Vector{Vector{Int}}()
             # initialize the mip for chain search if not already done
             if num_variables(subgraphs.chain_mip) == 0
                 # initialize the MIP for chain search if L >= K+2
                 time_limit = max(0.0, time_limit - (time() - start_time))
                 start_time = time()
-                @timeit timer "create_chain_mip" subgraphs.chain_mip = create_chain_mip(graph,  L, bp_params.optimizer, time_limit, bp_params.nb_threads)
+                @timeit timer "create_chain_mip" subgraphs.chain_mip = create_chain_mip(
+                    graph,
+                    L,
+                    bp_params.optimizer,
+                    time_limit,
+                    bp_params.nb_threads,
+                )
             end
 
             # compute are reduced costs
@@ -394,7 +521,14 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             # solve each subproblem independently
             for l in subproblems_for_mip
                 # need to initialize mips first
-                is_positive_chain, chain = MIP_chain_search(subgraphs.chain_mip, graph, subgraphs.sources[l], subgraphs.is_vertex_list[l], arc_cost, verbose)
+                is_positive_chain, chain = MIP_chain_search(
+                    subgraphs.chain_mip,
+                    graph,
+                    subgraphs.sources[l],
+                    subgraphs.is_vertex_list[l],
+                    arc_cost,
+                    verbose,
+                )
                 if (is_positive_chain)
                     push!(positive_paths, chain)
                 end
@@ -411,18 +545,26 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 push!(column_pool, column)
 
                 # add column to master problem model
-                @timeit timer  "opt_master" add_column_to_master(column, mastermodel, tree_node)
+                @timeit timer "opt_master" add_column_to_master(
+                    column,
+                    mastermodel,
+                    tree_node,
+                )
                 @timeit timer "IP_master" add_column_to_master_IP(column, master_IP)
             end
             if chain_added
-                if verbose println("- found at least one positive column") end
+                if verbose
+                    println("- found at least one positive column")
+                end
                 @timeit timer "opt_master" optimize!(mastermodel)
                 continue
             end
         end
 
         if !cycle_added && !chain_added
-            if verbose printstyled("\nNode relaxation is solved to optimality\n" ; color = :green) end
+            if verbose
+                printstyled("\nNode relaxation is solved to optimality\n"; color = :green)
+            end
             nodeub = master_value
             if nodeub < tree_node.ub
                 if abs(nodeub - round(nodeub)) < ϵ
@@ -432,16 +574,22 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
                 end
                 tree_node.ub = nodeub
             end
-            if verbose print("- node upper bound is $(tree_node.ub), ") end
-            if verbose println("tree lower bound is $(bp_status.bp_info.LB)") end
+            if verbose
+                print("- node upper bound is $(tree_node.ub), ")
+            end
+            if verbose
+                println("tree lower bound is $(bp_status.bp_info.LB)")
+            end
 
             #check whether artificial column is used
             if tree_node.index >= 2
                 if JuMP.value(mastermodel[:slack]) > ϵ
                     node_infeasible = true
-                    if verbose printstyled("\n Node is infeasible\n" ; color = :green) end
+                    if verbose
+                        printstyled("\n Node is infeasible\n"; color = :green)
+                    end
                     # if the node is infeasible, return an empty vector
-                    return Dict{Pair{Int,Int}, Float64}(), Dict{Pair{Int,Int}, Float64}()
+                    return Dict{Pair{Int,Int},Float64}(), Dict{Pair{Int,Int},Float64}()
                 end
             end
             # if not compute the arc flows resulting from the selction of columns
@@ -452,10 +600,12 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
 
     # find a feasible solution at current node by solving the master IP
     if bp_params.solve_master_IP &&
-        (bp_status.bp_info.LB < tree_node.ub - ϵ) &&
-        ( (bp_status.termination_status_last_ip != OPTIMAL) ||
-            (length(column_pool) > bp_status.nb_cols_last_ip) )
-        if verbose 
+       (bp_status.bp_info.LB < tree_node.ub - ϵ) &&
+       (
+           (bp_status.termination_status_last_ip != OPTIMAL) ||
+           (length(column_pool) > bp_status.nb_cols_last_ip)
+       )
+        if verbose
             if length(column_pool) > bp_status.nb_cols_last_ip
                 println("\nThe number of columns increased: ")
             elseif bp_status.termination_status_last_ip != OPTIMAL
@@ -464,7 +614,13 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
             println(" search for a feasible solution at node $(tree_node.index)")
         end
 
-        @timeit timer "IP_master" solve_master_IP(master_IP, column_pool, instance, bp_status, bp_params)
+        @timeit timer "IP_master" solve_master_IP(
+            master_IP,
+            column_pool,
+            instance,
+            bp_status,
+            bp_params,
+        )
         bp_status.nb_cols_last_ip = length(column_pool)
         bp_status.node_count_last_ip = bp_status.node_count
         bp_status.termination_status_last_ip = termination_status(master_IP)
@@ -475,7 +631,8 @@ function process_node(tree_node::TreeNode, instance::Instance, mastermodel::Mode
         if (termination_status != OPTIMAL)
             time_limit = max(0.0, time_limit - (time() - start_time))
             start_time = time()
-            bp_params.time_limit_master_IP = min(time_limit, min(bp_params.time_limit_master_IP + 10.0, 300.0))
+            bp_params.time_limit_master_IP =
+                min(time_limit, min(bp_params.time_limit_master_IP + 10.0, 300.0))
             set_time_limit(master_IP, bp_params.time_limit_master_IP, bp_params.optimizer)
         end
     end
@@ -497,7 +654,10 @@ Extract a integer feasible solution from the fractional solution by conserving a
 * `feas_val::Real`:  The objective value of the feasible solution
 * `columns::Array{Array{Int,1},1}`: The set of selected cycles and chains of the feasible solution
 """
-function get_feasible_solution(fractional_solution::Vector{Float64}, node_columns::Vector{Column})
+function get_feasible_solution(
+    fractional_solution::Vector{Float64},
+    node_columns::Vector{Column},
+)
     columns = Vector{Vector{Int}}()
     column_weights = Vector{Float64}() # weight of the corresponding cycle
     sol_vals = Vector{Float64}() # the fractional value of selected columns
@@ -515,7 +675,8 @@ function get_feasible_solution(fractional_solution::Vector{Float64}, node_column
             # if not, add the cycle, if yes, check if it is worthy to add the cycle and delete the columns that have common vertices
             if !isempty(redundant_cycle_indices)
                 # if the cycle contributed more in terms of the objective value then remove the columns that have common vertices and add the cycle
-                if fractional_solution[c] * column_weight > sum(sol_vals[i] * column_weights[i] for i in redundant_cycle_indices)
+                if fractional_solution[c] * column_weight >
+                   sum(sol_vals[i] * column_weights[i] for i in redundant_cycle_indices)
                     deleteat!(columns, redundant_cycle_indices)
                     deleteat!(column_weights, redundant_cycle_indices)
                     deleteat!(sol_vals, redundant_cycle_indices)
@@ -551,9 +712,9 @@ Gives a set of indices of cycle in cycles who have common vertices with cycle
 function check_used_vertices(cycle::Vector{Int}, cycles::Vector{Vector{Int}})
     redundant_cycle_indices = Vector{Int}()
     vertices_to_be_checked = copy(cycle)
-    for c in 1:length(cycles)
+    for c = 1:length(cycles)
         checked_vertices_id = Vector{Int}()
-        for i in 1:length(vertices_to_be_checked)
+        for i = 1:length(vertices_to_be_checked)
             if vertices_to_be_checked[i] in cycles[c]
                 push!(redundant_cycle_indices, c)
                 push!(checked_vertices_id, i)
@@ -576,7 +737,7 @@ $(SIGNATURES)
 function add_column_to_master(column::Column, mastermodel::Model, tree_node::TreeNode)
     # add the new variable
     y = mastermodel[:y]
-    push!(y, @variable(mastermodel, lower_bound=0))
+    push!(y, @variable(mastermodel, lower_bound = 0))
     set_name(y[end], "y_$(length(y))")
 
     # set the coefficient of the variable in the capacity constraint and objective function
@@ -643,8 +804,8 @@ x_(i,j) whose value >0 is stored in x::Dict{Pair{Int,Int}, Float64}
 * `x:: Dict{Pair{Int,Int}, Float64}`: value of x_(i,j) of arc (i->j)
 """
 function compute_arc_flow(mastersol::Vector{Float64}, node_columns::Vector{Column})
-    x = Dict{Pair{Int,Int}, Float64}()
-    for c in 1:length(mastersol)
+    x = Dict{Pair{Int,Int},Float64}()
+    for c = 1:length(mastersol)
         if mastersol[c] > ϵ
             column = node_columns[c]
             for arc in column.arcs
@@ -666,14 +827,14 @@ function compute_chains_from_pief(master::Model, instance::Instance)
     for u in instance.altruists
         for v in outneighbors(graph, u)
             chain = Vector{Int}()
-            if JuMP.value(master[:chain_flow][u,v,1]) > 1 - ϵ
+            if JuMP.value(master[:chain_flow][u, v, 1]) > 1 - ϵ
                 push!(chain, u)
                 push!(chain, v)
                 k = 2
                 while k <= L
                     is_end_of_chain = true
                     for w in outneighbors(graph, v)
-                        if JuMP.value(master[:chain_flow][v,w,k]) > 1 - ϵ
+                        if JuMP.value(master[:chain_flow][v, w, k]) > 1 - ϵ
                             push!(chain, w)
                             v = w
                             k += 1
@@ -693,9 +854,17 @@ function compute_chains_from_pief(master::Model, instance::Instance)
     return selected_chains
 end
 
-function solve_master_IP(master_IP::Model, column_pool::Vector{Column}, instance::Instance, bp_status::BP_status, bp_params::BP_params)
+function solve_master_IP(
+    master_IP::Model,
+    column_pool::Vector{Column},
+    instance::Instance,
+    bp_status::BP_status,
+    bp_params::BP_params,
+)
     L = instance.max_chain_length
-    if bp_params.verbose println("- number of columns in master IP: $(length(master_IP[:y]))\n") end
+    if bp_params.verbose
+        println("- number of columns in master IP: $(length(master_IP[:y]))\n")
+    end
 
     # solve the integer master problem
     optimize!(master_IP)
@@ -709,7 +878,7 @@ function solve_master_IP(master_IP::Model, column_pool::Vector{Column}, instance
             column_val = JuMP.value.(master_IP[:y])
             selected_cycles = Vector{Vector{Int}}()
             selected_chains = Vector{Vector{Int}}()
-            for c in 1:length(column_pool)
+            for c = 1:length(column_pool)
                 if column_val[c] > 1 - ϵ
                     if column_pool[c].is_cycle
                         push!(selected_cycles, (column_pool[c]).vertices)
@@ -724,7 +893,12 @@ function solve_master_IP(master_IP::Model, column_pool::Vector{Column}, instance
             else
                 bp_status.best_chains = selected_chains
             end
-            if bp_params.verbose printstyled("\nNew incumbent found with value $obj_val found by solving the IP with every column of the pool\n" ; color = :green) end
+            if bp_params.verbose
+                printstyled(
+                    "\nNew incumbent found with value $obj_val found by solving the IP with every column of the pool\n";
+                    color = :green,
+                )
+            end
         end
     end
 end

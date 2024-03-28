@@ -35,10 +35,9 @@ Downloads.download("https://www.preflib.org/static/data/kidney/" * dat_file, dat
 Downloads.download("https://www.preflib.org/static/data/kidney/" * wmd_file, wmd_file)
 
 
-bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
+bp_status, graph_info, subgraph_info =
+    solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
 
 
 
 # -
-
-

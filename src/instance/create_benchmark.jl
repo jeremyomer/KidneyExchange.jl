@@ -18,10 +18,20 @@ Generate a KEP dataset and write in two text files with extensions .dat and .wmd
 
 """
 function generate_saidman_instance(nb_pairs::Int, nb_altruists::Int, index::Int)
-    kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = generate_saidman_kep_graph(nb_pairs, nb_altruists);
-    write_kep_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, "saidman/saidman_$(nb_pairs)_$(nb_altruists)_$(index)");
-    kep_graph = 0;
-    return nothing;
+    kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist =
+        generate_saidman_kep_graph(nb_pairs, nb_altruists)
+    write_kep_file(
+        kep_graph,
+        edge_weights,
+        donorBT,
+        patientBT,
+        wifeP,
+        patientPRA,
+        is_altruist,
+        "saidman/saidman_$(nb_pairs)_$(nb_altruists)_$(index)",
+    )
+    kep_graph = 0
+    return nothing
 end
 
 """
@@ -37,10 +47,20 @@ Seel also [Dickerson2012](@cite) for the motivation and description of this gene
 * `index::Int`: index of the dataset, which will appear in the filename
  """
 function generate_sparse_unos_instance(nb_pairs::Int, nb_altruists::Int, index::Int)
-    kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = generate_sparse_unos_kep_graph(nb_pairs, nb_altruists);
-    write_kep_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, "sparse/sparse_$(nb_pairs)_$(nb_altruists)_$(index)");
-    kep_graph = 0;
-    return nothing;
+    kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist =
+        generate_sparse_unos_kep_graph(nb_pairs, nb_altruists)
+    write_kep_file(
+        kep_graph,
+        edge_weights,
+        donorBT,
+        patientBT,
+        wifeP,
+        patientPRA,
+        is_altruist,
+        "sparse/sparse_$(nb_pairs)_$(nb_altruists)_$(index)",
+    )
+    kep_graph = 0
+    return nothing
 end
 
 """
@@ -54,10 +74,20 @@ Generate a KEP dataset and write in two text files with extensions .dat and .wmd
 * `index::Int`: index of the dataset, which will appear in the filename
 """
 function generate_heterogeneous_instance(nb_pairs::Int, nb_altruists::Int, index::Int)
-    kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = generate_heterogeneous_kep_graph(nb_pairs, nb_altruists);
-    write_kep_file(kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist, "heterogeneous/heterogeneous_$(nb_pairs)_$(nb_altruists)_$(index)");
-    kep_graph = 0;
-    return nothing;
+    kep_graph, edge_weights, donorBT, patientBT, wifeP, patientPRA, is_altruist =
+        generate_heterogeneous_kep_graph(nb_pairs, nb_altruists)
+    write_kep_file(
+        kep_graph,
+        edge_weights,
+        donorBT,
+        patientBT,
+        wifeP,
+        patientPRA,
+        is_altruist,
+        "heterogeneous/heterogeneous_$(nb_pairs)_$(nb_altruists)_$(index)",
+    )
+    kep_graph = 0
+    return nothing
 end
 
 """
@@ -70,7 +100,7 @@ function generate_abraham_benchmark()
     Random.seed!(30112021)
     list_nb_pairs = [100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
     for nb_pairs in list_nb_pairs
-        for k in 1:10
+        for k = 1:10
             generate_saidman_instance(nb_pairs, 0, k)
         end
     end
@@ -85,17 +115,17 @@ The instances are stored in the subdirectories `heterogeneous`, `sparse` and `sa
 """
 function generate_complete_benchmark()
     Random.seed!(30112021)
-    list_nb_pairs = [128,256,512,1024,2048,6000,10000]
+    list_nb_pairs = [128, 256, 512, 1024, 2048, 6000, 10000]
     for nb_pairs in list_nb_pairs
-        for k in 1:10
-            generate_heterogeneous_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
-            generate_sparse_unos_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
+        for k = 1:10
+            generate_heterogeneous_instance(nb_pairs, round(Int, 0.10 * nb_pairs), k)
+            generate_sparse_unos_instance(nb_pairs, round(Int, 0.10 * nb_pairs), k)
         end
     end
-    list_nb_pairs = [6000,10000]
+    list_nb_pairs = [6000, 10000]
     for nb_pairs in list_nb_pairs
-        for k in 1:10
-            generate_saidman_instance(nb_pairs, round(Int, 0.10*nb_pairs), k)
+        for k = 1:10
+            generate_saidman_instance(nb_pairs, round(Int, 0.10 * nb_pairs), k)
         end
     end
 end
