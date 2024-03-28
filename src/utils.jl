@@ -28,7 +28,12 @@ Function that prints the main characteristics of a solution and check that it sa
 
 None
 """
-function print_and_check_solution(cycles::Vector{Vector{Int}}, chains::Vector{Vector{Int}}, instance::Instance, verbose::Bool = true)
+function print_and_check_solution(
+    cycles::Vector{Vector{Int}},
+    chains::Vector{Vector{Int}},
+    instance::Instance,
+    verbose::Bool = true,
+)
     cycles_lengths = [length(c) for c in cycles]
     chains_lengths = [length(c) for c in chains]
 
@@ -38,30 +43,38 @@ function print_and_check_solution(cycles::Vector{Vector{Int}}, chains::Vector{Ve
     if !isempty(cycles_lengths)
         max_cycles_lengths = maximum(cycles_lengths)
     end
-    if verbose println("Numbers of cycles per cycle length") end
-    for k in 2:max_cycles_lengths
+    if verbose
+        println("Numbers of cycles per cycle length")
+    end
+    for k = 2:max_cycles_lengths
         nb_cycles = length(findall(cycles_lengths .== k))
-        if verbose  && nb_cycles >= 1
+        if verbose && nb_cycles >= 1
             println("- k = $k: $nb_cycles cycles")
-         end
+        end
         nb_vertices += nb_cycles * k
     end
     max_chains_lengths = 0
     if !isempty(chains_lengths)
         max_chains_lengths = maximum(chains_lengths)
     end
-    if verbose println("In total, $nb_vertices pairs are covered by cycles\n") end
+    if verbose
+        println("In total, $nb_vertices pairs are covered by cycles\n")
+    end
     if instance.nb_altruists > 0
-        if verbose println("Numbers of chains per chain length") end
+        if verbose
+            println("Numbers of chains per chain length")
+        end
         nb_vertices = 0
-        for l in 2:max_chains_lengths
+        for l = 2:max_chains_lengths
             nb_chains = length(findall(chains_lengths .== l))
             if verbose && nb_chains >= 1
                 println("- l = $(l-1): $nb_chains chains")
             end
-            nb_vertices += nb_chains * (l-1)
+            nb_vertices += nb_chains * (l - 1)
         end
-        if verbose println("In total, $nb_vertices pairs are covered by chains\n") end
+        if verbose
+            println("In total, $nb_vertices pairs are covered by chains\n")
+        end
     end
 
     # check that the cycles and chains of the solution use only edges of the KEP graph and compute the objective value of the solution at the same time
@@ -70,7 +83,7 @@ function print_and_check_solution(cycles::Vector{Vector{Int}}, chains::Vector{Ve
     obj_val = 0.0
     for c in cycles
         vertex_coverage[c[1]] += 1
-        for i in 2:length(c)
+        for i = 2:length(c)
             if !has_edge(g, c[i-1], c[i])
                 error("An edge of the solution is not in the KEP graph")
             end
@@ -84,7 +97,7 @@ function print_and_check_solution(cycles::Vector{Vector{Int}}, chains::Vector{Ve
     end
     for c in chains
         vertex_coverage[c[1]] += 1
-        for i in 2:length(c)
+        for i = 2:length(c)
             if !has_edge(g, c[i-1], c[i])
                 error("An edge of the solution is not in the KEP graph")
             end
@@ -92,20 +105,22 @@ function print_and_check_solution(cycles::Vector{Vector{Int}}, chains::Vector{Ve
             vertex_coverage[c[i]] += 1
         end
     end
-    if verbose println("The computed cost of the solution is $obj_val") end
+    if verbose
+        println("The computed cost of the solution is $obj_val")
+    end
 
     # check that every vertex is covered at most once by the solution
-    for i in 1:nv(g)
+    for i = 1:nv(g)
         if vertex_coverage[i] >= 2
-            printstyled("\n vertex coverage: $vertex_coverage\n" ; color = :red)
+            printstyled("\n vertex coverage: $vertex_coverage\n"; color = :red)
             for c in chains
                 if i ∈ c
-                    printstyled("- by chain: $c\n" ; color = :red)
+                    printstyled("- by chain: $c\n"; color = :red)
                 end
             end
             for c in cycles
                 if i ∈ c
-                    printstyled("- by cycle: $c\n" ; color = :red)
+                    printstyled("- by cycle: $c\n"; color = :red)
                 end
             end
             error("A vertex is covered more than once in the solution")

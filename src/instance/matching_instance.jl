@@ -135,9 +135,9 @@ function read_wmd_file(filepath)
         else
             vertex1, vertex2, weight = split(line, ",")
 
-            src =  parse(Int, vertex1)
-            dst =  parse(Int, vertex2)
-            wgt =  parse(Float64, weight)
+            src = parse(Int, vertex1)
+            dst = parse(Int, vertex2)
+            wgt = parse(Float64, weight)
 
             if !is_altruist[dst] && wgt > 0.0
                 push!(sources, src)
@@ -166,8 +166,8 @@ function write_wmd_file(
     weights::Matrix{Float64},
     is_altruist::BitArray,
     file_name::String,
-    title :: String,
-    description :: String
+    title::String,
+    description::String,
 )
 
     wmd_filename = file_name * ".wmd"
@@ -202,17 +202,17 @@ function write_wmd_file(
     altruists = findall(is_altruist .== true)
     alternatives_name = Dict()
 
-    for (i,v) in enumerate(pairs)
-        println(io_wmd, "# ALTERNATIVE NAME ",v,": Pair ",v)
+    for (i, v) in enumerate(pairs)
+        println(io_wmd, "# ALTERNATIVE NAME ", v, ": Pair ", v)
         alternatives_name[i] = "Pair"
     end
-    for (i,v) in enumerate(altruists)
-        println(io_wmd, "# ALTERNATIVE NAME ",v,": Alturist ", v)
+    for (i, v) in enumerate(altruists)
+        println(io_wmd, "# ALTERNATIVE NAME ", v, ": Alturist ", v)
         alternatives_name[i] = "Alturist"
     end
 
     for e in edges(graph)
-        println(io_wmd, e.src, ", ", e.dst, ", ", weights[e.src,e.dst])
+        println(io_wmd, e.src, ", ", e.dst, ", ", weights[e.src, e.dst])
     end
 
     close(io_wmd)
@@ -226,7 +226,7 @@ function write_dat_file(
     wifeP::BitArray,
     patientPRA::Vector{Float64},
     is_altruist::BitArray,
-    file_name::String
+    file_name::String,
 )
 
     dat_filename = file_name * ".dat"
@@ -238,11 +238,14 @@ function write_dat_file(
     println(io_dat, "Pair,Patient,Donor,Wife-P?,%Pra,Out-Deg,Altruist")
 
     for v in pairs
-        println(io_dat, "$v,$(patientBT[v]),$(donorBT[v]),$(Int(wifeP[v])),$(patientPRA[v]),$(outdegree(graph,v)),0")
+        println(
+            io_dat,
+            "$v,$(patientBT[v]),$(donorBT[v]),$(Int(wifeP[v])),$(patientPRA[v]),$(outdegree(graph,v)),0",
+        )
     end
 
     for v in altruists
-     	println(io_dat, "$v,O,$(donorBT[v]),0,0.0,$(outdegree(graph,v)),1")
+        println(io_dat, "$v,O,$(donorBT[v]),0,0.0,$(outdegree(graph,v)),1")
     end
 
     close(io_dat)
@@ -257,17 +260,23 @@ Compatibility graph generator based on the following paper
 [Ashlagi2013](@cite)
 
 """
-function generate_heterogeneous_instance(nb_pairs::Int, nb_altruists::Int; index = 1, path = pwd())
+function generate_heterogeneous_instance(
+    nb_pairs::Int,
+    nb_altruists::Int;
+    index = 1,
+    path = pwd(),
+)
 
-    graph, weights, donorBT, patientBT, wifeP, patientPRA, is_altruist = generate_heterogeneous_kep_graph(nb_pairs, nb_altruists)
+    graph, weights, donorBT, patientBT, wifeP, patientPRA, is_altruist =
+        generate_heterogeneous_kep_graph(nb_pairs, nb_altruists)
 
 
     file_name = Printf.@sprintf "heterogeneous%05d%08d%05d" nb_pairs nb_altruists index
     @show title = "heterogeneous with $nb_pairs pairs and $nb_altruists"
     @show description = "Heterogeneous instance "
 
-    write_wmd_file( graph, weights, is_altruist, file_name, title, description)
-    write_dat_file( graph, donorBT, patientBT, wifeP, patientPRA, is_altruist, file_name)
+    write_wmd_file(graph, weights, is_altruist, file_name, title, description)
+    write_dat_file(graph, donorBT, patientBT, wifeP, patientPRA, is_altruist, file_name)
 
     return abspath(file_name)
 

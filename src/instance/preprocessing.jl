@@ -15,7 +15,12 @@ For the other copies, either each donor/patient pair is the source of one copy, 
 # Output parameters
 * `subgraphs::Graph_copies` : The structure describing the preprocessed data of the graph copies
 """
-function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, reduce_vertices::Bool = true, fvs::Bool = true)
+function preprocess_graph_copies(
+    instance::Instance,
+    reduce_arcs::Bool = false,
+    reduce_vertices::Bool = true,
+    fvs::Bool = true,
+)
     K = instance.max_cycle_length
     L = instance.max_chain_length
     graph = instance.graph
@@ -102,7 +107,7 @@ function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, re
                 end
                 for w in outneighbors(graph, v)
                     if !is_deleted[w]
-                    in_degrees[w] -= 1
+                        in_degrees[w] -= 1
                         if in_degrees[w] == 0
                             push!(deletion_list, w)
                         end
@@ -134,8 +139,8 @@ function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, re
         push!(vertex_in_subgraph_list, trues(nv(graph)))
         vertex_in_subgraph_list[end] .= .!is_deleted
         if reduce_vertices
-            bfs(graph, vstar, K-1, .!is_deleted, d_from_vstar_list[end])
-            bfs_reverse(graph, vstar, K-1, .!is_deleted, d_to_vstar_list[end])
+            bfs(graph, vstar, K - 1, .!is_deleted, d_from_vstar_list[end])
+            bfs_reverse(graph, vstar, K - 1, .!is_deleted, d_to_vstar_list[end])
             for v in vertices
                 if d_from_vstar_list[end][v] + d_to_vstar_list[end][v] > K
                     vertex_in_subgraph_list[end][v] = false
@@ -158,20 +163,20 @@ function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, re
     # reduce arcs to get smaller models: this is time-consuming and useful only if there is a real need to get smaller models, so this should be used only when a compact MIP model is solved
     if reduce_arcs
         alledges = collect(edges(graph))
-        for s in 1:instance.nb_altruists
+        for s = 1:instance.nb_altruists
             arc_in_subgraph = falses(ne(graph))
-            for i in 1:ne(graph)
+            for i = 1:ne(graph)
                 u = alledges[i].src
                 # keep an arc in the copy only if it can belong to a chain with length at most L originated from the source vertex
                 if d_from_vstar_list[s][u] + 1 <= L
                     arc_in_subgraph[i] = true
                 end
             end
-            push!(arc_in_subgraph_list,arc_in_subgraph)
+            push!(arc_in_subgraph_list, arc_in_subgraph)
         end
-        for s in instance.nb_altruists+1:length(sources)
+        for s = instance.nb_altruists+1:length(sources)
             arc_in_subgraph = falses(ne(graph))
-            for i in 1:ne(graph)
+            for i = 1:ne(graph)
                 u = alledges[i].src
                 v = alledges[i].dst
                 # keep an arc in the copy only if it can belong to a cycle with length at most K going through the source vertex
@@ -179,13 +184,25 @@ function preprocess_graph_copies(instance::Instance, reduce_arcs::Bool=false, re
                     arc_in_subgraph[i] = true
                 end
             end
-            push!(arc_in_subgraph_list,arc_in_subgraph)
+            push!(arc_in_subgraph_list, arc_in_subgraph)
         end
-        return Graph_copies(sources, vertex_in_subgraph_list, d_to_vstar_list, d_from_vstar_list, chain_mip, arc_in_subgraph_list)
+        return Graph_copies(
+            sources,
+            vertex_in_subgraph_list,
+            d_to_vstar_list,
+            d_from_vstar_list,
+            chain_mip,
+            arc_in_subgraph_list,
+        )
     end
 
     if reduce_vertices
-        return Graph_copies(sources, vertex_in_subgraph_list, d_to_vstar_list, d_from_vstar_list)
+        return Graph_copies(
+            sources,
+            vertex_in_subgraph_list,
+            d_to_vstar_list,
+            d_from_vstar_list,
+        )
     end
     return Graph_copies(sources, vertex_in_subgraph_list)
 end
@@ -203,10 +220,16 @@ Breadth-first search in the graph where arcs are reversed
 # Output parameters
 * `dists::Vector{Float64}`: shortest distance from source to vertices
 """
-function bfs_reverse(g::SimpleDiGraph, source::Int, K::Int, vertex_in_subgraph::BitVector = trues(nv(g)), d_to_vstar::Vector{Int} = zeros(Int, nv(g)))
+function bfs_reverse(
+    g::SimpleDiGraph,
+    source::Int,
+    K::Int,
+    vertex_in_subgraph::BitVector = trues(nv(g)),
+    d_to_vstar::Vector{Int} = zeros(Int, nv(g)),
+)
     n = nv(g)
-    for s in 1:n
-        d_to_vstar[s]= n
+    for s = 1:n
+        d_to_vstar[s] = n
     end
     d_to_vstar[source] = 0
     to_treat = trues(n)
@@ -224,14 +247,14 @@ function bfs_reverse(g::SimpleDiGraph, source::Int, K::Int, vertex_in_subgraph::
     while !isempty(vertices) && d <= K
         for v in vertices
             for u in outneighbors(g, v)
-                if d_to_vstar[u] == d-1
+                if d_to_vstar[u] == d - 1
                     d_to_vstar[v] = d
                     to_treat[v] = false
                     break
                 end
             end
         end
-        if d <= K-1
+        if d <= K - 1
             vertices = findall(to_treat)
         end
         d += 1
@@ -256,13 +279,21 @@ at most K length, vertices of level >=K are never be considered in cycles.
 # Output parameters
 * `dists::Vector{Float64}`: shortest distance from source to vertices
 """
-function bfs(g::SimpleDiGraph, source::Int, K::Int, vertex_in_subgraph::BitVector=trues(nv(g)), d_from_vstar::Vector{Int} = zeros(Int, nv(g)))
+function bfs(
+    g::SimpleDiGraph,
+    source::Int,
+    K::Int,
+    vertex_in_subgraph::BitVector = trues(nv(g)),
+    d_from_vstar::Vector{Int} = zeros(Int, nv(g)),
+)
     n = nv(g)
-    for s in 1:n
-        d_from_vstar[s]= n
+    for s = 1:n
+        d_from_vstar[s] = n
     end
     d_from_vstar[source] = 0
-    if K == 0 return nothing end
+    if K == 0
+        return nothing
+    end
 
     to_treat = trues(n)
     to_treat .= vertex_in_subgraph
@@ -273,21 +304,23 @@ function bfs(g::SimpleDiGraph, source::Int, K::Int, vertex_in_subgraph::BitVecto
             to_treat[v] = false
         end
     end
-    if K == 1 return nothing end
+    if K == 1
+        return nothing
+    end
 
     d = 2
     vertices = findall(to_treat)
     while !isempty(vertices) && d <= K
         for v in vertices
             for u in inneighbors(g, v)
-                if d_from_vstar[u] == d-1
+                if d_from_vstar[u] == d - 1
                     d_from_vstar[v] = d
                     to_treat[v] = false
                     break
                 end
             end
         end
-        if d <= K-1
+        if d <= K - 1
             vertices = findall(to_treat)
         end
         d += 1
