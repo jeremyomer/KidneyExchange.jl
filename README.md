@@ -33,7 +33,7 @@ Users who wish to run our code on other existing instances may input them as a .
 
 The package was fully tested with the two commercial MIP solvers CPLEX and Gurobi. Those can both be downloaded and used under an Academic licence at https://www.ibm.com/academic/home and https://www.gurobi.com, respectively.
 
-If you prefer running a fully open version of the package, it is possible to do so by using a chosen mixture of HiGHS, Clp, Cbc, and GLPK. The corresponding packages are documented at https://github.com/jump-dev/HiGHS.jl, https://github.com/jump-dev/Cbc.jl, https://github.com/jump-dev/Clp.jl and https://github.com/jump-dev/Glpk.jl. Be aware that the execution of the algorithms may take longer than communicated in our article if you do so, especially for large instances. This is true even for the branch-and-price algorithms which rely on the capacity of the solver to solve the relaxed master problem with integer variables. 
+If you prefer running a fully open version of the package, it is possible to do so by using a chosen mixture of [HiGHS](https://github.com/jump-dev/HiGHS.jl), [Clp](https://github.com/jump-dev/Clp.jl), [Cbc](https://github.com/jump-dev/Cbc.jl), and [GLPK](https://github.com/jump-dev/Glpk.jl). Be aware that the execution of the algorithms may take longer than communicated in our article if you do so, especially for large instances. This is true even for the branch-and-price algorithms which rely on the capacity of the solver to solve the relaxed master problem with integer variables. 
 
 To choose the solver, you need to set the field `optimizer` of the `BP_params` or `MIP_params` structure with one of the following options:
 - `HiGHS`: use exclusively HiGHS, i.e., both for integer programs (IPs) and linear programs (LPs)

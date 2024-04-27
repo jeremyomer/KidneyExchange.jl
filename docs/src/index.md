@@ -27,7 +27,8 @@ Otherwise, three generators functions are provided with the package :
 - [`generate_sparse_unos_instance`](@ref). 
 
 !!! note 
-   [`generate_saidman_instance`](@ref) will generate instances similar to those of the [PrefLib library](https://www.preflib.org/dataset/00036).
+    The [`generate_saidman_instance`](@ref) function will generate instances 
+    similar to those of the [PrefLib library](https://www.preflib.org/dataset/00036).
 
 Users who wish to run our code on other existing instances may input
 them as `.wmd` file and read them with [`read_wmd_file`](@ref).
