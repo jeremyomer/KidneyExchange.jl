@@ -106,6 +106,10 @@ $ ls
 00036-00000002.dat		MD-00001-00000002.dat		Project.toml			solve_with_bppicef.jl
 00036-00000002.wmd		Project.toml
 
+$ julia --project --startup-file=no solve_with_bp.jl
+  2.890542 seconds (2.99 M allocations: 195.866 MiB, 2.07% gc time, 99.62% compilation time: 3% of which was recompilation)
+  0.004946 seconds (10.55 k allocations: 443.156 KiB)
+
 $ julia --startup-file=no -J KidneyExchangeSysimage.so solve_with_bp.jl
   0.007080 seconds (11.89 k allocations: 533.320 KiB)
   0.005073 seconds (10.47 k allocations: 441.906 KiB)
