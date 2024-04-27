@@ -6,7 +6,7 @@
 ```
 $ mkdir KidneyExchangeImage
 $ cd KidneyExchangeImage/
-$ julia -q
+$ julia -q --startup-file=no
 julia> using PackageCompiler
  │ Package PackageCompiler not found, but a package named PackageCompiler is available from a
  │ registry.
@@ -89,7 +89,7 @@ bp_status, graph_info, subgraph_info = solve_with_BP(filename, cycle_limit, chai
 ## Create your image
 
 ```
-julia> create_sysimage(["KidneyExchange"]; sysimage_path="KidneyExchangeSysimage.so", precompile_execution_file="precompile.jl")
+julia> create_sysimage(["KidneyExchange", "HiGHS"]; sysimage_path="KidneyExchangeSysimage.so", precompile_execution_file="precompile.jl")
 Precompiling project...
   123 dependencies successfully precompiled in 82 seconds. 10 already precompiled.
 ✔ [02m:41s] PackageCompiler: compiling incremental system image
@@ -101,9 +101,12 @@ Precompiling project...
 
 ```
 $ ls
+00036-00000001.dat		00036-00000002.wmd		MD-00001-00000002.wmd		precompile.jl
+00036-00000001.wmd		KidneyExchangeSysimage.so	Manifest.toml			solve_with_bp.jl
+00036-00000002.dat		MD-00001-00000002.dat		Project.toml			solve_with_bppicef.jl
 00036-00000002.wmd		Project.toml
-KidneyExchangeSysimage.so	precompile.jl
-00036-00000002.dat		Manifest.toml
 
-$ julia -q -JKidneyExchangeSysimage.so my_example.jl
+$ julia --startup-file=no -J KidneyExchangeSysimage.so solve_with_bp.jl
+  0.007080 seconds (11.89 k allocations: 533.320 KiB)
+  0.005073 seconds (10.47 k allocations: 441.906 KiB)
 ```
