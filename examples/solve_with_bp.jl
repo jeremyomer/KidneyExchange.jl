@@ -47,9 +47,9 @@ cycle_limit, chain_limit = 3, 2
 @time bp_status, graph_info, subgraph_info =
     solve_with_BP(filename, cycle_limit, chain_limit, bp_params, timer, max_time)
 
-filename = "MD-00001-00000002"
-wmd_file = "MD-00001-00000002" * ".wmd"
-dat_file = "MD-00001-00000002" * ".dat"
+filename = joinpath(@__DIR__, "MD-00001-00000002")
+wmd_file = filename * ".wmd"
+dat_file = filename * ".dat"
 old_graph, old_weights, old_is_altruist = read_kep_file(wmd_file, dat_file)
 
 
