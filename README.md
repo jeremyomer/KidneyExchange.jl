@@ -109,6 +109,10 @@ after having imported the Gurobi package in your environment.
 
 ## Advanced usage and running tests 
 
+> **Tip**
+> To speedup the following computations, you can create an image with PackageCompiler.jl.
+> There is a chapter with instructions in [the documentation][docs-dev-url].
+
 The package can also be used without adding it to the Julia environment and resorting to the Julia REPL. To do so, download the code folder and make sure that all dependencies of the package are present in your Julia environment. 
 
 A set of example script files are provided in the code folder under the name KEPTestxxx.jl for each method tested in our manuscript. 
