@@ -109,7 +109,7 @@ after having imported the Gurobi package in your environment.
 
 ## Advanced usage and running tests 
 
-> [!NOTE]
+> [!TIP]
 > To speedup the following computations, you can create an image with PackageCompiler.jl.
 > There is a chapter with instructions in [the documentation][docs-dev-url].
 
